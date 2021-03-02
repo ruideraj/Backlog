@@ -17,8 +17,11 @@ interface ListsRepository {
 @Singleton
 class FakeListsRepository @Inject constructor() : ListsRepository {
     private val lists = mutableListOf<BacklogList>().apply {
+        val icons = ListIcon.values()
+        val iconTypes = icons.size
         for (i in 0..18) {
-            add(BacklogList(i.toLong(), "list$i", ListIcon.LIST, i, i))
+            val iconType = icons[i % iconTypes]
+            add(BacklogList(i.toLong(), "list$i", iconType, i, i))
         }
     }
 

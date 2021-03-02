@@ -12,6 +12,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ruideraj.backlog.R
 import com.ruideraj.backlog.ViewModelFactory
@@ -23,6 +26,7 @@ class ListsFragment : Fragment() {
     }
 
     private val viewModel by viewModels<ListsViewModel> { ViewModelFactory(requireActivity()) }
+    private lateinit var adapter: ListsAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -34,13 +38,19 @@ class ListsFragment : Fragment() {
 
         (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
 
+        val recycler = view.findViewById<RecyclerView>(R.id.lists_recycler)
+        recycler.layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
+        recycler.addItemDecoration(DividerItemDecoration(recycler.context, DividerItemDecoration.VERTICAL))
+        adapter = ListsAdapter()
+        recycler.adapter = adapter
+
         view.findViewById<FloatingActionButton>(R.id.lists_button_create).setOnClickListener {
             // TODO Open Create List dialog
         }
 
         viewModel.let {
             it.lists.observe(requireActivity(), { lists ->
-                Toast.makeText(requireContext(), "Lists: ${lists.size}", Toast.LENGTH_SHORT).show()
+                adapter.submitList(lists)
             })
         }
     }
