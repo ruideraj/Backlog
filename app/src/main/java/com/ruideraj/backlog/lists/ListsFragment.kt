@@ -5,19 +5,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.navigation.fragment.findNavController
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.ruideraj.backlog.ListIcon
 import com.ruideraj.backlog.R
 import com.ruideraj.backlog.ViewModelFactory
+import kotlinx.coroutines.flow.collect
 
 class ListsFragment : Fragment() {
 
@@ -26,6 +25,7 @@ class ListsFragment : Fragment() {
     }
 
     private val viewModel by viewModels<ListsViewModel> { ViewModelFactory(requireActivity()) }
+    private lateinit var recycler: RecyclerView
     private lateinit var adapter: ListsAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -38,18 +38,38 @@ class ListsFragment : Fragment() {
 
         (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
 
-        val recycler = view.findViewById<RecyclerView>(R.id.lists_recycler)
+        recycler = view.findViewById(R.id.lists_recycler)
         recycler.layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
         recycler.addItemDecoration(DividerItemDecoration(recycler.context, DividerItemDecoration.VERTICAL))
-        adapter = ListsAdapter()
+        adapter = ListsAdapter().apply {
+            // Scroll to the bottom when an item is added
+            registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                    super.onItemRangeInserted(positionStart, itemCount)
+
+                    val count = adapter.itemCount
+                    val lastVisiblePosition =
+                        (recycler.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
+
+                    if (lastVisiblePosition == -1 || positionStart >= count - 1 &&
+                        lastVisiblePosition == positionStart - 1) {
+                        recycler.scrollToPosition(positionStart)
+                    } else {
+                        recycler.scrollToPosition(count - 1);
+                    }
+                }
+            })
+        }
         recycler.adapter = adapter
 
         view.findViewById<FloatingActionButton>(R.id.lists_button_create).setOnClickListener {
-            // TODO Open Create List dialog
+            // TODO Replace with Create List Dialog
+            viewModel.createList("new list", ListIcon.LIST)
         }
 
         viewModel.let {
             it.lists.observe(requireActivity(), { lists ->
+                Log.d(TAG, "Submitting new list to adapter")
                 adapter.submitList(lists)
             })
         }
