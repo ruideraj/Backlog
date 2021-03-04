@@ -40,7 +40,7 @@ class ListsFragment : Fragment() {
         recycler = view.findViewById(R.id.lists_recycler)
         recycler.layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
         recycler.addItemDecoration(DividerItemDecoration(recycler.context, DividerItemDecoration.VERTICAL))
-        adapter = ListsAdapter().apply {
+        adapter = ListsAdapter(viewModel).apply {
             // Scroll to the bottom when an item is added
             registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
                 override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
@@ -61,10 +61,22 @@ class ListsFragment : Fragment() {
         }
         recycler.adapter = adapter
 
-        view.findViewById<FloatingActionButton>(R.id.lists_button_create).setOnClickListener {
-            // TODO Replace with Create List Dialog
-            viewModel.createList("new list", ListIcon.LIST)
+        val fab = view.findViewById<FloatingActionButton>(R.id.lists_button_create).apply {
+            setOnClickListener {
+                // TODO Replace with Create List Dialog
+                viewModel.createList("new list", ListIcon.LIST)
+            }
         }
+
+        recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0) {
+                    fab.hide()
+                } else if (dy < 0) {
+                    fab.show()
+                }
+            }
+        })
 
         viewModel.let {
             it.lists.observe(requireActivity(), { lists ->
