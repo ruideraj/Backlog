@@ -8,23 +8,22 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ruideraj.backlog.ListIcon
 import com.ruideraj.backlog.R
-import com.ruideraj.backlog.ViewModelFactory
-import kotlinx.coroutines.flow.collect
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ListsFragment : Fragment() {
 
     companion object {
         private const val TAG = "ListsFragment"
     }
 
-    private val viewModel by viewModels<ListsViewModel> { ViewModelFactory(requireActivity()) }
+    private val viewModel by viewModels<ListsViewModel>()
     private lateinit var recycler: RecyclerView
     private lateinit var adapter: ListsAdapter
 

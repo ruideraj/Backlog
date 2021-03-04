@@ -2,13 +2,10 @@ package com.ruideraj.backlog.lists
 
 import com.ruideraj.backlog.BacklogList
 import com.ruideraj.backlog.ListIcon
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import javax.inject.Singleton
 
 interface ListsRepository {
     fun loadLists(): Flow<List<BacklogList>>
@@ -17,7 +14,6 @@ interface ListsRepository {
     suspend fun deleteList(listId: Long)
 }
 
-@Singleton
 class FakeListsRepository @Inject constructor() : ListsRepository {
     private val lists = mutableListOf<BacklogList>().apply {
         val icons = ListIcon.values()
