@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/bg_radio_state"/>
+    <item>
+        <inset
+            android:drawable="@drawable/ic_tv"
+            android:insetTop="@dimen/button_radio_inset"
+            android:insetBottom="@dimen/button_radio_inset"
+            android:insetLeft="@dimen/button_radio_inset"
+            android:insetRight="@dimen/button_radio_inset" />
+    </item>
+</layer-list>

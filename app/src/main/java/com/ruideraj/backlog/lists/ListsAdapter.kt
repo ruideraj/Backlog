@@ -34,7 +34,7 @@ class ListsAdapter(viewModel: ListsViewModel) : ListAdapter<BacklogList, Recycle
     private fun getIconResource(icon: ListIcon) = when(icon) {
         ListIcon.LIST -> R.drawable.ic_list
         ListIcon.FILM -> R.drawable.ic_film
-        ListIcon.SHOW -> R.drawable.ic_tv
+        ListIcon.TV -> R.drawable.ic_tv
         ListIcon.GAME -> R.drawable.ic_game
         ListIcon.BOOK -> R.drawable.ic_book
     }

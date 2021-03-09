@@ -21,6 +21,7 @@ class ListsFragment : Fragment() {
 
     companion object {
         private const val TAG = "ListsFragment"
+        private const val LIST_DIALOG_TAG = "ListDialog"
     }
 
     private val viewModel by viewModels<ListsViewModel>()
@@ -63,8 +64,8 @@ class ListsFragment : Fragment() {
 
         val fab = view.findViewById<FloatingActionButton>(R.id.lists_button_create).apply {
             setOnClickListener {
-                // TODO Replace with Create List Dialog
-                viewModel.createList("new list", ListIcon.LIST)
+                val dialogFragment = ListDialogFragment()
+                dialogFragment.show(childFragmentManager, LIST_DIALOG_TAG)
             }
         }
 
