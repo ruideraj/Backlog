@@ -14,6 +14,7 @@
     <string name="lists_cancel">Cancel</string>
     <string name="lists_icon">Icon</string>
     <string name="lists_title">Title</string>
+    <string name="lists_dialog_error_title">Please enter a title.</string>
 
     <plurals name="items">
         <item quantity="one">%d item</item>
