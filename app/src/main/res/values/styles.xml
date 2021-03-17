@@ -10,4 +10,12 @@
         <item name="android:minHeight">0dp</item>
     </style>
 
+    <style name="AlertDialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="buttonBarButtonStyle">@style/AlertDialogButton</item>
+    </style>
+
+    <style name="AlertDialogButton" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">?android:attr/colorControlNormal</item>
+    </style>
+
 </resources>

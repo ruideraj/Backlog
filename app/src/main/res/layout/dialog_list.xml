@@ -18,7 +18,9 @@
         app:boxCornerRadiusTopEnd="@dimen/text_input_box_corner_radius"
         app:boxCornerRadiusBottomStart="@dimen/text_input_box_corner_radius"
         app:boxCornerRadiusBottomEnd="@dimen/text_input_box_corner_radius"
+        app:boxStrokeColor="?attr/colorControlNormal"
         app:boxBackgroundColor="@android:color/transparent"
+        app:hintTextColor="?android:attr/textColorPrimary"
         app:errorTextColor="@color/dark_red"
         app:boxStrokeErrorColor="@color/dark_red"
         android:hint="@string/lists_title">
@@ -40,6 +42,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginTop="16dp"
         android:layout_marginLeft="4dp"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="12sp"
         android:text="@string/lists_icon" />
 
