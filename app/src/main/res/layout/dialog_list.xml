@@ -67,6 +67,7 @@
             list_edit_radio_tv, list_edit_radio_game, list_edit_radio_book" />
 
         <com.udit.android.flatradiogroup.FlatRadioGroup
+            android:id="@+id/list_edit_radio_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +16,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ruideraj.backlog.ListIcon
 import com.ruideraj.backlog.R
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class ListsFragment : Fragment() {
@@ -63,10 +65,7 @@ class ListsFragment : Fragment() {
         recycler.adapter = adapter
 
         val fab = view.findViewById<FloatingActionButton>(R.id.lists_button_create).apply {
-            setOnClickListener {
-                val dialogFragment = ListDialogFragment()
-                dialogFragment.show(childFragmentManager, LIST_DIALOG_TAG)
-            }
+            setOnClickListener { viewModel.onClickCreateList() }
         }
 
         recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -81,9 +80,15 @@ class ListsFragment : Fragment() {
 
         viewModel.let {
             it.lists.observe(requireActivity(), { lists ->
-                Log.d(TAG, "Submitting new list to adapter")
                 adapter.submitList(lists)
             })
+
+            lifecycleScope.launchWhenStarted { it.openListDialog.collect { args ->
+                ListDialogFragment().let { dialog ->
+                    dialog.arguments = args
+                    dialog.show(childFragmentManager, LIST_DIALOG_TAG)
+                }
+            } }
         }
     }
 
