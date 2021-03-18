@@ -14,7 +14,8 @@ import com.ruideraj.backlog.BacklogList
 import com.ruideraj.backlog.ListIcon
 import com.ruideraj.backlog.R
 
-class ListsAdapter(viewModel: ListsViewModel) : ListAdapter<BacklogList, RecyclerView.ViewHolder>(ListItemCallback()) {
+class ListsAdapter(val viewModel: ListsViewModel) : ListAdapter<BacklogList,
+        RecyclerView.ViewHolder>(ListItemCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -52,6 +53,7 @@ class ListsAdapter(viewModel: ListsViewModel) : ListAdapter<BacklogList, Recycle
                         when (item.itemId) {
                             R.id.list_action_edit -> {
                                 Log.d("ListAdapter", "edit: $adapterPosition")
+                                viewModel.onClickEditList(adapterPosition)
                                 true
                             }
                             R.id.list_action_delete -> {

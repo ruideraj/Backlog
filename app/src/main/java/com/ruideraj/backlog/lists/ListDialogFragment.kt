@@ -25,6 +25,7 @@ class ListDialogFragment : DialogFragment() {
         const val ARG_MODE = "mode"
         const val ARG_TITLE = "title"
         const val ARG_ICON = "icon"
+        const val ARG_LIST_ID = "listId"
 
         const val MODE_CREATE = 0
         const val MODE_EDIT = 1
@@ -43,23 +44,29 @@ class ListDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         createdView = requireActivity().layoutInflater.inflate(R.layout.dialog_list, null)
 
-        arguments?.let {
-            val initialTitle = it.getString(ARG_TITLE)
-            if (!initialTitle.isNullOrBlank()) {
-                createdView.findViewById<EditText>(R.id.list_edit_title_edit).setText(initialTitle)
-            }
+        val args = requireArguments()
 
-            val checkedId = getButtonIdForIcon(it.getSerializable(ARG_ICON) as ListIcon)
-            val flatRadioGroup = createdView.findViewById<FlatRadioGroup>(R.id.list_edit_radio_group)
-            flatRadioGroup.selectViewProgramatically(checkedId)
+        val mode = args.getInt(ARG_MODE, MODE_CREATE)
+        val dialogTitleId = if (mode == MODE_EDIT) R.string.lists_edit_list else R.string.lists_create_list
+
+        val initialTitle = args.getString(ARG_TITLE)
+        if (!initialTitle.isNullOrBlank()) {
+            createdView.findViewById<EditText>(R.id.list_edit_title_edit).setText(initialTitle)
         }
 
+        val checkedId = getButtonIdForIcon(args.getSerializable(ARG_ICON) as ListIcon)
+        val flatRadioGroup = createdView.findViewById<FlatRadioGroup>(R.id.list_edit_radio_group)
+        flatRadioGroup.selectViewProgramatically(checkedId)
+
+        val positiveButtonTextId = if (mode == MODE_EDIT) R.string.edit else R.string.create
+
         return AlertDialog.Builder(requireContext()).apply {
+            setTitle(dialogTitleId)
             setView(createdView)
-            setPositiveButton(R.string.lists_create) { _, _ ->
+            setPositiveButton(positiveButtonTextId) { _, _ ->
                 // Do nothing.  Need to have empty handler here to instantiate the button.
             }
-            setNegativeButton(R.string.lists_cancel) { _, _ ->
+            setNegativeButton(R.string.cancel) { _, _ ->
                 // Do nothing, dialog should be automatically dismissed
             }
         }.create()
@@ -92,14 +99,25 @@ class ListDialogFragment : DialogFragment() {
             // Set positive button listener after dialog is shown to prevent automatically closing the dialog
             // when the button is clicked.
             it.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                viewModel.createList(getTitle(createdView), getCheckedRadioButtonId(createdView))
+                val args = requireArguments()
+                val mode = args.getInt(ARG_MODE, MODE_CREATE)
+
+                val title = getTitle(createdView)
+                val selectedIcon = getSelectedIcon(createdView)
+
+                if (mode == MODE_EDIT) {
+                    val listId = args.getLong(ARG_LIST_ID, -1)
+                    viewModel.editList(listId, title, selectedIcon)
+                } else {
+                    viewModel.createList(title, selectedIcon)
+                }
             }
         }
     }
 
     private fun getTitle(view: View): String = view.findViewById<EditText>(R.id.list_edit_title_edit).text.toString()
 
-    private fun getCheckedRadioButtonId(view: View): ListIcon {
+    private fun getSelectedIcon(view: View): ListIcon {
         if (view.findViewById<RadioButton>(R.id.list_edit_radio_film).isChecked) return ListIcon.FILM
         if (view.findViewById<RadioButton>(R.id.list_edit_radio_tv).isChecked) return ListIcon.TV
         if (view.findViewById<RadioButton>(R.id.list_edit_radio_game).isChecked) return ListIcon.GAME

@@ -47,9 +47,20 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
             putInt(ListDialogFragment.ARG_MODE, ListDialogFragment.MODE_CREATE)
             putSerializable(ListDialogFragment.ARG_ICON, ListIcon.LIST)  // Default icon
         }
-        viewModelScope.launch {
-            _openListDialog.emit(bundle)
+
+        viewModelScope.launch { _openListDialog.emit(bundle) }
+    }
+
+    fun onClickEditList(position: Int) {
+        val listToEdit = _lists.value!![position]
+        val bundle = Bundle().apply {
+            putInt(ListDialogFragment.ARG_MODE, ListDialogFragment.MODE_EDIT)
+            putLong(ListDialogFragment.ARG_LIST_ID, listToEdit.listId)
+            putString(ListDialogFragment.ARG_TITLE, listToEdit.title)
+            putSerializable(ListDialogFragment.ARG_ICON, listToEdit.icon)
         }
+
+        viewModelScope.launch { _openListDialog.emit(bundle) }
     }
 
     fun createList(title: String, icon: ListIcon) {
@@ -59,6 +70,19 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
             viewModelScope.launch {
                 _dismissDialog.emit(Unit)
                 listsRepository.createList(title, icon)
+            }
+        }
+    }
+
+    fun editList(listId: Long, title: String, icon: ListIcon) {
+        if (listId < 0) {
+            throw IllegalArgumentException("listId cannot be less than 0, listId: $listId")
+        } else if (title.isBlank()) {
+            _showDialogTitleError.value = true
+        } else {
+            viewModelScope.launch {
+                _dismissDialog.emit(Unit)
+                listsRepository.editList(listId, title, icon)
             }
         }
     }
