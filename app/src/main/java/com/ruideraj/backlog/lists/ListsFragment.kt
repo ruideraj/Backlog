@@ -24,6 +24,7 @@ class ListsFragment : Fragment() {
     companion object {
         private const val TAG = "ListsFragment"
         private const val LIST_DIALOG_TAG = "ListDialog"
+        private const val DELETE_DIALOG_TAG = "DeleteDialog"
     }
 
     private val viewModel by viewModels<ListsViewModel>()
@@ -87,6 +88,13 @@ class ListsFragment : Fragment() {
                 ListDialogFragment().let { dialog ->
                     dialog.arguments = args
                     dialog.show(childFragmentManager, LIST_DIALOG_TAG)
+                }
+            } }
+
+            lifecycleScope.launchWhenStarted { it.openDeleteDialog.collect { args ->
+                DeleteListDialogFragment().let { dialog ->
+                    dialog.arguments = args
+                    dialog.show(childFragmentManager, DELETE_DIALOG_TAG)
                 }
             } }
         }

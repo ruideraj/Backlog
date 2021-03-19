@@ -1,5 +1,7 @@
 package com.ruideraj.backlog
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import java.util.*
 
 enum class MediaType { FILM, TV, GAME, BOOK }
@@ -8,11 +10,12 @@ enum class Status { TODO, IN_PROGRESS, DONE }
 
 enum class ListIcon { LIST, FILM, TV, GAME, BOOK }
 
+@Parcelize
 data class BacklogList(val listId: Long,
                        val title: String,
                        val icon: ListIcon,
                        val position: Int,
-                       val count: Int)
+                       val count: Int) : Parcelable
 
 data class Entry(val entryId: Long,
                  val listId: Long,

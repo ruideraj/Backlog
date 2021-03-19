@@ -19,6 +19,8 @@
     <string name="lists_icon">Icon</string>
     <string name="lists_title">Title</string>
     <string name="lists_dialog_error_title">Please enter a title.</string>
+    <string name="lists_delete_list">Delete List</string>
+    <string name="lists_delete_confirm">Are you sure you want to delete list: %1$s?</string>
 
     <plurals name="items">
         <item quantity="one">%d item</item>

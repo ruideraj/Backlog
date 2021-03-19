@@ -81,7 +81,7 @@ class ListDialogFragment : DialogFragment() {
             }
 
             titleInputLayout = view.findViewById(R.id.list_edit_title_layout)
-            it.showDialogTitleError.observe(viewLifecycleOwner) { showError ->
+            it.showListDialogTitleError.observe(viewLifecycleOwner) { showError ->
                 if (showError) {
                     titleInputLayout.error = getString(R.string.lists_dialog_error_title)
                 } else {
@@ -89,7 +89,7 @@ class ListDialogFragment : DialogFragment() {
                 }
             }
 
-            lifecycleScope.launchWhenStarted { it.dismissDialog.collect { dismiss() } }
+            lifecycleScope.launchWhenStarted { it.dismissListDialog.collect { dismiss() } }
         }
     }
 

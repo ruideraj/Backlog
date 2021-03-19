@@ -52,12 +52,11 @@ class ListsAdapter(val viewModel: ListsViewModel) : ListAdapter<BacklogList,
                     setOnMenuItemClickListener { item ->
                         when (item.itemId) {
                             R.id.list_action_edit -> {
-                                Log.d("ListAdapter", "edit: $adapterPosition")
                                 viewModel.onClickEditList(adapterPosition)
                                 true
                             }
                             R.id.list_action_delete -> {
-                                Log.d("ListAdapter", "delete: $adapterPosition")
+                                viewModel.onClickDeleteList(adapterPosition)
                                 true
                             }
                             else -> false

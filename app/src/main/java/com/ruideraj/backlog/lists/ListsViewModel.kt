@@ -1,7 +1,6 @@
 package com.ruideraj.backlog.lists
 
 import android.os.Bundle
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -30,13 +29,17 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
         get() = _openListDialog
     private val _openListDialog = MutableSharedFlow<Bundle>()
 
-    val showDialogTitleError: LiveData<Boolean>
-        get() = _showDialogTitleError
-    private val _showDialogTitleError = MutableLiveData(false)
+    val showListDialogTitleError: LiveData<Boolean>
+        get() = _showListDialogTitleError
+    private val _showListDialogTitleError = MutableLiveData(false)
 
-    val dismissDialog: SharedFlow<Unit>
-        get() = _dismissDialog
-    private val _dismissDialog = MutableSharedFlow<Unit>()
+    val dismissListDialog: SharedFlow<Unit>
+        get() = _dismissListDialog
+    private val _dismissListDialog = MutableSharedFlow<Unit>()
+
+    val openDeleteDialog: SharedFlow<Bundle>
+        get() = _openDeleteDialog
+    private val _openDeleteDialog = MutableSharedFlow<Bundle>()
 
     init {
         viewModelScope.launch { listsRepository.loadLists().collect { lists -> _lists.value = lists } }
@@ -63,32 +66,40 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
         viewModelScope.launch { _openListDialog.emit(bundle) }
     }
 
+    fun onClickDeleteList(position: Int) {
+        val listToDelete = _lists.value!![position]
+        val bundle = Bundle().apply { putParcelable(DeleteListDialogFragment.ARG_LIST, listToDelete) }
+        viewModelScope.launch { _openDeleteDialog.emit(bundle) }
+    }
+
     fun createList(title: String, icon: ListIcon) {
         if (title.isBlank()) {
-            _showDialogTitleError.value = true
+            _showListDialogTitleError.value = true
         } else {
             viewModelScope.launch {
-                _dismissDialog.emit(Unit)
+                _dismissListDialog.emit(Unit)
                 listsRepository.createList(title, icon)
             }
         }
     }
 
     fun editList(listId: Long, title: String, icon: ListIcon) {
-        if (listId < 0) {
-            throw IllegalArgumentException("listId cannot be less than 0, listId: $listId")
-        } else if (title.isBlank()) {
-            _showDialogTitleError.value = true
-        } else {
-            viewModelScope.launch {
-                _dismissDialog.emit(Unit)
-                listsRepository.editList(listId, title, icon)
+        when {
+            listId < 0 -> throw IllegalArgumentException("listId cannot be less than 0, listId: $listId")
+            title.isBlank() -> _showListDialogTitleError.value = true
+            else -> {
+                viewModelScope.launch {
+                    _dismissListDialog.emit(Unit)
+                    listsRepository.editList(listId, title, icon)
+                }
             }
         }
     }
 
+    fun deleteList(listId: Long) = viewModelScope.launch { listsRepository.deleteList(listId) }
+
     fun onDialogTitleTextChanged(input: String) {
-        if (showDialogTitleError.value == true && input.isNotBlank()) _showDialogTitleError.value = false
+        if (showListDialogTitleError.value == true && input.isNotBlank()) _showListDialogTitleError.value = false
     }
 
 }
