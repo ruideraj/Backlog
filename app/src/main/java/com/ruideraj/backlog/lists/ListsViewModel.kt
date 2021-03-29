@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ruideraj.backlog.BacklogList
+import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.ListIcon
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,25 +22,20 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
         private const val TAG = "ListsViewModel"
     }
 
-    val lists: LiveData<List<BacklogList>>
-        get() = _lists
     private val _lists = MutableLiveData<List<BacklogList>>()
+    val lists: LiveData<List<BacklogList>> = _lists
 
-    val openListDialog: SharedFlow<Bundle>
-        get() = _openListDialog
     private val _openListDialog = MutableSharedFlow<Bundle>()
+    val openListDialog: SharedFlow<Bundle> = _openListDialog
 
-    val showListDialogTitleError: LiveData<Boolean>
-        get() = _showListDialogTitleError
     private val _showListDialogTitleError = MutableLiveData(false)
+    val showListDialogTitleError: LiveData<Boolean> = _showListDialogTitleError
 
-    val dismissListDialog: SharedFlow<Unit>
-        get() = _dismissListDialog
     private val _dismissListDialog = MutableSharedFlow<Unit>()
+    val dismissListDialog: SharedFlow<Unit> = _dismissListDialog
 
-    val openDeleteDialog: SharedFlow<Bundle>
-        get() = _openDeleteDialog
     private val _openDeleteDialog = MutableSharedFlow<Bundle>()
+    val openDeleteDialog: SharedFlow<Bundle> = _openDeleteDialog
 
     init {
         viewModelScope.launch { listsRepository.loadLists().collect { lists -> _lists.value = lists } }
@@ -47,8 +43,8 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
 
     fun onClickCreateList() {
         val bundle = Bundle().apply {
-            putInt(ListDialogFragment.ARG_MODE, ListDialogFragment.MODE_CREATE)
-            putSerializable(ListDialogFragment.ARG_ICON, ListIcon.LIST)  // Default icon
+            putInt(Constants.ARG_MODE, Constants.MODE_CREATE)
+            putSerializable(Constants.ARG_ICON, ListIcon.LIST)  // Default icon
         }
 
         viewModelScope.launch { _openListDialog.emit(bundle) }
@@ -57,10 +53,10 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
     fun onClickEditList(position: Int) {
         val listToEdit = _lists.value!![position]
         val bundle = Bundle().apply {
-            putInt(ListDialogFragment.ARG_MODE, ListDialogFragment.MODE_EDIT)
-            putLong(ListDialogFragment.ARG_LIST_ID, listToEdit.id)
-            putString(ListDialogFragment.ARG_TITLE, listToEdit.title)
-            putSerializable(ListDialogFragment.ARG_ICON, listToEdit.icon)
+            putInt(Constants.ARG_MODE, Constants.MODE_EDIT)
+            putLong(Constants.ARG_LIST_ID, listToEdit.id)
+            putString(Constants.ARG_TITLE, listToEdit.title)
+            putSerializable(Constants.ARG_ICON, listToEdit.icon)
         }
 
         viewModelScope.launch { _openListDialog.emit(bundle) }
@@ -68,7 +64,7 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
 
     fun onClickDeleteList(position: Int) {
         val listToDelete = _lists.value!![position]
-        val bundle = Bundle().apply { putParcelable(DeleteListDialogFragment.ARG_LIST, listToDelete) }
+        val bundle = Bundle().apply { putParcelable(Constants.ARG_LIST, listToDelete) }
         viewModelScope.launch { _openDeleteDialog.emit(bundle) }
     }
 

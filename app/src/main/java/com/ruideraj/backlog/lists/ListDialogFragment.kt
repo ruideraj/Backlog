@@ -14,22 +14,13 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputLayout
+import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.ListIcon
 import com.ruideraj.backlog.R
 import com.udit.android.flatradiogroup.FlatRadioGroup
 import kotlinx.coroutines.flow.collect
 
 class ListDialogFragment : DialogFragment() {
-
-    companion object {
-        const val ARG_MODE = "mode"
-        const val ARG_TITLE = "title"
-        const val ARG_ICON = "icon"
-        const val ARG_LIST_ID = "listId"
-
-        const val MODE_CREATE = 0
-        const val MODE_EDIT = 1
-    }
 
     private lateinit var viewModel: ListsViewModel
 
@@ -46,19 +37,19 @@ class ListDialogFragment : DialogFragment() {
 
         val args = requireArguments()
 
-        val mode = args.getInt(ARG_MODE, MODE_CREATE)
-        val dialogTitleId = if (mode == MODE_EDIT) R.string.lists_edit_list else R.string.lists_create_list
+        val mode = args.getInt(Constants.ARG_MODE, Constants.MODE_CREATE)
+        val dialogTitleId = if (mode == Constants.MODE_EDIT) R.string.lists_edit_list else R.string.lists_create_list
 
-        val initialTitle = args.getString(ARG_TITLE)
+        val initialTitle = args.getString(Constants.ARG_TITLE)
         if (!initialTitle.isNullOrBlank()) {
             createdView.findViewById<EditText>(R.id.list_edit_title_edit).setText(initialTitle)
         }
 
-        val checkedId = getButtonIdForIcon(args.getSerializable(ARG_ICON) as ListIcon)
+        val checkedId = getButtonIdForIcon(args.getSerializable(Constants.ARG_ICON) as ListIcon)
         val flatRadioGroup = createdView.findViewById<FlatRadioGroup>(R.id.list_edit_radio_group)
         flatRadioGroup.selectViewProgramatically(checkedId)
 
-        val positiveButtonTextId = if (mode == MODE_EDIT) R.string.edit else R.string.create
+        val positiveButtonTextId = if (mode == Constants.MODE_EDIT) R.string.edit else R.string.create
 
         return AlertDialog.Builder(requireContext()).apply {
             setTitle(dialogTitleId)
@@ -100,13 +91,13 @@ class ListDialogFragment : DialogFragment() {
             // when the button is clicked.
             it.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                 val args = requireArguments()
-                val mode = args.getInt(ARG_MODE, MODE_CREATE)
+                val mode = args.getInt(Constants.ARG_MODE, Constants.MODE_CREATE)
 
                 val title = getTitle(createdView)
                 val selectedIcon = getSelectedIcon(createdView)
 
-                if (mode == MODE_EDIT) {
-                    val listId = args.getLong(ARG_LIST_ID, -1)
+                if (mode == Constants.MODE_EDIT) {
+                    val listId = args.getLong(Constants.ARG_LIST_ID, -1)
                     viewModel.editList(listId, title, selectedIcon)
                 } else {
                     viewModel.createList(title, selectedIcon)

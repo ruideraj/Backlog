@@ -4,8 +4,8 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
+import com.ruideraj.backlog.Constants.TABLE_NAME_LISTS
 import com.ruideraj.backlog.data.ListIconConverters
-import com.ruideraj.backlog.data.TABLE_NAME_LISTS
 import kotlinx.parcelize.Parcelize
 import java.util.*
 

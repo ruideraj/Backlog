@@ -1,5 +1,6 @@
 package com.ruideraj.backlog.lists
 
+import android.util.Log
 import com.ruideraj.backlog.BacklogList
 import com.ruideraj.backlog.ListIcon
 import com.ruideraj.backlog.data.AppDatabase
@@ -19,12 +20,12 @@ interface ListsRepository {
     suspend fun deleteList(listId: Long)
 }
 
-class ListsRepositoryImpl @Inject constructor(private val appDatabase: AppDatabase,
+class ListsRepositoryImpl @Inject constructor(private val listsDao: ListsDao,
                                               @IoDispatcher private val ioDispatcher: CoroutineDispatcher)
     : ListsRepository {
     private var listCount = 0
 
-    override fun loadLists(): Flow<List<BacklogList>> = appDatabase.listsDao().getAllLists().onEach { lists ->
+    override fun loadLists(): Flow<List<BacklogList>> = listsDao.getAllLists().onEach { lists ->
         listCount = lists.size
     }
 
@@ -32,19 +33,19 @@ class ListsRepositoryImpl @Inject constructor(private val appDatabase: AppDataba
         val newList = BacklogList(0, title, icon, listCount, 0)
 
         withContext(ioDispatcher) {
-            appDatabase.listsDao().insertList(newList)
+            listsDao.insertList(newList)
         }
     }
 
     override suspend fun editList(listId: Long, title: String, icon: ListIcon) {
         withContext(ioDispatcher) {
-            appDatabase.listsDao().updateList(listId, title, icon)
+            listsDao.updateList(listId, title, icon)
         }
     }
 
     override suspend fun deleteList(listId: Long) {
         withContext(ioDispatcher) {
-            appDatabase.listsDao().deleteList(listId)
+            listsDao.deleteList(listId)
         }
     }
 }

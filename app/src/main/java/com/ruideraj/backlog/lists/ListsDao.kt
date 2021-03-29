@@ -1,10 +1,12 @@
 package com.ruideraj.backlog.lists
 
 import androidx.room.*
+import androidx.room.OnConflictStrategy.REPLACE
 import com.ruideraj.backlog.BacklogList
+import com.ruideraj.backlog.Constants
+import com.ruideraj.backlog.Constants.TABLE_NAME_LISTS
 import com.ruideraj.backlog.ListIcon
 import com.ruideraj.backlog.data.ListIconConverters
-import com.ruideraj.backlog.data.TABLE_NAME_LISTS
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -13,7 +15,7 @@ interface ListsDao {
     @Query("SELECT * FROM $TABLE_NAME_LISTS ORDER BY position")
     fun getAllLists(): Flow<List<BacklogList>>
 
-    @Insert
+    @Insert(onConflict = REPLACE)
     fun insertList(newList: BacklogList)
 
     @Query("DELETE FROM $TABLE_NAME_LISTS WHERE id = :listId")
