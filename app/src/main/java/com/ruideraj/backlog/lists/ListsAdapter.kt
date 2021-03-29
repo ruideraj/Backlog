@@ -1,6 +1,5 @@
 package com.ruideraj.backlog.lists
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -71,7 +70,7 @@ class ListsAdapter(val viewModel: ListsViewModel) : ListAdapter<BacklogList,
     }
 
     private class ListItemCallback : DiffUtil.ItemCallback<BacklogList>() {
-        override fun areItemsTheSame(oldItem: BacklogList, newItem: BacklogList) = oldItem.listId == newItem.listId
+        override fun areItemsTheSame(oldItem: BacklogList, newItem: BacklogList) = oldItem.id == newItem.id
 
         override fun areContentsTheSame(oldItem: BacklogList, newItem: BacklogList) = oldItem == newItem
     }

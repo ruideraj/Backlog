@@ -29,7 +29,7 @@ class DeleteListDialogFragment : DialogFragment() {
             setTitle(R.string.lists_delete_list)
             setMessage(getString(R.string.lists_delete_confirm, listToDelete.title))
             setPositiveButton(R.string.delete) { _, _ ->
-                viewModel.deleteList(listToDelete.listId)
+                viewModel.deleteList(listToDelete.id)
             }
             setNegativeButton(R.string.cancel) { _, _ ->
                 // Do nothing, dialog should be automatically dismissed

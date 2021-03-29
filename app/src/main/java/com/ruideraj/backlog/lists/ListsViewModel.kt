@@ -58,7 +58,7 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
         val listToEdit = _lists.value!![position]
         val bundle = Bundle().apply {
             putInt(ListDialogFragment.ARG_MODE, ListDialogFragment.MODE_EDIT)
-            putLong(ListDialogFragment.ARG_LIST_ID, listToEdit.listId)
+            putLong(ListDialogFragment.ARG_LIST_ID, listToEdit.id)
             putString(ListDialogFragment.ARG_TITLE, listToEdit.title)
             putSerializable(ListDialogFragment.ARG_ICON, listToEdit.icon)
         }

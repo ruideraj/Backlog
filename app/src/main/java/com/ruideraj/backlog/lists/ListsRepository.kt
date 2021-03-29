@@ -2,9 +2,14 @@ package com.ruideraj.backlog.lists
 
 import com.ruideraj.backlog.BacklogList
 import com.ruideraj.backlog.ListIcon
+import com.ruideraj.backlog.data.AppDatabase
+import com.ruideraj.backlog.injection.IoDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface ListsRepository {
@@ -14,39 +19,32 @@ interface ListsRepository {
     suspend fun deleteList(listId: Long)
 }
 
-class FakeListsRepository @Inject constructor() : ListsRepository {
-    private val lists = mutableListOf<BacklogList>().apply {
-        val icons = ListIcon.values()
-        val iconTypes = icons.size
-        for (i in 0..18) {
-            val iconType = icons[i % iconTypes]
-            add(BacklogList(i.toLong(), "list$i", iconType, i, i))
+class ListsRepositoryImpl @Inject constructor(private val appDatabase: AppDatabase,
+                                              @IoDispatcher private val ioDispatcher: CoroutineDispatcher)
+    : ListsRepository {
+    private var listCount = 0
+
+    override fun loadLists(): Flow<List<BacklogList>> = appDatabase.listsDao().getAllLists().onEach { lists ->
+        listCount = lists.size
+    }
+
+    override suspend fun createList(title: String, icon: ListIcon) {
+        val newList = BacklogList(0, title, icon, listCount, 0)
+
+        withContext(ioDispatcher) {
+            appDatabase.listsDao().insertList(newList)
         }
     }
 
-    private val listsFlow = MutableStateFlow<List<BacklogList>>(lists)
-
-    override fun loadLists(): Flow<List<BacklogList>> = listsFlow
-
-    override suspend fun createList(title: String, icon: ListIcon) {
-        delay(1000)
-        val currentMainList = listsFlow.value
-        val newId = currentMainList.size
-        val newList = BacklogList(newId.toLong(), title , icon, newId, newId)
-        val newMainList = currentMainList + newList
-        listsFlow.value = newMainList
-    }
-
     override suspend fun editList(listId: Long, title: String, icon: ListIcon) {
-        delay(1000)
-        val lists = listsFlow.value
-        val indexToEdit = lists.indexOfFirst { it.listId == listId }
-        val editedList = lists[indexToEdit].copy(title = title, icon = icon)
-        listsFlow.value = lists.toMutableList().apply { this[indexToEdit] = editedList }
+        withContext(ioDispatcher) {
+            appDatabase.listsDao().updateList(listId, title, icon)
+        }
     }
 
     override suspend fun deleteList(listId: Long) {
-        delay(1000)
-        listsFlow.value = listsFlow.value.filter { it.listId != listId }
+        withContext(ioDispatcher) {
+            appDatabase.listsDao().deleteList(listId)
+        }
     }
 }
