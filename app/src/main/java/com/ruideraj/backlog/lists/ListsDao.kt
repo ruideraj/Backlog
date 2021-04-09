@@ -15,7 +15,13 @@ interface ListsDao {
     @Query("SELECT * FROM $TABLE_NAME_LISTS ORDER BY position")
     fun getAllLists(): Flow<List<BacklogList>>
 
-    @Insert(onConflict = REPLACE)
+    @Query("SELECT MAX(position) FROM $TABLE_NAME_LISTS")
+    fun getMaxPosition(): Double
+
+    @Query("SELECT position FROM $TABLE_NAME_LISTS WHERE id = :listId")
+    fun getListPositionFromId(listId: Long): Double
+
+    @Insert
     fun insertList(newList: BacklogList)
 
     @Query("DELETE FROM $TABLE_NAME_LISTS WHERE id = :listId")

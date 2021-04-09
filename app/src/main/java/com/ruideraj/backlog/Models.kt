@@ -21,11 +21,12 @@ data class BacklogList (
     @PrimaryKey(autoGenerate = true) val id: Long,
     val title: String,
     @field:TypeConverters(ListIconConverters::class) val icon: ListIcon,
-    val position: Int,
+    val position: Double,
     val count: Int) : Parcelable
 
 data class Entry(val id: Long,
                  val listId: Long,
+                 val position: Double,
                  val type: MediaType,
                  val title: String,
                  val metadata: Metadata,
