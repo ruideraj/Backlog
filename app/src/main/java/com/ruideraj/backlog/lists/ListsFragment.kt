@@ -46,64 +46,21 @@ class ListsFragment : Fragment() {
             addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         }
 
-        val helperSimpleCallback = object : ItemTouchHelper.SimpleCallback(
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
-            override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
-                super.onSelectedChanged(viewHolder, actionState)
-                viewHolder?.let { viewModel.moveListStarted(it.adapterPosition) }
-            }
-
-            override fun onMove(recyclerView: RecyclerView,
-                                viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-                val fromPos = viewHolder.adapterPosition
-                val toPos = target.adapterPosition
-
-                adapter.run {
-                    moveItem(fromPos, toPos)
-                    notifyItemMoved(fromPos, toPos)
-                }
-
-                return true
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                // Not used, do nothing
-            }
-
-            override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
-                super.clearView(recyclerView, viewHolder)
-                viewModel.moveListEnded(viewHolder.adapterPosition)
-            }
-
-            override fun isItemViewSwipeEnabled() = false
-        }
-        ItemTouchHelper(helperSimpleCallback).attachToRecyclerView(recycler)
-
         adapter = ListsAdapter(viewModel).apply {
-            // Scroll to the bottom when an item is added
-            registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                    super.onItemRangeInserted(positionStart, itemCount)
-
-                    val count = adapter.itemCount
-                    val lastVisiblePosition =
-                        (recycler.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
-
-                    if (lastVisiblePosition == -1 || positionStart >= count - 1 &&
-                        lastVisiblePosition == positionStart - 1) {
-                        recycler.scrollToPosition(positionStart)
-                    } else {
-                        recycler.scrollToPosition(count - 1);
-                    }
-                }
-            })
+            registerAdapterDataObserver(ScrollOnAddObserver(recycler))
         }
         recycler.adapter = adapter
+
+        val dragDropCallback = DragDropHelperCallback(adapter, { dragStartPosition ->
+            viewModel.moveListStarted(dragStartPosition)
+        }, { dragEndPosition ->
+            viewModel.moveListEnded(dragEndPosition)
+        })
+        ItemTouchHelper(dragDropCallback).attachToRecyclerView(recycler)
 
         val fab = view.findViewById<FloatingActionButton>(R.id.lists_button_create).apply {
             setOnClickListener { viewModel.onClickCreateList() }
         }
-
         recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (dy > 0) {
