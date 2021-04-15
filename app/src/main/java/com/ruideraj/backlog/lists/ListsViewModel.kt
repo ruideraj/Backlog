@@ -37,6 +37,8 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
     private val _openDeleteDialog = MutableSharedFlow<Bundle>()
     val openDeleteDialog: SharedFlow<Bundle> = _openDeleteDialog
 
+    private var listBeingMoved: Long = -1
+
     init {
         viewModelScope.launch { listsRepository.loadLists().collect { lists -> _lists.value = lists } }
     }
@@ -93,6 +95,16 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
     }
 
     fun deleteList(listId: Long) = viewModelScope.launch { listsRepository.deleteList(listId) }
+
+    fun moveListStarted(position: Int) {
+        _lists.value?.let { listBeingMoved = it[position].id }
+    }
+
+    fun moveListEnded(newPosition: Int) {
+        viewModelScope.launch {
+            listsRepository.moveList(listBeingMoved, newPosition)
+        }
+    }
 
     fun onDialogTitleTextChanged(input: String) {
         if (showListDialogTitleError.value == true && input.isNotBlank()) _showListDialogTitleError.value = false

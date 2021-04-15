@@ -18,9 +18,6 @@ interface ListsDao {
     @Query("SELECT MAX(position) FROM $TABLE_NAME_LISTS")
     fun getMaxPosition(): Double
 
-    @Query("SELECT position FROM $TABLE_NAME_LISTS WHERE id = :listId")
-    fun getListPositionFromId(listId: Long): Double
-
     @Insert
     fun insertList(newList: BacklogList)
 
@@ -29,6 +26,17 @@ interface ListsDao {
 
     @Query("UPDATE $TABLE_NAME_LISTS SET title = :title, icon = :icon WHERE id = :listId")
     @TypeConverters(ListIconConverters::class)
-    fun updateList(listId: Long, title: String, icon: ListIcon)
+    fun updateListDetails(listId: Long, title: String, icon: ListIcon)
+
+    @Query("UPDATE $TABLE_NAME_LISTS SET position = :newPosition WHERE id = :listId")
+    fun updateListPosition(listId: Long, newPosition: Double)
+
+    @Query("SELECT id, position FROM $TABLE_NAME_LISTS ORDER BY position")
+    fun getAllListPositions(): List<PositionTuple>
 
 }
+
+data class PositionTuple(
+    @ColumnInfo(name = "id") val id: Long,
+    @ColumnInfo(name = "position") val position: Double
+)
