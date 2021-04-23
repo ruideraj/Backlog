@@ -3,26 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/ListsFragment">
+    app:startDestination="@id/listsFragment">
 
     <fragment
-        android:id="@+id/ListsFragment"
+        android:id="@+id/listsFragment"
         android:name="com.ruideraj.backlog.lists.ListsFragment"
         android:label="@string/lists_fragment_label"
         tools:layout="@layout/fragment_lists">
 
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_listsFragment_to_listDetailFragment"
+            app:destination="@id/listDetailFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.ruideraj.backlog.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
 
-        <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/ListsFragment" />
+    <fragment
+        android:id="@+id/listDetailFragment"
+        android:name="com.ruideraj.backlog.listdetail.ListDetailFragment"
+        android:label="fragment_list_detail"
+        tools:layout="@layout/fragment_list_detail">
+        <argument
+            android:name="list"
+            app:argType="com.ruideraj.backlog.BacklogList" />
     </fragment>
 </navigation>

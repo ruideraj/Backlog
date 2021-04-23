@@ -63,8 +63,8 @@ class ListsAdapter(val viewModel: ListsViewModel) : ListAdapter<BacklogList,
         would be inefficient.
         Since this function is used for drag-and-drop the user will have to move the item over the intermediate
         positions, thus swapping the items into their correct positions along the way.
-        Any potential inconsistencies should be corrected when the updated list (which should normally be identical
-        to the now modified backing list) is submitted in submitList().
+        Any potential inconsistencies should be corrected when the updated list from data sources
+        (which should be identical to the now modified backing list) is submitted in submitList().
          */
         val temp = backingList[fromPos]
         backingList[fromPos] = backingList[toPos]
@@ -78,6 +78,10 @@ class ListsAdapter(val viewModel: ListsViewModel) : ListAdapter<BacklogList,
         val overflow: ImageView = itemView.findViewById(R.id.list_overflow)
 
         init {
+            itemView.setOnClickListener {
+                viewModel.onClickList(adapterPosition)
+            }
+
             overflow.setOnClickListener { view ->
                 PopupMenu(view.context, view).apply {
                     setOnMenuItemClickListener { item ->

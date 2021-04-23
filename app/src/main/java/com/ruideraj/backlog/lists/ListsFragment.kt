@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -105,6 +106,10 @@ class ListsFragment : Fragment() {
                         childFragmentManager.findFragmentByTag(LIST_DIALOG_TAG)?.let {
                             if ((it as DialogFragment).isVisible) it.dismiss()
                         }
+                    }
+                    is ListsViewModel.Event.GoToListDetails -> {
+                        val directions = ListsFragmentDirections.actionListsFragmentToListDetailFragment(event.list)
+                        findNavController().navigate(directions)
                     }
                 }
             }
