@@ -1,22 +1,28 @@
 package com.ruideraj.backlog.lists
 
-import android.os.Bundle
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ruideraj.backlog.BacklogList
-import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.ListIcon
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ListsViewModel @Inject constructor(private val listsRepository: ListsRepository) : ViewModel() {
+
+    sealed class Event {
+        data class ShowCreateList(val defaultIcon: ListIcon) : Event()
+        data class ShowEditList(val listId: Long, val title: String, val icon: ListIcon) : Event()
+        object CloseListDialog : Event()
+        data class ShowDeleteDialog(val list: BacklogList) : Event()
+    }
 
     companion object {
         private const val TAG = "ListsViewModel"
@@ -25,17 +31,11 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
     private val _lists = MutableLiveData<List<BacklogList>>()
     val lists: LiveData<List<BacklogList>> = _lists
 
-    private val _openListDialog = MutableSharedFlow<Bundle>()
-    val openListDialog: SharedFlow<Bundle> = _openListDialog
+    private val eventChannel = Channel<Event>(Channel.BUFFERED)
+    val eventFlow = eventChannel.receiveAsFlow()
 
     private val _showListDialogTitleError = MutableLiveData(false)
     val showListDialogTitleError: LiveData<Boolean> = _showListDialogTitleError
-
-    private val _dismissListDialog = MutableSharedFlow<Unit>()
-    val dismissListDialog: SharedFlow<Unit> = _dismissListDialog
-
-    private val _openDeleteDialog = MutableSharedFlow<Bundle>()
-    val openDeleteDialog: SharedFlow<Bundle> = _openDeleteDialog
 
     private var listBeingMoved: Long = -1
 
@@ -44,30 +44,18 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
     }
 
     fun onClickCreateList() {
-        val bundle = Bundle().apply {
-            putInt(Constants.ARG_MODE, Constants.MODE_CREATE)
-            putSerializable(Constants.ARG_ICON, ListIcon.LIST)  // Default icon
-        }
-
-        viewModelScope.launch { _openListDialog.emit(bundle) }
+        viewModelScope.launch { eventChannel.send(Event.ShowCreateList(ListIcon.LIST)) }
     }
 
     fun onClickEditList(position: Int) {
-        val listToEdit = _lists.value!![position]
-        val bundle = Bundle().apply {
-            putInt(Constants.ARG_MODE, Constants.MODE_EDIT)
-            putLong(Constants.ARG_LIST_ID, listToEdit.id)
-            putString(Constants.ARG_TITLE, listToEdit.title)
-            putSerializable(Constants.ARG_ICON, listToEdit.icon)
-        }
-
-        viewModelScope.launch { _openListDialog.emit(bundle) }
+        val list = _lists.value!![position]
+        viewModelScope.launch { eventChannel.send(Event.ShowEditList(list.id, list.title, list.icon)) }
     }
 
     fun onClickDeleteList(position: Int) {
         val listToDelete = _lists.value!![position]
-        val bundle = Bundle().apply { putParcelable(Constants.ARG_LIST, listToDelete) }
-        viewModelScope.launch { _openDeleteDialog.emit(bundle) }
+        viewModelScope.launch { eventChannel.send(Event.ShowDeleteDialog(listToDelete)) }
+    }
     }
 
     fun createList(title: String, icon: ListIcon) {
@@ -75,7 +63,7 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
             _showListDialogTitleError.value = true
         } else {
             viewModelScope.launch {
-                _dismissListDialog.emit(Unit)
+                eventChannel.send(Event.CloseListDialog)
                 listsRepository.createList(title, icon)
             }
         }
@@ -87,7 +75,7 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
             title.isBlank() -> _showListDialogTitleError.value = true
             else -> {
                 viewModelScope.launch {
-                    _dismissListDialog.emit(Unit)
+                    eventChannel.send(Event.CloseListDialog)
                     listsRepository.editList(listId, title, icon)
                 }
             }

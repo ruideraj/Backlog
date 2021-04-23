@@ -1,22 +1,22 @@
 package com.ruideraj.backlog.lists
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.R
+import com.ruideraj.backlog.util.collectWhileStarted
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class ListsFragment : Fragment() {
@@ -71,24 +71,50 @@ class ListsFragment : Fragment() {
             }
         })
 
-        viewModel.let {
+        viewModel.let { it ->
             it.lists.observe(requireActivity(), { lists ->
                 adapter.submitList(lists)
             })
 
-            lifecycleScope.launchWhenStarted { it.openListDialog.collect { args ->
-                ListDialogFragment().let { dialog ->
-                    dialog.arguments = args
-                    dialog.show(childFragmentManager, LIST_DIALOG_TAG)
+            it.eventFlow.collectWhileStarted(this) { event ->
+                when (event) {
+                    is ListsViewModel.Event.ShowCreateList -> {
+                        val args = Bundle().apply {
+                            putInt(Constants.ARG_MODE, Constants.MODE_CREATE)
+                            putSerializable(Constants.ARG_ICON, event.defaultIcon)
+                        }
+                        showListDialog(args)
+                    }
+                    is ListsViewModel.Event.ShowEditList -> {
+                        val args = Bundle().apply {
+                            putInt(Constants.ARG_MODE, Constants.MODE_EDIT)
+                            putLong(Constants.ARG_LIST_ID, event.listId)
+                            putString(Constants.ARG_TITLE, event.title)
+                            putSerializable(Constants.ARG_ICON, event.icon)
+                        }
+                        showListDialog(args)
+                    }
+                    is ListsViewModel.Event.ShowDeleteDialog -> {
+                        val args = Bundle().apply { putParcelable(Constants.ARG_LIST, event.list) }
+                        DeleteListDialogFragment().let { dialog ->
+                            dialog.arguments = args
+                            dialog.show(childFragmentManager, DELETE_DIALOG_TAG)
+                        }
+                    }
+                    is ListsViewModel.Event.CloseListDialog -> {
+                        childFragmentManager.findFragmentByTag(LIST_DIALOG_TAG)?.let {
+                            if ((it as DialogFragment).isVisible) it.dismiss()
+                        }
+                    }
                 }
-            } }
+            }
+        }
+    }
 
-            lifecycleScope.launchWhenStarted { it.openDeleteDialog.collect { args ->
-                DeleteListDialogFragment().let { dialog ->
-                    dialog.arguments = args
-                    dialog.show(childFragmentManager, DELETE_DIALOG_TAG)
-                }
-            } }
+    private fun showListDialog(args: Bundle) {
+        ListDialogFragment().apply {
+            arguments =args
+            show(this@ListsFragment.childFragmentManager, LIST_DIALOG_TAG)
         }
     }
 

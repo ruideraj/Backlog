@@ -12,13 +12,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputLayout
 import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.ListIcon
 import com.ruideraj.backlog.R
 import com.udit.android.flatradiogroup.FlatRadioGroup
-import kotlinx.coroutines.flow.collect
 
 class ListDialogFragment : DialogFragment() {
 
@@ -79,8 +77,6 @@ class ListDialogFragment : DialogFragment() {
                     titleInputLayout.isErrorEnabled = false
                 }
             }
-
-            lifecycleScope.launchWhenStarted { it.dismissListDialog.collect { dismiss() } }
         }
     }
 
