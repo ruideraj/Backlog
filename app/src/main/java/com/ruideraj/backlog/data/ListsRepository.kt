@@ -1,4 +1,4 @@
- package com.ruideraj.backlog.lists
+ package com.ruideraj.backlog.data
 
 import com.ruideraj.backlog.BacklogList
 import com.ruideraj.backlog.ListIcon

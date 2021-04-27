@@ -1,11 +1,12 @@
 package com.ruideraj.backlog
 
 import android.os.Parcelable
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
+import androidx.room.*
+import com.ruideraj.backlog.Constants.TABLE_NAME_ENTRIES
 import com.ruideraj.backlog.Constants.TABLE_NAME_LISTS
 import com.ruideraj.backlog.data.ListIconConverters
+import com.ruideraj.backlog.data.MediaTypeConverters
+import com.ruideraj.backlog.data.StatusConverters
 import kotlinx.parcelize.Parcelize
 import java.util.*
 
@@ -24,13 +25,21 @@ data class BacklogList (
     val position: Double,
     val count: Int) : Parcelable
 
-data class Entry(val id: Long,
-                 val listId: Long,
-                 val position: Double,
-                 val type: MediaType,
-                 val title: String,
-                 val metadata: Metadata,
-                 val status: Status)
+@Entity(tableName = TABLE_NAME_ENTRIES, foreignKeys = [
+    ForeignKey(entity = BacklogList::class,
+        parentColumns = ["id"],
+        childColumns = ["listId"],
+        onDelete = ForeignKey.CASCADE)],
+    indices = [Index(value = ["listId"])])
+@Parcelize
+data class Entry(
+    @PrimaryKey(autoGenerate = true) val id: Long,
+    val listId: Long,
+    val title: String,
+    @field:TypeConverters(MediaTypeConverters::class) val type: MediaType,
+    val position: Double,
+    // TODO val metadata: Metadata,
+    @field:TypeConverters(StatusConverters::class) val status: Status) : Parcelable
 
 sealed class Metadata {
     class FilmData(val director: String, releaseDate: Date) : Metadata()

@@ -3,9 +3,7 @@ package com.ruideraj.backlog.injection
 import android.content.Context
 import androidx.room.Room
 import com.ruideraj.backlog.Constants
-import com.ruideraj.backlog.data.AppDatabase
-import com.ruideraj.backlog.lists.ListsRepository
-import com.ruideraj.backlog.lists.ListsRepositoryImpl
+import com.ruideraj.backlog.data.*
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -26,6 +24,16 @@ abstract class ListsModule {
 
 @Module
 @InstallIn(SingletonComponent::class)
+abstract class EntriesModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindEntriesRepository(entriesRepositoryImpl: EntriesRepositoryImpl): EntriesRepository
+
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
     @Provides
@@ -34,6 +42,9 @@ object DatabaseModule {
         Room.databaseBuilder(context, AppDatabase::class.java, Constants.DATABASE_NAME).build()
 
     @Provides
-    fun providesListsDao(appDatabase: AppDatabase)  = appDatabase.listsDao()
+    fun providesListsDao(appDatabase: AppDatabase) = appDatabase.listsDao()
+
+    @Provides
+    fun providesEntriesDao(appDatabase: AppDatabase) = appDatabase.entriesDao()
 
 }

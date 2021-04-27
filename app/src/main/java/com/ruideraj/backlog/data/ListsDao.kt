@@ -1,12 +1,9 @@
-package com.ruideraj.backlog.lists
+package com.ruideraj.backlog.data
 
 import androidx.room.*
-import androidx.room.OnConflictStrategy.REPLACE
 import com.ruideraj.backlog.BacklogList
-import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.Constants.TABLE_NAME_LISTS
 import com.ruideraj.backlog.ListIcon
-import com.ruideraj.backlog.data.ListIconConverters
 import kotlinx.coroutines.flow.Flow
 
 @Dao
