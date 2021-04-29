@@ -1,4 +1,4 @@
-package com.ruideraj.backlog.listdetail
+package com.ruideraj.backlog.entries
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,16 +13,16 @@ import com.ruideraj.backlog.R
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ListDetailFragment : Fragment() {
+class EntriesFragment : Fragment() {
 
     companion object {
-        const val TAG = "ListDetailFragment"
+        const val TAG = "EntriesFragment"
     }
 
-    private val viewModel by viewModels<ListDetailViewModel>()
+    private val viewModel by viewModels<EntriesViewModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_list_detail, container, false)
+        return inflater.inflate(R.layout.fragment_entries, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

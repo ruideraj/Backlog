@@ -12,15 +12,15 @@
         tools:layout="@layout/fragment_lists">
 
         <action
-            android:id="@+id/action_listsFragment_to_listDetailFragment"
-            app:destination="@id/listDetailFragment" />
+            android:id="@+id/action_listsFragment_to_entriesFragment"
+            app:destination="@id/entriesFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/listDetailFragment"
-        android:name="com.ruideraj.backlog.listdetail.ListDetailFragment"
-        android:label="fragment_list_detail"
-        tools:layout="@layout/fragment_list_detail">
+        android:id="@+id/entriesFragment"
+        android:name="com.ruideraj.backlog.entries.EntriesFragment"
+        android:label="fragment_entries"
+        tools:layout="@layout/fragment_entries">
         <argument
             android:name="list"
             app:argType="com.ruideraj.backlog.BacklogList" />

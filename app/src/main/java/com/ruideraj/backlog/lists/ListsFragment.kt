@@ -107,8 +107,8 @@ class ListsFragment : Fragment() {
                             if ((it as DialogFragment).isVisible) it.dismiss()
                         }
                     }
-                    is ListsViewModel.Event.GoToListDetails -> {
-                        val directions = ListsFragmentDirections.actionListsFragmentToListDetailFragment(event.list)
+                    is ListsViewModel.Event.GoToEntries -> {
+                        val directions = ListsFragmentDirections.actionListsFragmentToEntriesFragment(event.list)
                         findNavController().navigate(directions)
                     }
                 }

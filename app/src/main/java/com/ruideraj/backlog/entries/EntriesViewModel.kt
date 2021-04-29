@@ -1,4 +1,4 @@
-package com.ruideraj.backlog.listdetail
+package com.ruideraj.backlog.entries
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,10 +12,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ListDetailViewModel @Inject constructor(private val entriesRepository: EntriesRepository) : ViewModel() {
+class EntriesViewModel @Inject constructor(private val entriesRepository: EntriesRepository) : ViewModel() {
 
     companion object {
-        private const val TAG = "ListDetailViewModel"
+        private const val TAG = "EntriesViewModel"
     }
 
     private val _entries = MutableLiveData<List<Entry>>()

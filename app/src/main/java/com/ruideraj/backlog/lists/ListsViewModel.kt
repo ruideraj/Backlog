@@ -22,7 +22,7 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
         data class ShowEditList(val listId: Long, val title: String, val icon: ListIcon) : Event()
         object CloseListDialog : Event()
         data class ShowDeleteDialog(val list: BacklogList) : Event()
-        data class GoToListDetails(val list: BacklogList) : Event()
+        data class GoToEntries(val list: BacklogList) : Event()
     }
 
     companion object {
@@ -62,7 +62,7 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
         viewModelScope.launch {
             _lists.value?.let {
                 val list = it[position]
-                viewModelScope.launch { eventChannel.send(Event.GoToListDetails(list)) }
+                viewModelScope.launch { eventChannel.send(Event.GoToEntries(list)) }
             }
         }
     }
