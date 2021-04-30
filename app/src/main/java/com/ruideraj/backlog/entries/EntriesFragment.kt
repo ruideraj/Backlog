@@ -10,9 +10,11 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ruideraj.backlog.BacklogList
 import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.R
+import com.ruideraj.backlog.util.UpDownScrollListener
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -43,6 +45,13 @@ class EntriesFragment : Fragment() {
 
         val adapter = EntriesAdapter(viewModel)
         recycler.adapter = adapter
+
+        val fab = view.findViewById<FloatingActionButton>(R.id.entries_button_create)
+        recycler.addOnScrollListener(UpDownScrollListener({
+            fab.show()
+        }, {
+            fab.hide()
+        }))
 
         viewModel.let {
             it.entries.observe(viewLifecycleOwner) { entriesList ->

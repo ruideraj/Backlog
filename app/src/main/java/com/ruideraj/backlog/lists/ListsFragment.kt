@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.R
+import com.ruideraj.backlog.util.UpDownScrollListener
 import com.ruideraj.backlog.util.collectWhileStarted
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -62,15 +63,11 @@ class ListsFragment : Fragment() {
         val fab = view.findViewById<FloatingActionButton>(R.id.lists_button_create).apply {
             setOnClickListener { viewModel.onClickCreateList() }
         }
-        recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy > 0) {
-                    fab.hide()
-                } else if (dy < 0) {
-                    fab.show()
-                }
-            }
-        })
+        recycler.addOnScrollListener(UpDownScrollListener({
+            fab.show()
+        }, {
+            fab.hide()
+        }))
 
         viewModel.let { it ->
             it.lists.observe(requireActivity(), { lists ->

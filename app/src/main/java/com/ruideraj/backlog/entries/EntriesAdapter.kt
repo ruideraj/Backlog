@@ -56,6 +56,16 @@ class EntriesAdapter(private val viewModel: EntriesViewModel)
         val title: TextView = itemView.findViewById(R.id.entry_title)
         val image: ImageView = itemView.findViewById(R.id.entry_image)
         val status: ImageView = itemView.findViewById(R.id.entry_status)
+
+        init {
+            itemView.setOnClickListener {
+                viewModel.onClickEntry(adapterPosition)
+            }
+
+            status.setOnClickListener {
+                viewModel.onClickEntryStatus(adapterPosition)
+            }
+        }
     }
 
     private class EntryCallback : DiffUtil.ItemCallback<Entry>() {
