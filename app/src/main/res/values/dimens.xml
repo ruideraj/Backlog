@@ -1,8 +1,9 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
 
-    <dimen name="list_item_padding">16dp</dimen>
-    <dimen name="list_item_text_margin">16dp</dimen>
+    <dimen name="item_padding">16dp</dimen>
+    <dimen name="item_text_margin">16dp</dimen>
+    <dimen name="item_text_size">18sp</dimen>
 
     <dimen name="text_input_box_corner_radius">4dp</dimen>
     <dimen name="text_input_box_padding_vertical">16dp</dimen>

@@ -13,7 +13,7 @@ import com.ruideraj.backlog.BacklogList
 import com.ruideraj.backlog.ListIcon
 import com.ruideraj.backlog.R
 
-class ListsAdapter(val viewModel: ListsViewModel) : ListAdapter<BacklogList,
+class ListsAdapter(private val viewModel: ListsViewModel) : ListAdapter<BacklogList,
         RecyclerView.ViewHolder>(ListItemCallback()) {
 
     private lateinit var backingList: MutableList<BacklogList>
