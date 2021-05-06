@@ -24,6 +24,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        android:padding="@dimen/item_button_padding"
         app:tint="?attr/colorControlNormal"
         app:srcCompat="@drawable/ic_more"
         android:background="?attr/selectableItemBackgroundBorderless"/>

@@ -21,6 +21,43 @@
         android:indeterminate="true"
         android:visibility="gone" />
 
+    <View
+        android:id="@+id/entries_menu_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg_menu_overlay"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/entries_button_film"
+        style="@style/EntryMenuFab"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@drawable/ic_film" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/entries_button_tv"
+        style="@style/EntryMenuFab"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@drawable/ic_tv" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/entries_button_game"
+        style="@style/EntryMenuFab"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@drawable/ic_game" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/entries_button_book"
+        style="@style/EntryMenuFab"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@drawable/ic_book" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/entries_button_create"
         android:layout_width="wrap_content"
@@ -28,6 +65,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@android:drawable/ic_input_add"
+        android:visibility="visible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

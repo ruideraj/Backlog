@@ -1,9 +1,14 @@
 package com.ruideraj.backlog.entries
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -13,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ruideraj.backlog.BacklogList
 import com.ruideraj.backlog.Constants
+import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.R
 import com.ruideraj.backlog.util.UpDownScrollListener
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,6 +31,19 @@ class EntriesFragment : Fragment() {
     }
 
     private val viewModel by viewModels<EntriesViewModel>()
+
+    private lateinit var createFab: FloatingActionButton
+    private lateinit var filmFab: FloatingActionButton
+    private lateinit var tvFab: FloatingActionButton
+    private lateinit var gameFab: FloatingActionButton
+    private lateinit var bookFab: FloatingActionButton
+    private lateinit var menuOverlay: View
+
+    private val backPressedCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            viewModel.onBackPressed()
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_entries, container, false)
@@ -46,11 +65,45 @@ class EntriesFragment : Fragment() {
         val adapter = EntriesAdapter(viewModel)
         recycler.adapter = adapter
 
-        val fab = view.findViewById<FloatingActionButton>(R.id.entries_button_create)
+        createFab = view.findViewById<FloatingActionButton>(R.id.entries_button_create).apply {
+            setOnClickListener { viewModel.onClickCreateButton() }
+
+            viewTreeObserver.addOnGlobalLayoutListener(object: ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    viewModel.showCreateMenu.observe(viewLifecycleOwner) { show ->
+                        if (show) {
+                            expandFabMenu()
+                        } else {
+                            collapseFabMenu()
+                        }
+
+                        backPressedCallback.isEnabled = show
+                    }
+
+                    viewTreeObserver.removeOnGlobalLayoutListener(this)
+                }
+            })
+        }
+        filmFab = view.findViewById<FloatingActionButton>(R.id.entries_button_film).apply {
+            setOnClickListener { viewModel.onClickCreateMenuButton(MediaType.FILM) }
+        }
+        tvFab = view.findViewById<FloatingActionButton>(R.id.entries_button_tv).apply {
+            setOnClickListener { viewModel.onClickCreateMenuButton(MediaType.TV) }
+        }
+        gameFab = view.findViewById<FloatingActionButton>(R.id.entries_button_game).apply {
+            setOnClickListener { viewModel.onClickCreateMenuButton(MediaType.GAME) }
+        }
+        bookFab = view.findViewById<FloatingActionButton>(R.id.entries_button_book).apply {
+            setOnClickListener { viewModel.onClickCreateMenuButton(MediaType.BOOK) }
+        }
+        menuOverlay = view.findViewById(R.id.entries_menu_overlay)
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backPressedCallback)
+
         recycler.addOnScrollListener(UpDownScrollListener({
-            fab.show()
+            showFabMenu()
         }, {
-            fab.hide()
+            hideFabMenu()
         }))
 
         viewModel.let {
@@ -60,6 +113,78 @@ class EntriesFragment : Fragment() {
         }
 
         viewModel.loadEntries(list.id)
+    }
+
+    private fun showFabMenu() {
+        createFab.show()
+        filmFab.show()
+        tvFab.show()
+        gameFab.show()
+        bookFab.show()
+    }
+
+    private fun hideFabMenu() {
+        createFab.hide()
+        filmFab.hide()
+        tvFab.hide()
+        gameFab.hide()
+        bookFab.hide()
+    }
+
+    private fun expandFabMenu() {
+        val fabDifference = - (createFab.height - filmFab.height)
+
+        val resources = resources
+        val height = filmFab.height
+        val margin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, resources.displayMetrics)
+
+        val menuFabHeight = -margin - height
+
+        createFab.animate().rotationBy(45f)
+        filmFab.apply {
+            visibility = View.VISIBLE
+            animate().translationYBy(fabDifference + menuFabHeight)
+        }
+        tvFab.apply {
+            visibility = View.VISIBLE
+            animate().translationYBy(fabDifference + menuFabHeight * 2)
+        }
+        gameFab.apply {
+            visibility = View.VISIBLE
+            animate().translationYBy(fabDifference + menuFabHeight * 3)
+        }
+        bookFab.apply {
+            visibility = View.VISIBLE
+            animate().translationYBy(fabDifference + menuFabHeight * 4)
+        }
+        menuOverlay.apply {
+            alpha = 0f
+            visibility = View.VISIBLE
+            animate().alpha(1f).setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    alpha = 1f
+                }
+            })
+        }
+    }
+
+    private fun collapseFabMenu() {
+        createFab.animate().rotation(0f)
+        filmFab.animate().translationY(0f)
+        tvFab.animate().translationY(0f)
+        gameFab.animate().translationY(0f)
+        bookFab.animate().translationY(0f)
+        menuOverlay.apply {
+            animate().alpha(0f).setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    visibility = View.GONE
+                    filmFab.visibility = View.GONE
+                    tvFab.visibility = View.GONE
+                    gameFab.visibility = View.GONE
+                    bookFab.visibility = View.GONE
+                }
+            })
+        }
     }
 
 }

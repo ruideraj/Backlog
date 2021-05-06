@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ruideraj.backlog.Entry
+import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.Status
 import com.ruideraj.backlog.data.EntriesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +23,9 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
 
     private val _entries = MutableLiveData<List<Entry>>()
     val entries: LiveData<List<Entry>> = _entries
+
+    private val _showCreateMenu = MutableLiveData(false)
+    val showCreateMenu: LiveData<Boolean> = _showCreateMenu
 
     fun loadEntries(listId: Long) {
         viewModelScope.launch { entriesRepository.loadEntriesForList(listId).collect {
@@ -42,6 +46,20 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
 
                 entriesRepository.setStatusForEntry(entry.id, nextStatus)
             }
+        }
+    }
+
+    fun onClickCreateButton() {
+        _showCreateMenu.value = !(_showCreateMenu.value ?: false)
+    }
+
+    fun onClickCreateMenuButton(type: MediaType) {
+        Log.d(TAG, "onClickMenuButton: $type")
+    }
+
+    fun onBackPressed() {
+        if (_showCreateMenu.value == true) {
+            _showCreateMenu.value = false
         }
     }
 
