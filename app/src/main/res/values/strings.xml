@@ -22,6 +22,8 @@
     <string name="lists_delete_list">Delete List</string>
     <string name="lists_delete_confirm">Are you sure you want to delete list: %1$s?</string>
 
+    <string name="entry_title">Add %1$s</string>
+
     <plurals name="items">
         <item quantity="one">%d item</item>
         <item quantity="other">%d items</item>

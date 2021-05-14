@@ -13,6 +13,8 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="alertDialogTheme">@style/AlertDialog</item>
+
+        <item name="entryFieldStyle">@style/EntryTextInputLayout</item>
     </style>
 
     <style name="Theme.Backlog.NoActionBar">

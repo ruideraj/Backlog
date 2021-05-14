@@ -19,6 +19,28 @@
         <item name="fabSize">mini</item>
     </style>
 
+    <style name="EntryTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="boxBackgroundMode">outline</item>
+        <item name="boxCornerRadiusTopStart">@dimen/text_input_box_corner_radius</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/text_input_box_corner_radius</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/text_input_box_corner_radius</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/text_input_box_corner_radius</item>
+        <item name="boxStrokeColor">?attr/colorControlNormal</item>
+        <item name="boxBackgroundColor">@android:color/transparent</item>
+        <item name="hintTextColor">?android:attr/textColorPrimary</item>
+        <item name="errorTextColor">@color/dark_red</item>
+        <item name="boxStrokeErrorColor">@color/dark_red</item>
+    </style>
+
+    <style name="EntryTextInputEditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">@dimen/text_input_box_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/text_input_box_padding_vertical</item>
+    </style>
+
     <style name="AlertDialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">
         <item name="buttonBarButtonStyle">@style/AlertDialogButton</item>
     </style>

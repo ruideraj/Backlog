@@ -10,7 +10,9 @@ import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.Status
 import com.ruideraj.backlog.data.EntriesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,11 +23,18 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
         private const val TAG = "EntriesViewModel"
     }
 
+    sealed class Event {
+        data class GoToEntryCreate(val type: MediaType) : Event()
+    }
+
     private val _entries = MutableLiveData<List<Entry>>()
     val entries: LiveData<List<Entry>> = _entries
 
     private val _showCreateMenu = MutableLiveData(false)
     val showCreateMenu: LiveData<Boolean> = _showCreateMenu
+
+    private val eventChannel = Channel<Event>(Channel.BUFFERED)
+    val eventFlow = eventChannel.receiveAsFlow()
 
     fun loadEntries(listId: Long) {
         viewModelScope.launch { entriesRepository.loadEntriesForList(listId).collect {
@@ -54,7 +63,8 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
     }
 
     fun onClickCreateMenuButton(type: MediaType) {
-        Log.d(TAG, "onClickMenuButton: $type")
+        _showCreateMenu.value = false
+        viewModelScope.launch { eventChannel.send(Event.GoToEntryCreate(type)) }
     }
 
     fun onBackPressed() {

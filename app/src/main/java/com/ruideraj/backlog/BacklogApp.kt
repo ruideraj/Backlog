@@ -1,12 +1,12 @@
 package com.ruideraj.backlog
 
-import android.app.Application
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.multidex.MultiDexApplication
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class BacklogApp : Application() {
+class BacklogApp : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()

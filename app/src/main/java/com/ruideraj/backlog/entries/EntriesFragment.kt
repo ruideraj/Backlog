@@ -3,7 +3,6 @@ package com.ruideraj.backlog.entries
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +11,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +21,8 @@ import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.R
 import com.ruideraj.backlog.util.UpDownScrollListener
+import com.ruideraj.backlog.util.asDp
+import com.ruideraj.backlog.util.collectWhileStarted
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -110,6 +112,17 @@ class EntriesFragment : Fragment() {
             it.entries.observe(viewLifecycleOwner) { entriesList ->
                 adapter.submitList(entriesList)
             }
+
+            it.eventFlow.collectWhileStarted(viewLifecycleOwner) { event ->
+                when (event) {
+                    is EntriesViewModel.Event.GoToEntryCreate -> {
+                        val directions = EntriesFragmentDirections
+                            .actionEntriesFragmentToEntriesEditFragment(event.type)
+                        findNavController().navigate(directions)
+                    }
+                }
+
+            }
         }
 
         viewModel.loadEntries(list.id)
@@ -136,7 +149,7 @@ class EntriesFragment : Fragment() {
 
         val resources = resources
         val height = filmFab.height
-        val margin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, resources.displayMetrics)
+        val margin = 16.asDp(resources)
 
         val menuFabHeight = -margin - height
 

@@ -42,8 +42,8 @@ data class Entry(
     @field:TypeConverters(StatusConverters::class) val status: Status) : Parcelable
 
 sealed class Metadata {
-    class FilmData(val director: String, releaseDate: Date) : Metadata()
-    class GameData(val developer: String, releaseDate: Date) : Metadata()
-    class ShowData(val showrunner: String, releaseDate: Date) : Metadata()
-    class BookData(val author: String, releaseDate: Date) : Metadata()
+    class FilmData(val director: String, val releaseDate: Date) : Metadata()
+    class GameData(val developer: String, val releaseDate: Date) : Metadata()
+    class ShowData(val releaseDate: Date) : Metadata()
+    class BookData(val author: String, val publisher: String, val releaseDate: Date) : Metadata()
 }

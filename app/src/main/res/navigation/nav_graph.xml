@@ -24,5 +24,20 @@
         <argument
             android:name="list"
             app:argType="com.ruideraj.backlog.BacklogList" />
+        <action
+            android:id="@+id/action_entriesFragment_to_entriesEditFragment"
+            app:destination="@id/entriesEditFragment" />
+
     </fragment>
+
+    <fragment
+        android:id="@+id/entriesEditFragment"
+        android:name="com.ruideraj.backlog.entries.EntryEditFragment"
+        android:label="fragment_entry_edit"
+        tools:layout="@layout/fragment_entry_edit" >
+        <argument
+            android:name="type"
+            app:argType="com.ruideraj.backlog.MediaType" />
+    </fragment>
+
 </navigation>
