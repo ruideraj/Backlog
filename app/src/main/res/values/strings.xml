@@ -17,10 +17,20 @@
     <string name="lists_create_list">Create List</string>
     <string name="lists_edit_list">Edit List</string>
     <string name="lists_icon">Icon</string>
-    <string name="lists_title">Title</string>
     <string name="lists_dialog_error_title">Please enter a title.</string>
     <string name="lists_delete_list">Delete List</string>
     <string name="lists_delete_confirm">Are you sure you want to delete list: %1$s?</string>
+
+    <string name="field_title">Title</string>
+    <string name="field_image_url">Image URL</string>
+    <string name="field_date_release">Release Date</string>
+    <string name="field_date_first_aired">First Aired</string>
+    <string name="field_date_publication">Publication Date</string>
+    <string name="field_creator_director">Director</string>
+    <string name="field_creator_developer">Developer</string>
+    <string name="field_creator_showrunner">Showrunner</string>
+    <string name="field_creator_author">Author</string>
+    <string name="field_creator_publisher">Publisher</string>
 
     <string name="entry_title">Add %1$s</string>
 

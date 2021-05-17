@@ -12,17 +12,65 @@
         android:clipToPadding="true" >
 
         <LinearLayout
-            android:id="@+id/entry_edit_field_layout"
+            android:id="@+id/entry_field_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:orientation="vertical">
 
             <com.ruideraj.backlog.util.EntryField
-                android:id="@+id/entry_edit_field_title"
+                android:id="@+id/entry_field_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/lists_title"/>
+                android:hint="@string/field_title"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/entry_field_top_margin">
+
+                <ImageView
+                    android:id="@+id/entry_field_image"
+                    android:layout_width="@dimen/entry_image_size"
+                    android:layout_height="@dimen/entry_image_size"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/bg_circle"
+                    android:padding="@dimen/image_circle_stroke_width" />
+
+                <com.ruideraj.backlog.util.EntryField
+                    android:id="@+id/entry_field_image_url"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/entry_field_image"
+                    android:hint="@string/field_image_url"/>
+
+            </RelativeLayout>
+
+            <com.ruideraj.backlog.util.EntryField
+                android:id="@+id/entry_field_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/entry_field_top_margin"
+                tools:hint="@string/field_date_publication"/>
+
+            <com.ruideraj.backlog.util.EntryField
+                android:id="@+id/entry_field_creator1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/entry_field_top_margin"
+                android:visibility="gone"
+                tools:visibility="visible"
+                tools:hint="@string/field_creator_author"/>
+
+            <com.ruideraj.backlog.util.EntryField
+                android:id="@+id/entry_field_creator2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/entry_field_top_margin"
+                android:visibility="gone"
+                tools:visibility="visible"
+                tools:hint="@string/field_creator_publisher"/>
 
         </LinearLayout>
 

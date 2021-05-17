@@ -13,7 +13,6 @@ import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.R
 import com.ruideraj.backlog.util.EntryField
-import com.ruideraj.backlog.util.asDp
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -41,21 +40,27 @@ class EntryEditFragment : Fragment() {
         viewModel.setType(type)
 
         viewModel.let {
-            it.fields.observe(viewLifecycleOwner, { fields ->
-                val fieldLayout = view.findViewById<LinearLayout>(R.id.entry_edit_field_layout)
+            it.fields.observe(viewLifecycleOwner, { shownFields ->
+                val fieldLayout = view.findViewById<LinearLayout>(R.id.entry_field_layout)
 
-                fields.forEach { field ->
-                    val entryField = EntryField(view.context, null, R.attr.entryFieldStyle)
-                    val layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
-                            topMargin = 16.asDp(resources).toInt()
-                    }
-                    entryField.layoutParams = layoutParams
-                    entryField.hint = field
-                    fieldLayout.addView(entryField)
-                }
+                val dateField = fieldLayout.findViewById<EntryField>(R.id.entry_field_date)
+                setFieldVisibilityAndHint(dateField, shownFields.releaseDate)
+
+                val creator1Field = fieldLayout.findViewById<EntryField>(R.id.entry_field_creator1)
+                setFieldVisibilityAndHint(creator1Field, shownFields.creator1)
+
+                val creator2Field = fieldLayout.findViewById<EntryField>(R.id.entry_field_creator2)
+                setFieldVisibilityAndHint(creator2Field, shownFields.creator2)
             })
         }
     }
 
+    private fun setFieldVisibilityAndHint(entryField: EntryField, hintTextRes: Int) {
+        if (hintTextRes < 0) {
+            entryField.visibility = View.GONE
+        } else {
+            entryField.setHint(hintTextRes)
+            entryField.visibility = View.VISIBLE
+        }
+    }
 }

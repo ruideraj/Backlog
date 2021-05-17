@@ -23,7 +23,7 @@
         app:hintTextColor="?android:attr/textColorPrimary"
         app:errorTextColor="@color/dark_red"
         app:boxStrokeErrorColor="@color/dark_red"
-        android:hint="@string/lists_title">
+        android:hint="@string/field_title">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/list_edit_title_edit"
