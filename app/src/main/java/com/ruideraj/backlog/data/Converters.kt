@@ -1,8 +1,12 @@
 package com.ruideraj.backlog.data
 
+import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.ruideraj.backlog.ListIcon
 import com.ruideraj.backlog.MediaType
+import com.ruideraj.backlog.Metadata
 import com.ruideraj.backlog.Status
 
 class ListIconConverters {
@@ -27,4 +31,45 @@ class StatusConverters {
 
     @TypeConverter
     fun intToStatus(statusInt: Int) = Status.values()[statusInt]
+}
+
+@ProvidedTypeConverter
+class MetadataConverters(private val gson: Gson) {
+
+    companion object {
+        private const val PROP_TYPE = "type"
+
+        private val metadataToIntMap = mapOf(
+            Metadata.FilmData::class to 0,
+            Metadata.ShowData::class to 1,
+            Metadata.GameData::class to 2,
+            Metadata.BookData::class to 3
+        )
+        private val intToMetadataMap = mapOf(
+            0 to Metadata.FilmData::class,
+            1 to Metadata.ShowData::class,
+            2 to Metadata.GameData::class,
+            3 to Metadata.BookData::class
+        )
+    }
+
+    @TypeConverter
+    fun metadataToString(metadata: Metadata) : String {
+        val jsonElement = gson.toJsonTree(metadata)
+        val typeInt = metadataToIntMap[metadata::class]
+        jsonElement.asJsonObject.addProperty(PROP_TYPE, typeInt)
+
+        return gson.toJson(jsonElement)
+    }
+
+    @TypeConverter
+    fun stringToMetadata(string: String) : Metadata {
+        val jsonObject = gson.fromJson(string, JsonObject::class.java)
+        val typeInt = jsonObject.get(PROP_TYPE)
+            ?: throw IllegalStateException("Stored Metadata should have an int to indicate type")
+        val metadataClass = intToMetadataMap[typeInt.asInt]
+            ?: throw IllegalArgumentException("Invalid int for Metadata type")
+
+        return gson.fromJson(jsonObject, metadataClass.java)
+    }
 }

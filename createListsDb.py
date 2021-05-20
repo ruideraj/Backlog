@@ -18,18 +18,35 @@ create_entries_stmt = 'CREATE TABLE IF NOT EXISTS `entries` '\
 					'`title` TEXT NOT NULL, '\
 					'`type` INTEGER NOT NULL, '\
 					'`position` REAL NOT NULL, '\
+                    '`metadata` TEXT NOT NULL, '\
 					'`status` INTEGER NOT NULL, '\
                     'FOREIGN KEY(`listId`) REFERENCES `lists`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE)'
 					
-insert_entries_stmt = 'INSERT INTO entries (listId, title, type, position, status) '\
-              'VALUES (:listId, :title, :type, :position, :status)'
+insert_entries_stmt = 'INSERT INTO entries (listId, title, type, position, metadata, status) '\
+              'VALUES (:listId, :title, :type, :position, :metadata, :status)'
 			  
 entry_rows = 10
 
 db_filename = 'app\\src\\main\\assets\\database\\testDb' + str(list_rows) + '.db'
 
-with sqlite3.connect(db_filename) as dbConn:
-    cursor = dbConn.cursor()
+def create_metadata(type_int):
+    # Film
+    if type_int == 0:
+        return "{\"type\":0,\"director\":\"director\"}"
+    # Show
+    elif type_int == 1:
+        return "{\"type\":1}"
+    # Game
+    elif type_int == 2:
+        return "{\"type\":2,\"developer\":\"developer\"}"
+    # Book
+    elif type_int == 3:
+        return "{\"type\":3,\"author\":\"author\",\"publisher\":\"publisher\"}"
+    else:
+        return "{}"
+
+with sqlite3.connect(db_filename) as db_conn:
+    cursor = db_conn.cursor()
 
     cursor.execute(create_lists_stmt)
     cursor.execute(create_entries_stmt)
@@ -44,7 +61,9 @@ with sqlite3.connect(db_filename) as dbConn:
             list_id = i + 1
             type = j % 4
             status = j % 3
-            cursor.execute(insert_entries_stmt, {'listId': list_id, 'title': entry_title, 'type': type, 'position': float(j), 'status': status})
+            metadata = create_metadata(type)
+
+            cursor.execute(insert_entries_stmt, {'listId': list_id, 'title': entry_title, 'type': type, 'position': float(j), 'metadata': metadata, 'status': status})
 
     cursor.execute(check_list_list_rows_stmt)
     list_rows = cursor.fetchone()

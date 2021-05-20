@@ -2,6 +2,7 @@ package com.ruideraj.backlog.injection
 
 import android.content.Context
 import androidx.room.Room
+import com.google.gson.Gson
 import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.data.*
 import dagger.Binds
@@ -38,13 +39,21 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun providesAppDatabase(@ApplicationContext context: Context) =
-        Room.databaseBuilder(context, AppDatabase::class.java, Constants.DATABASE_NAME).build()
+    fun providesAppDatabase(@ApplicationContext context: Context, metadataConverters: MetadataConverters) =
+        Room.databaseBuilder(context, AppDatabase::class.java, Constants.DATABASE_NAME)
+            .addTypeConverter(metadataConverters)
+            .build()
 
     @Provides
     fun providesListsDao(appDatabase: AppDatabase) = appDatabase.listsDao()
 
     @Provides
     fun providesEntriesDao(appDatabase: AppDatabase) = appDatabase.entriesDao()
+
+    @Provides
+    fun providesMetadataConverters(gson: Gson) = MetadataConverters(gson)
+
+    @Provides
+    fun providesGson() = Gson()
 
 }

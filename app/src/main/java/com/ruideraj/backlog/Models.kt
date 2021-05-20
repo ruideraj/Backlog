@@ -6,6 +6,7 @@ import com.ruideraj.backlog.Constants.TABLE_NAME_ENTRIES
 import com.ruideraj.backlog.Constants.TABLE_NAME_LISTS
 import com.ruideraj.backlog.data.ListIconConverters
 import com.ruideraj.backlog.data.MediaTypeConverters
+import com.ruideraj.backlog.data.MetadataConverters
 import com.ruideraj.backlog.data.StatusConverters
 import kotlinx.parcelize.Parcelize
 import java.util.*
@@ -38,12 +39,16 @@ data class Entry(
     val title: String,
     @field:TypeConverters(MediaTypeConverters::class) val type: MediaType,
     val position: Double,
-    // TODO val metadata: Metadata,
+    @field:TypeConverters(MetadataConverters::class) val metadata: Metadata,
     @field:TypeConverters(StatusConverters::class) val status: Status) : Parcelable
 
-sealed class Metadata {
-    class FilmData(val director: String, val releaseDate: Date) : Metadata()
-    class GameData(val developer: String, val releaseDate: Date) : Metadata()
-    class ShowData(val releaseDate: Date) : Metadata()
-    class BookData(val author: String, val publisher: String, val releaseDate: Date) : Metadata()
+sealed class Metadata : Parcelable {
+    @Parcelize
+    data class FilmData(val director: String?, val releaseDate: Date?) : Metadata()
+    @Parcelize
+    data class ShowData(val releaseDate: Date?) : Metadata()
+    @Parcelize
+    data class GameData(val developer: String?, val releaseDate: Date?) : Metadata()
+    @Parcelize
+    data class BookData(val author: String?, val publisher: String?, val releaseDate: Date?) : Metadata()
 }
