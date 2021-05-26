@@ -52,6 +52,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/entry_field_top_margin"
+                app:endIconMode="custom"
+                app:endIconDrawable="@drawable/ic_event"
                 tools:hint="@string/field_date_publication"/>
 
             <com.ruideraj.backlog.util.EntryField

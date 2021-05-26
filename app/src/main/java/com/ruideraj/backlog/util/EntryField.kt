@@ -17,12 +17,14 @@ class EntryField @JvmOverloads constructor(
         initView()
     }
 
-    private val entryEditText = findViewById<TextInputEditText>(R.id.entry_field_edit)
+    private lateinit var entryEditText: TextInputEditText
 
     private fun initView() {
-        inflate(context, R.layout.view_entry_field, this)
+        val view = inflate(context, R.layout.view_entry_field, this)
+        entryEditText = view.findViewById(R.id.entry_field_edit)
     }
 
-    fun getText() = entryEditText.editableText.toString()
-
+    var text: String
+        get() = entryEditText.editableText.toString()
+        set(value) = entryEditText.setText(value)
 }

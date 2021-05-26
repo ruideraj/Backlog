@@ -2,13 +2,12 @@ package com.ruideraj.backlog.entries
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.google.android.material.textfield.TextInputEditText
 import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.R
@@ -20,6 +19,7 @@ class EntryEditFragment : Fragment() {
 
     companion object {
         private const val TAG = "EntryEditFragment"
+        private const val DATE_DIALOG_TAG = "DateDialog"
     }
 
     private val viewModel by viewModels<EntryEditViewModel>()
@@ -43,7 +43,18 @@ class EntryEditFragment : Fragment() {
             it.fields.observe(viewLifecycleOwner, { shownFields ->
                 val fieldLayout = view.findViewById<LinearLayout>(R.id.entry_field_layout)
 
-                val dateField = fieldLayout.findViewById<EntryField>(R.id.entry_field_date)
+                val dateField = fieldLayout.findViewById<EntryField>(R.id.entry_field_date).apply {
+                    findViewById<TextInputEditText>(R.id.entry_field_edit).apply {
+                        isClickable = true
+                        isLongClickable = false
+                        isFocusableInTouchMode = false
+                        setOnClickListener {
+                            DatePickerFragment().apply {
+                                show(this@EntryEditFragment.childFragmentManager, DATE_DIALOG_TAG)
+                            }
+                        }
+                    }
+                }
                 setFieldVisibilityAndHint(dateField, shownFields.releaseDate)
 
                 val creator1Field = fieldLayout.findViewById<EntryField>(R.id.entry_field_creator1)
@@ -51,6 +62,10 @@ class EntryEditFragment : Fragment() {
 
                 val creator2Field = fieldLayout.findViewById<EntryField>(R.id.entry_field_creator2)
                 setFieldVisibilityAndHint(creator2Field, shownFields.creator2)
+            })
+
+            it.releaseDate.observe(viewLifecycleOwner, { releaseDate ->
+                view.findViewById<EntryField>(R.id.entry_field_date).text = releaseDate
             })
         }
     }

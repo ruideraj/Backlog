@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:parentTag="com.ruideraj.backlog.util.EntryField">
 
-
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/entry_field_edit"
         android:layout_width="match_parent"
