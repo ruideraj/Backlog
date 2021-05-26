@@ -72,9 +72,9 @@ class ListDialogFragment : DialogFragment() {
             titleInputLayout = view.findViewById(R.id.list_edit_title_layout)
             it.showListDialogTitleError.observe(viewLifecycleOwner) { showError ->
                 if (showError) {
-                    titleInputLayout.error = getString(R.string.lists_dialog_error_title)
+                    titleInputLayout.error = getString(R.string.error_title)
                 } else {
-                    titleInputLayout.isErrorEnabled = false
+                    titleInputLayout.error = null
                 }
             }
         }

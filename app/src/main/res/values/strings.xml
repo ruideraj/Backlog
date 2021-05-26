@@ -13,12 +13,13 @@
     <string name="delete">Delete</string>
     <string name="search">Search</string>
 
+    <string name="error_title">Please enter a title.</string>
+
     <string name="lists_fragment_label">Lists</string>
     <string name="lists_load_error">Error loading lists</string>
     <string name="lists_create_list">Create List</string>
     <string name="lists_edit_list">Edit List</string>
     <string name="lists_icon">Icon</string>
-    <string name="lists_dialog_error_title">Please enter a title.</string>
     <string name="lists_delete_list">Delete List</string>
     <string name="lists_delete_confirm">Are you sure you want to delete list: %1$s?</string>
 
@@ -39,7 +40,4 @@
         <item quantity="one">%d item</item>
         <item quantity="other">%d items</item>
     </plurals>
-
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>

@@ -15,12 +15,13 @@ class EntryEditViewModel @Inject constructor() : ViewModel() {
 
     companion object {
         private const val TAG = "EntryEditViewModel"
+        private const val NOT_SHOWN = -1
     }
 
     enum class ShownFields(val releaseDate: Int, val creator1: Int, val creator2: Int) {
-        FILM(R.string.field_date_release, R.string.field_creator_director, -1),
-        TV(R.string.field_date_first_aired, -1, -1),
-        GAME(R.string.field_date_release, R.string.field_creator_developer, -1),
+        FILM(R.string.field_date_release, R.string.field_creator_director, NOT_SHOWN),
+        TV(R.string.field_date_first_aired, NOT_SHOWN, NOT_SHOWN),
+        GAME(R.string.field_date_release, R.string.field_creator_developer, NOT_SHOWN),
         BOOK(R.string.field_date_publication, R.string.field_creator_author, R.string.field_creator_publisher)
     }
 
@@ -30,6 +31,9 @@ class EntryEditViewModel @Inject constructor() : ViewModel() {
     private var date: Calendar? = null
     private val _releaseDate = MutableLiveData<String>()
     val releaseDate: LiveData<String> = _releaseDate
+
+    private val _titleError = MutableLiveData(false)
+    val titleError: LiveData<Boolean> = _titleError
 
     fun setType(type: MediaType) {
         _fields.value = when (type) {
@@ -49,5 +53,17 @@ class EntryEditViewModel @Inject constructor() : ViewModel() {
             val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault())
             _releaseDate.value = dateFormat.format(time)
         }
+    }
+
+    fun onClickConfirm(title: String, imageUrl: String, creator1: String, creator2: String) {
+        if (title.isBlank()) {
+            _titleError.value = true
+        } else {
+            // TODO Create new Entry for the given List
+        }
+    }
+
+    fun onTitleTextChanged(input: String) {
+        if (_titleError.value == true && input.isNotBlank()) _titleError.value = false
     }
 }
