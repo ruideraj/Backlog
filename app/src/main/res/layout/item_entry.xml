@@ -26,7 +26,7 @@
         android:background="@drawable/bg_box"
         android:padding="4dp"
         app:tint="@color/radio_color"
-        tools:src="@drawable/ic_play_24" />
+        tools:src="@drawable/ic_status_play" />
 
     <TextView
         android:id="@+id/entry_title"

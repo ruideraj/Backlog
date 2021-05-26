@@ -24,6 +24,11 @@ class EntryEditFragment : Fragment() {
 
     private val viewModel by viewModels<EntryEditViewModel>()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_entry_edit, container, false)
     }
@@ -68,6 +73,11 @@ class EntryEditFragment : Fragment() {
                 view.findViewById<EntryField>(R.id.entry_field_date).text = releaseDate
             })
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_entry_edit, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     private fun setFieldVisibilityAndHint(entryField: EntryField, hintTextRes: Int) {

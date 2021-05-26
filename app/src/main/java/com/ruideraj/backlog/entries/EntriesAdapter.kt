@@ -46,8 +46,8 @@ class EntriesAdapter(private val viewModel: EntriesViewModel)
 
     private fun getImageForStatus(status: Status): Int {
         return when (status) {
-            Status.IN_PROGRESS -> R.drawable.ic_play_24
-            Status.DONE -> R.drawable.ic_done_24
+            Status.IN_PROGRESS -> R.drawable.ic_status_play
+            Status.DONE -> R.drawable.ic_status_done
             else -> -1
         }
     }

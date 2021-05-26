@@ -11,6 +11,7 @@
     <string name="cancel">Cancel</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="search">Search</string>
 
     <string name="lists_fragment_label">Lists</string>
     <string name="lists_load_error">Error loading lists</string>
