@@ -37,7 +37,7 @@ class EntriesFragment : Fragment() {
 
     private lateinit var createFab: FloatingActionButton
     private lateinit var filmFab: FloatingActionButton
-    private lateinit var tvFab: FloatingActionButton
+    private lateinit var showFab: FloatingActionButton
     private lateinit var gameFab: FloatingActionButton
     private lateinit var bookFab: FloatingActionButton
     private lateinit var menuOverlay: View
@@ -92,8 +92,8 @@ class EntriesFragment : Fragment() {
         filmFab = view.findViewById<FloatingActionButton>(R.id.entries_button_film).apply {
             setOnClickListener { viewModel.onClickCreateMenuButton(MediaType.FILM) }
         }
-        tvFab = view.findViewById<FloatingActionButton>(R.id.entries_button_tv).apply {
-            setOnClickListener { viewModel.onClickCreateMenuButton(MediaType.TV) }
+        showFab = view.findViewById<FloatingActionButton>(R.id.entries_button_show).apply {
+            setOnClickListener { viewModel.onClickCreateMenuButton(MediaType.SHOW) }
         }
         gameFab = view.findViewById<FloatingActionButton>(R.id.entries_button_game).apply {
             setOnClickListener { viewModel.onClickCreateMenuButton(MediaType.GAME) }
@@ -133,7 +133,7 @@ class EntriesFragment : Fragment() {
     private fun showFabMenu() {
         createFab.show()
         filmFab.show()
-        tvFab.show()
+        showFab.show()
         gameFab.show()
         bookFab.show()
     }
@@ -141,7 +141,7 @@ class EntriesFragment : Fragment() {
     private fun hideFabMenu() {
         createFab.hide()
         filmFab.hide()
-        tvFab.hide()
+        showFab.hide()
         gameFab.hide()
         bookFab.hide()
     }
@@ -160,7 +160,7 @@ class EntriesFragment : Fragment() {
             visibility = View.VISIBLE
             animate().translationYBy(fabDifference + menuFabHeight)
         }
-        tvFab.apply {
+        showFab.apply {
             visibility = View.VISIBLE
             animate().translationYBy(fabDifference + menuFabHeight * 2)
         }
@@ -186,7 +186,7 @@ class EntriesFragment : Fragment() {
     private fun collapseFabMenu() {
         createFab.animate().rotation(0f)
         filmFab.animate().translationY(0f)
-        tvFab.animate().translationY(0f)
+        showFab.animate().translationY(0f)
         gameFab.animate().translationY(0f)
         bookFab.animate().translationY(0f)
         menuOverlay.apply {
@@ -194,7 +194,7 @@ class EntriesFragment : Fragment() {
                 override fun onAnimationEnd(animation: Animator?) {
                     visibility = View.GONE
                     filmFab.visibility = View.GONE
-                    tvFab.visibility = View.GONE
+                    showFab.visibility = View.GONE
                     gameFab.visibility = View.GONE
                     bookFab.visibility = View.GONE
                 }

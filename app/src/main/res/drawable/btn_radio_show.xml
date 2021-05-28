@@ -3,7 +3,7 @@
     <item android:drawable="@drawable/bg_radio_state"/>
     <item>
         <inset
-            android:drawable="@drawable/ic_tv"
+            android:drawable="@drawable/ic_show"
             android:insetTop="@dimen/button_radio_inset"
             android:insetBottom="@dimen/button_radio_inset"
             android:insetLeft="@dimen/button_radio_inset"

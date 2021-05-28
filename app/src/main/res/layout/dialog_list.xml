@@ -67,7 +67,7 @@
             app:flow_horizontalGap="@dimen/button_radio_gap"
             app:flow_verticalGap="@dimen/button_radio_gap"
             app:constraint_referenced_ids="list_edit_radio_list, list_edit_radio_film,
-            list_edit_radio_tv, list_edit_radio_game, list_edit_radio_book" />
+            list_edit_radio_show, list_edit_radio_game, list_edit_radio_book" />
 
         <com.udit.android.flatradiogroup.FlatRadioGroup
             android:id="@+id/list_edit_radio_group"
@@ -76,7 +76,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:constraint_referenced_ids="list_edit_radio_list, list_edit_radio_film,
-            list_edit_radio_tv, list_edit_radio_game, list_edit_radio_book" />
+            list_edit_radio_show, list_edit_radio_game, list_edit_radio_book" />
 
         <RadioButton
             android:id="@+id/list_edit_radio_list"
@@ -94,9 +94,9 @@
             app:layout_constraintTop_toTopOf="@+id/list_edit_radio_flow"/>
 
         <RadioButton
-            android:id="@+id/list_edit_radio_tv"
+            android:id="@+id/list_edit_radio_show"
             style="@style/ListDialogRadioButton"
-            android:background="@drawable/btn_radio_tv"
+            android:background="@drawable/btn_radio_show"
             app:layout_constraintStart_toEndOf="@+id/list_edit_radio_film"
             app:layout_constraintTop_toTopOf="@+id/list_edit_radio_flow"/>
 
@@ -104,7 +104,7 @@
             android:id="@+id/list_edit_radio_game"
             style="@style/ListDialogRadioButton"
             android:background="@drawable/btn_radio_game"
-            app:layout_constraintStart_toEndOf="@+id/list_edit_radio_tv"
+            app:layout_constraintStart_toEndOf="@+id/list_edit_radio_show"
             app:layout_constraintTop_toTopOf="@+id/list_edit_radio_flow" />
 
         <RadioButton

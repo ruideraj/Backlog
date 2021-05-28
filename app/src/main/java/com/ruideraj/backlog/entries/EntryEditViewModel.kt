@@ -30,7 +30,7 @@ class EntryEditViewModel @Inject constructor(private val entriesRepository: Entr
 
     enum class ShownFields(val releaseDate: Int, val creator1: Int, val creator2: Int) {
         FILM(R.string.field_date_release, R.string.field_creator_director, NOT_SHOWN),
-        TV(R.string.field_date_first_aired, NOT_SHOWN, NOT_SHOWN),
+        SHOW(R.string.field_date_first_aired, NOT_SHOWN, NOT_SHOWN),
         GAME(R.string.field_date_release, R.string.field_creator_developer, NOT_SHOWN),
         BOOK(R.string.field_date_publication, R.string.field_creator_author, R.string.field_creator_publisher)
     }
@@ -59,7 +59,7 @@ class EntryEditViewModel @Inject constructor(private val entriesRepository: Entr
 
         _fields.value = when (type) {
             MediaType.FILM -> ShownFields.FILM
-            MediaType.TV -> ShownFields.TV
+            MediaType.SHOW -> ShownFields.SHOW
             MediaType.GAME -> ShownFields.GAME
             MediaType.BOOK -> ShownFields.BOOK
         }
@@ -82,7 +82,7 @@ class EntryEditViewModel @Inject constructor(private val entriesRepository: Entr
         } else {
             val metadata = when (mediaType) {
                 MediaType.FILM -> Metadata.FilmData(creator1, date?.time)
-                MediaType.TV -> Metadata.ShowData(date?.time)
+                MediaType.SHOW -> Metadata.ShowData(date?.time)
                 MediaType.GAME -> Metadata.GameData(creator1, date?.time)
                 MediaType.BOOK -> Metadata.BookData(creator1, creator2, date?.time)
             }

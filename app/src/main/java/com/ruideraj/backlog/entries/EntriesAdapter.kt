@@ -38,7 +38,7 @@ class EntriesAdapter(private val viewModel: EntriesViewModel)
     private fun getImageForType(type: MediaType): Int {
         return when (type) {
             MediaType.FILM -> R.drawable.ic_film
-            MediaType.TV -> R.drawable.ic_tv
+            MediaType.SHOW -> R.drawable.ic_show
             MediaType.GAME -> R.drawable.ic_game
             MediaType.BOOK -> R.drawable.ic_book
         }

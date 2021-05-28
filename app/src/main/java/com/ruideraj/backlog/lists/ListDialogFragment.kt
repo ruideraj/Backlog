@@ -106,7 +106,7 @@ class ListDialogFragment : DialogFragment() {
 
     private fun getSelectedIcon(view: View): ListIcon {
         if (view.findViewById<RadioButton>(R.id.list_edit_radio_film).isChecked) return ListIcon.FILM
-        if (view.findViewById<RadioButton>(R.id.list_edit_radio_tv).isChecked) return ListIcon.TV
+        if (view.findViewById<RadioButton>(R.id.list_edit_radio_show).isChecked) return ListIcon.SHOW
         if (view.findViewById<RadioButton>(R.id.list_edit_radio_game).isChecked) return ListIcon.GAME
         if (view.findViewById<RadioButton>(R.id.list_edit_radio_book).isChecked) return ListIcon.BOOK
 
@@ -117,7 +117,7 @@ class ListDialogFragment : DialogFragment() {
         return when (icon) {
             ListIcon.LIST -> R.id.list_edit_radio_list
             ListIcon.FILM -> R.id.list_edit_radio_film
-            ListIcon.TV -> R.id.list_edit_radio_tv
+            ListIcon.SHOW -> R.id.list_edit_radio_show
             ListIcon.GAME -> R.id.list_edit_radio_game
             ListIcon.BOOK -> R.id.list_edit_radio_book
         }

@@ -11,11 +11,11 @@ import com.ruideraj.backlog.data.StatusConverters
 import kotlinx.parcelize.Parcelize
 import java.util.*
 
-enum class MediaType { FILM, TV, GAME, BOOK }
+enum class MediaType { FILM, SHOW, GAME, BOOK }
 
 enum class Status { TODO, IN_PROGRESS, DONE }
 
-enum class ListIcon { LIST, FILM, TV, GAME, BOOK }
+enum class ListIcon { LIST, FILM, SHOW, GAME, BOOK }
 
 @Entity(tableName = TABLE_NAME_LISTS)
 @Parcelize
