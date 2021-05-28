@@ -44,11 +44,11 @@ data class Entry(
 
 sealed class Metadata : Parcelable {
     @Parcelize
-    data class FilmData(val director: String?, val releaseDate: Date?) : Metadata()
+    data class FilmData(val director: String?, val releaseDate: Date?, val imageUrl: String?) : Metadata()
     @Parcelize
-    data class ShowData(val releaseDate: Date?) : Metadata()
+    data class ShowData(val releaseDate: Date?, val imageUrl: String?) : Metadata()
     @Parcelize
-    data class GameData(val developer: String?, val releaseDate: Date?) : Metadata()
+    data class GameData(val developer: String?, val releaseDate: Date?, val imageUrl: String?) : Metadata()
     @Parcelize
-    data class BookData(val author: String?, val publisher: String?, val releaseDate: Date?) : Metadata()
+    data class BookData(val author: String?, val publisher: String?, val releaseDate: Date?, val imageUrl: String?) : Metadata()
 }

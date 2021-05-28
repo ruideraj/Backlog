@@ -76,18 +76,16 @@ class EntryEditViewModel @Inject constructor(private val entriesRepository: Entr
         }
     }
 
-    fun createEntry(title: String, imageUrl: String, creator1: String, creator2: String) {
+    fun createEntry(title: String, imageUrl: String?, creator1: String?, creator2: String?) {
         if (title.isBlank()) {
             _titleError.value = true
         } else {
             val metadata = when (mediaType) {
-                MediaType.FILM -> Metadata.FilmData(creator1, date?.time)
-                MediaType.SHOW -> Metadata.ShowData(date?.time)
-                MediaType.GAME -> Metadata.GameData(creator1, date?.time)
-                MediaType.BOOK -> Metadata.BookData(creator1, creator2, date?.time)
+                MediaType.FILM -> Metadata.FilmData(creator1, date?.time, imageUrl)
+                MediaType.SHOW -> Metadata.ShowData(date?.time, imageUrl)
+                MediaType.GAME -> Metadata.GameData(creator1, date?.time, imageUrl)
+                MediaType.BOOK -> Metadata.BookData(creator1, creator2, date?.time, imageUrl)
             }
-
-            // TODO Add image URL into Entry
 
             viewModelScope.launch {
                 entriesRepository.createEntry(listId, mediaType, title, metadata)
