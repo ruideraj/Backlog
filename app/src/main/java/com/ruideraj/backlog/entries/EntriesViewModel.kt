@@ -24,8 +24,10 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
     }
 
     sealed class Event {
-        data class GoToEntryCreate(val type: MediaType) : Event()
+        data class GoToEntryCreate(val listId: Long, val type: MediaType) : Event()
     }
+
+    private var listId: Long = -1L
 
     private val _entries = MutableLiveData<List<Entry>>()
     val entries: LiveData<List<Entry>> = _entries
@@ -37,6 +39,9 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
     val eventFlow = eventChannel.receiveAsFlow()
 
     fun loadEntries(listId: Long) {
+        this.listId = listId
+        if (listId < 0) throw IllegalArgumentException("Must include valid list id")
+
         viewModelScope.launch { entriesRepository.loadEntriesForList(listId).collect {
             _entries.value = it
         } }
@@ -64,7 +69,7 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
 
     fun onClickCreateMenuButton(type: MediaType) {
         _showCreateMenu.value = false
-        viewModelScope.launch { eventChannel.send(Event.GoToEntryCreate(type)) }
+        viewModelScope.launch { eventChannel.send(Event.GoToEntryCreate(listId, type)) }
     }
 
     fun onBackPressed() {

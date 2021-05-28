@@ -36,6 +36,9 @@
         android:label="fragment_entry_edit"
         tools:layout="@layout/fragment_entry_edit" >
         <argument
+            android:name="listId"
+            app:argType="long"/>
+        <argument
             android:name="type"
             app:argType="com.ruideraj.backlog.MediaType" />
     </fragment>

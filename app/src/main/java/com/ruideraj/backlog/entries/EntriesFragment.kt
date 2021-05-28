@@ -20,6 +20,7 @@ import com.ruideraj.backlog.BacklogList
 import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.R
+import com.ruideraj.backlog.lists.ScrollOnAddObserver
 import com.ruideraj.backlog.util.UpDownScrollListener
 import com.ruideraj.backlog.util.asDp
 import com.ruideraj.backlog.util.collectWhileStarted
@@ -64,7 +65,9 @@ class EntriesFragment : Fragment() {
             addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
         }
 
-        val adapter = EntriesAdapter(viewModel)
+        val adapter = EntriesAdapter(viewModel).apply {
+            registerAdapterDataObserver(ScrollOnAddObserver(recycler))
+        }
         recycler.adapter = adapter
 
         createFab = view.findViewById<FloatingActionButton>(R.id.entries_button_create).apply {
@@ -117,11 +120,10 @@ class EntriesFragment : Fragment() {
                 when (event) {
                     is EntriesViewModel.Event.GoToEntryCreate -> {
                         val directions = EntriesFragmentDirections
-                            .actionEntriesFragmentToEntriesEditFragment(event.type)
+                            .actionEntriesFragmentToEntriesEditFragment(list.id, event.type)
                         findNavController().navigate(directions)
                     }
                 }
-
             }
         }
 

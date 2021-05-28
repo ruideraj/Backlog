@@ -1,6 +1,8 @@
 package com.ruideraj.backlog.data
 
 import com.ruideraj.backlog.Entry
+import com.ruideraj.backlog.MediaType
+import com.ruideraj.backlog.Metadata
 import com.ruideraj.backlog.Status
 import com.ruideraj.backlog.injection.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
@@ -10,6 +12,7 @@ import javax.inject.Inject
 
 interface EntriesRepository {
     suspend fun loadEntriesForList(listId: Long): Flow<List<Entry>>
+    suspend fun createEntry(listId: Long, type: MediaType, title: String, metadata: Metadata)
     suspend fun setStatusForEntry(entryId: Long, status: Status)
 }
 
@@ -18,6 +21,19 @@ class EntriesRepositoryImpl @Inject constructor (private val entriesDao: Entries
     : EntriesRepository {
 
     override suspend fun loadEntriesForList(listId: Long) = entriesDao.getEntriesForList(listId)
+
+    override suspend fun createEntry(
+        listId: Long,
+        type: MediaType,
+        title: String,
+        metadata: Metadata
+    ) {
+        withContext(ioDispatcher) {
+            val position = entriesDao.getMaxPositionForList(listId) + 1
+            val newEntry = Entry(0, listId, title, type, position, metadata, Status.TODO)
+            entriesDao.insertEntry(newEntry)
+        }
+    }
 
     override suspend fun setStatusForEntry(entryId: Long, status: Status) {
         withContext(ioDispatcher) {

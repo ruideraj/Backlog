@@ -1,6 +1,7 @@
 package com.ruideraj.backlog.data
 
 import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.TypeConverters
 import com.ruideraj.backlog.Constants.TABLE_NAME_ENTRIES
@@ -13,6 +14,12 @@ interface EntriesDao {
 
     @Query("SELECT * FROM $TABLE_NAME_ENTRIES WHERE listId = :listId")
     fun getEntriesForList(listId: Long): Flow<List<Entry>>
+
+    @Query("SELECT MAX(position) from $TABLE_NAME_ENTRIES WHERE listId = :listId")
+    fun getMaxPositionForList(listId: Long): Double
+
+    @Insert
+    fun insertEntry(entry: Entry)
 
     @Query("UPDATE $TABLE_NAME_ENTRIES SET status = :status WHERE id = :entryId")
     @TypeConverters(StatusConverters::class)

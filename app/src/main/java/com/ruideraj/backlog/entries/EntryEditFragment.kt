@@ -2,18 +2,18 @@ package com.ruideraj.backlog.entries
 
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
 import android.view.*
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputEditText
 import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.R
 import com.ruideraj.backlog.util.EntryField
+import com.ruideraj.backlog.util.collectWhileStarted
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -44,8 +44,12 @@ class EntryEditFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val type = requireArguments().getSerializable(Constants.ARG_TYPE) as MediaType
-        Log.d(TAG, "type: $type")
+        val args = requireArguments()
+
+        val listId = args.getLong(Constants.ARG_LIST_ID, -1L)
+        val type = args.getSerializable(Constants.ARG_TYPE) as MediaType
+
+        viewModel.initialize(listId, type)
 
         val title = getString(R.string.entry_title, type.name.toLowerCase().capitalize())
         (requireActivity() as AppCompatActivity).supportActionBar?.title = title
@@ -74,8 +78,6 @@ class EntryEditFragment : Fragment() {
         creator1Field = view.findViewById(R.id.entry_field_creator1)
         creator2Field = view.findViewById(R.id.entry_field_creator2)
 
-        viewModel.setType(type)
-
         viewModel.let {
             it.fields.observe(viewLifecycleOwner, { shownFields ->
                 setFieldVisibilityAndHint(dateField, shownFields.releaseDate)
@@ -94,6 +96,14 @@ class EntryEditFragment : Fragment() {
             it.releaseDate.observe(viewLifecycleOwner, { releaseDate ->
                 dateField.text = releaseDate
             })
+
+            it.eventFlow.collectWhileStarted(this) { event ->
+                when (event) {
+                    EntryEditViewModel.Event.GoBackToList -> {
+                        findNavController().navigateUp()
+                    }
+                }
+            }
         }
     }
 
@@ -105,7 +115,7 @@ class EntryEditFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.entry_action_confirm -> {
-                viewModel.onClickConfirm(titleField.text, imageField.text, creator1Field.text, creator2Field.text)
+                viewModel.createEntry(titleField.text, imageField.text, creator1Field.text, creator2Field.text)
                 return true
             }
             R.id.entry_action_search -> {

@@ -3,19 +3,29 @@ package com.ruideraj.backlog.entries
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ruideraj.backlog.MediaType
+import com.ruideraj.backlog.Metadata
 import com.ruideraj.backlog.R
+import com.ruideraj.backlog.data.EntriesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-class EntryEditViewModel @Inject constructor() : ViewModel() {
+class EntryEditViewModel @Inject constructor(private val entriesRepository: EntriesRepository) : ViewModel() {
 
     companion object {
         private const val TAG = "EntryEditViewModel"
         private const val NOT_SHOWN = -1
+    }
+
+    sealed class Event {
+        object GoBackToList : Event()
     }
 
     enum class ShownFields(val releaseDate: Int, val creator1: Int, val creator2: Int) {
@@ -24,6 +34,9 @@ class EntryEditViewModel @Inject constructor() : ViewModel() {
         GAME(R.string.field_date_release, R.string.field_creator_developer, NOT_SHOWN),
         BOOK(R.string.field_date_publication, R.string.field_creator_author, R.string.field_creator_publisher)
     }
+
+    private var listId: Long = -1L
+    private lateinit var mediaType: MediaType
 
     private val _fields = MutableLiveData<ShownFields>()
     val fields: LiveData<ShownFields> = _fields
@@ -35,7 +48,15 @@ class EntryEditViewModel @Inject constructor() : ViewModel() {
     private val _titleError = MutableLiveData(false)
     val titleError: LiveData<Boolean> = _titleError
 
-    fun setType(type: MediaType) {
+    private val eventChannel = Channel<Event>(Channel.BUFFERED)
+    val eventFlow = eventChannel.receiveAsFlow()
+
+    fun initialize(listId: Long, type: MediaType) {
+        this.listId = listId
+        if (listId < 0) throw IllegalArgumentException("Must include valid list id")
+
+        mediaType = type
+
         _fields.value = when (type) {
             MediaType.FILM -> ShownFields.FILM
             MediaType.TV -> ShownFields.TV
@@ -55,11 +76,23 @@ class EntryEditViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun onClickConfirm(title: String, imageUrl: String, creator1: String, creator2: String) {
+    fun createEntry(title: String, imageUrl: String, creator1: String, creator2: String) {
         if (title.isBlank()) {
             _titleError.value = true
         } else {
-            // TODO Create new Entry for the given List
+            val metadata = when (mediaType) {
+                MediaType.FILM -> Metadata.FilmData(creator1, date?.time)
+                MediaType.TV -> Metadata.ShowData(date?.time)
+                MediaType.GAME -> Metadata.GameData(creator1, date?.time)
+                MediaType.BOOK -> Metadata.BookData(creator1, creator2, date?.time)
+            }
+
+            // TODO Add image URL into Entry
+
+            viewModelScope.launch {
+                entriesRepository.createEntry(listId, mediaType, title, metadata)
+                eventChannel.send(Event.GoBackToList)
+            }
         }
     }
 
