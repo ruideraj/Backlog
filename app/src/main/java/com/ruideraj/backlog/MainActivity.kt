@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -22,8 +23,13 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val appBarConfiguration = AppBarConfiguration(navHostFragment.navController.graph)
-        toolbar.setupWithNavController(navHostFragment.navController, appBarConfiguration)
+        val navController = navHostFragment.navController.apply {
+            addOnDestinationChangedListener { _, _, arguments ->
+                toolbar.isVisible = arguments?.getBoolean(Constants.ARG_SHOW_APP_BAR, true) ?: true
+            }
+        }
+        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        toolbar.setupWithNavController(navController, appBarConfiguration)
     }
 
 }

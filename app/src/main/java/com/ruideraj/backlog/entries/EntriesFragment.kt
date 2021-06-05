@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -35,6 +35,7 @@ class EntriesFragment : Fragment() {
 
     private val viewModel by viewModels<EntriesViewModel>()
 
+    private lateinit var toolbar: Toolbar
     private lateinit var createFab: FloatingActionButton
     private lateinit var filmFab: FloatingActionButton
     private lateinit var showFab: FloatingActionButton
@@ -58,7 +59,9 @@ class EntriesFragment : Fragment() {
         val list = requireArguments().getParcelable<BacklogList>(Constants.ARG_LIST)
             ?: throw IllegalStateException("Need to provide a list to Entries screen")
 
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = list.title
+        toolbar = view.findViewById<Toolbar>(R.id.entries_toolbar).apply {
+            title = list.title
+        }
 
         val recycler = view.findViewById<RecyclerView>(R.id.entries_recycler).apply {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)

@@ -11,6 +11,7 @@ object Constants {
     const val ARG_ICON = "icon"
     const val ARG_LIST_ID = "listId"
     const val ARG_TYPE = "type"
+    const val ARG_SHOW_APP_BAR = "showAppBar"
 
     const val MODE_CREATE = 0
     const val MODE_EDIT = 1

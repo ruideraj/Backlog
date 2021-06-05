@@ -49,4 +49,9 @@
         <item name="android:textColor">?android:attr/colorControlNormal</item>
     </style>
 
+    <style name="Toolbar" >
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="titleTextColor">?attr/colorOnPrimary</item>
+        <item name="popupTheme">@style/Theme.Backlog.PopupOverlay</item>
+    </style>
 </resources>
