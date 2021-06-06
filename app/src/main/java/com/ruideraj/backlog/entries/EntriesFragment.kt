@@ -59,9 +59,7 @@ class EntriesFragment : Fragment() {
         val list = requireArguments().getParcelable<BacklogList>(Constants.ARG_LIST)
             ?: throw IllegalStateException("Need to provide a list to Entries screen")
 
-        toolbar = view.findViewById<Toolbar>(R.id.entries_toolbar).apply {
-            title = list.title
-        }
+        toolbar = view.findViewById(R.id.entries_toolbar)
 
         val recycler = view.findViewById<RecyclerView>(R.id.entries_recycler).apply {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -78,14 +76,12 @@ class EntriesFragment : Fragment() {
 
             viewTreeObserver.addOnGlobalLayoutListener(object: ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
-                    viewModel.showCreateMenu.observe(viewLifecycleOwner) { show ->
-                        if (show) {
+                    viewModel.expandCreateMenu.observe(viewLifecycleOwner) { expand ->
+                        if (expand) {
                             expandFabMenu()
                         } else {
                             collapseFabMenu()
                         }
-
-                        backPressedCallback.isEnabled = show
                     }
 
                     viewTreeObserver.removeOnGlobalLayoutListener(this)
@@ -109,14 +105,30 @@ class EntriesFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backPressedCallback)
 
         recycler.addOnScrollListener(UpDownScrollListener({
-            showFabMenu()
+            viewModel.onScrollUp()
         }, {
-            hideFabMenu()
+            viewModel.onScrollDown()
         }))
 
         viewModel.let {
+            it.title.observe(viewLifecycleOwner) { title ->
+                toolbar.title = title
+            }
+
             it.entries.observe(viewLifecycleOwner) { entriesList ->
                 adapter.submitList(entriesList)
+            }
+
+            it.showCreateMenu.observe(viewLifecycleOwner) { show ->
+                if (show) {
+                    showFabMenu()
+                } else {
+                    hideFabMenu()
+                }
+            }
+
+            it.backPressedCallbackEnabled.observe(viewLifecycleOwner) { enabled ->
+                backPressedCallback.isEnabled = enabled
             }
 
             it.eventFlow.collectWhileStarted(viewLifecycleOwner) { event ->
@@ -126,11 +138,17 @@ class EntriesFragment : Fragment() {
                             .actionEntriesFragmentToEntriesEditFragment(list.id, event.type)
                         findNavController().navigate(directions)
                     }
+                    is EntriesViewModel.Event.EntrySelectedChanged -> {
+                        adapter.notifyItemChanged(event.position)
+                    }
+                    is EntriesViewModel.Event.SelectedEntriesCleared -> {
+                        adapter.notifyDataSetChanged()
+                    }
                 }
             }
         }
 
-        viewModel.loadEntries(list.id)
+        viewModel.loadEntries(list)
     }
 
     private fun showFabMenu() {

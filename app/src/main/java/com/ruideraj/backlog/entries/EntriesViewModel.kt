@@ -1,10 +1,7 @@
 package com.ruideraj.backlog.entries
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import com.ruideraj.backlog.BacklogList
 import com.ruideraj.backlog.Entry
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.Status
@@ -25,30 +22,88 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
 
     sealed class Event {
         data class GoToEntryCreate(val listId: Long, val type: MediaType) : Event()
+        data class EntrySelectedChanged(val position: Int) : Event()
+        object SelectedEntriesCleared : Event()
     }
 
-    private var listId: Long = -1L
+    private lateinit var list: BacklogList
+
+    private val _title = MutableLiveData<String>()
+    val title: LiveData<String> = _title
 
     private val _entries = MutableLiveData<List<Entry>>()
     val entries: LiveData<List<Entry>> = _entries
 
-    private val _showCreateMenu = MutableLiveData(false)
+    private val _showCreateMenu = MutableLiveData(true)
     val showCreateMenu: LiveData<Boolean> = _showCreateMenu
+
+    private val _expandCreateMenu = MutableLiveData(false)
+    val expandCreateMenu: LiveData<Boolean> = _expandCreateMenu
+
+    private val _selectMode = MutableLiveData(false)
+    val selectMode: LiveData<Boolean> = _selectMode
+
+    private val _selectedEntries = mutableSetOf<Entry>()
+    val selectedEntries: Set<Entry> = _selectedEntries
+
+    private val _backPressedCallbackEnabled = MediatorLiveData<Boolean>()
+    val backPressedCallbackEnabled: LiveData<Boolean> = _backPressedCallbackEnabled
 
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow = eventChannel.receiveAsFlow()
 
-    fun loadEntries(listId: Long) {
-        this.listId = listId
-        if (listId < 0) throw IllegalArgumentException("Must include valid list id")
+    init {
+        _backPressedCallbackEnabled.addSource(_expandCreateMenu) { determineBackPressedCallbackEnabled() }
+        _backPressedCallbackEnabled.addSource(_selectMode) { determineBackPressedCallbackEnabled() }
+    }
 
-        viewModelScope.launch { entriesRepository.loadEntriesForList(listId).collect {
-            _entries.value = it
-        } }
+    fun loadEntries(backlogList: BacklogList) {
+        list = backlogList
+        _title.value = backlogList.title
+        viewModelScope.launch {
+            entriesRepository.loadEntriesForList(backlogList.id).collect {
+                _entries.value = it
+            }
+        }
+    }
+
+    fun onScrollUp() {
+        if (_selectMode.value != true) {
+            _showCreateMenu.value = true
+        }
+    }
+
+    fun onScrollDown() {
+        if (_selectMode.value != true) {
+            _showCreateMenu.value = false
+        }
     }
 
     fun onClickEntry(position: Int) {
-        Log.d(TAG, "onClickEntry: $position")
+        if (_selectMode.value == true) {
+            _entries.value?.let { entries ->
+                val clickedEntry = entries[position]
+
+                if (_selectedEntries.contains(clickedEntry)) {
+                    _selectedEntries.remove(clickedEntry)
+                } else {
+                    _selectedEntries.add(clickedEntry)
+                }
+
+                viewModelScope.launch { eventChannel.send(Event.EntrySelectedChanged(position)) }
+
+                _title.value = _selectedEntries.size.toString()
+            }
+        } else {
+            // TODO Go to Entry Details/Edit screen
+        }
+    }
+
+    fun onLongClickEntry(position: Int) {
+        if (_selectMode.value == false) {
+            setSelectMode(true)
+            onClickEntry(position)
+        }
     }
 
     fun onClickEntryStatus(position: Int) {
@@ -64,18 +119,41 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
     }
 
     fun onClickCreateButton() {
-        _showCreateMenu.value = !(_showCreateMenu.value ?: false)
+        _expandCreateMenu.value = !(_expandCreateMenu.value ?: false)
     }
 
     fun onClickCreateMenuButton(type: MediaType) {
-        _showCreateMenu.value = false
-        viewModelScope.launch { eventChannel.send(Event.GoToEntryCreate(listId, type)) }
+        _expandCreateMenu.value = false
+        viewModelScope.launch { list.let { eventChannel.send(Event.GoToEntryCreate(it.id, type)) } }
     }
 
     fun onBackPressed() {
-        if (_showCreateMenu.value == true) {
-            _showCreateMenu.value = false
+        if (_expandCreateMenu.value == true) {
+            _expandCreateMenu.value = false
+        } else if (_selectMode.value == true) {
+            setSelectMode(false)
         }
+    }
+
+    private fun setSelectMode(enable: Boolean) {
+        if (enable) {
+            _selectMode.value = true
+            _expandCreateMenu.value = false
+            _showCreateMenu.value = false
+            _title.value = selectedEntries.size.toString()
+            // TODO Enable select mode actions, e.g. Delete
+        } else {
+            _selectMode.value = false
+            _showCreateMenu.value = true
+            _selectedEntries.clear()
+            viewModelScope.launch { eventChannel.send(Event.SelectedEntriesCleared) }
+            list.let { _title.value = it.title }
+            // TODO Disable select mode actions
+        }
+    }
+
+    private fun determineBackPressedCallbackEnabled() {
+        _backPressedCallbackEnabled.value = _expandCreateMenu.value == true || _selectMode.value == true
     }
 
     private fun getNextStatus(status: Status): Status {

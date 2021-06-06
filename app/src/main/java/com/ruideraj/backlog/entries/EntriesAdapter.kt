@@ -33,6 +33,12 @@ class EntriesAdapter(private val viewModel: EntriesViewModel)
         } else {
             vh.status.setImageResource(getImageForStatus(entry.status))
         }
+
+        if (viewModel.selectedEntries.contains(entry)) {
+            vh.itemView.setBackgroundResource(R.color.bg_entry_selected)
+        } else {
+            vh.itemView.setBackgroundResource(0)
+        }
     }
 
     private fun getImageForType(type: MediaType): Int {
@@ -58,8 +64,14 @@ class EntriesAdapter(private val viewModel: EntriesViewModel)
         val status: ImageView = itemView.findViewById(R.id.entry_status)
 
         init {
-            itemView.setOnClickListener {
-                viewModel.onClickEntry(adapterPosition)
+            itemView.let {
+                it.setOnClickListener {
+                    viewModel.onClickEntry(adapterPosition)
+                }
+                it.setOnLongClickListener {
+                    viewModel.onLongClickEntry(adapterPosition)
+                    true
+                }
             }
 
             status.setOnClickListener {
