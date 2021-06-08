@@ -168,18 +168,10 @@ class EntriesFragment : Fragment() {
 
     private fun showFabMenu() {
         createFab.show()
-        filmFab.show()
-        showFab.show()
-        gameFab.show()
-        bookFab.show()
     }
 
     private fun hideFabMenu() {
         createFab.hide()
-        filmFab.hide()
-        showFab.hide()
-        gameFab.hide()
-        bookFab.hide()
     }
 
     private fun expandFabMenu() {

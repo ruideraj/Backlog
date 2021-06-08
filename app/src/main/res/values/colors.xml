@@ -14,4 +14,6 @@
     <color name="bg_entry_selected">#4C0277BD</color>
 
     <color name="bg_menu_overlay">#52000000</color>
+
+    <color name="color_control_normal">#89000000</color>
 </resources>
