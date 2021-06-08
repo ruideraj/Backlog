@@ -21,6 +21,7 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
     }
 
     sealed class Event {
+        object NavigateUp : Event()
         data class GoToEntryCreate(val listId: Long, val type: MediaType) : Event()
         data class EntrySelectedChanged(val position: Int) : Event()
         object SelectedEntriesCleared : Event()
@@ -132,6 +133,14 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
             _expandCreateMenu.value = false
         } else if (_selectMode.value == true) {
             setSelectMode(false)
+        }
+    }
+
+    fun onNavigationIconClicked() {
+        if (_selectMode.value == true) {
+            setSelectMode(false)
+        } else {
+            viewModelScope.launch { eventChannel.send(Event.NavigateUp) }
         }
     }
 

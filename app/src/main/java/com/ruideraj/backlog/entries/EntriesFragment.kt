@@ -59,7 +59,11 @@ class EntriesFragment : Fragment() {
         val list = requireArguments().getParcelable<BacklogList>(Constants.ARG_LIST)
             ?: throw IllegalStateException("Need to provide a list to Entries screen")
 
-        toolbar = view.findViewById(R.id.entries_toolbar)
+        toolbar = view.findViewById<Toolbar>(R.id.entries_toolbar).apply {
+            setNavigationOnClickListener {
+                viewModel.onNavigationIconClicked()
+            }
+        }
 
         val recycler = view.findViewById<RecyclerView>(R.id.entries_recycler).apply {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -115,6 +119,16 @@ class EntriesFragment : Fragment() {
                 toolbar.title = title
             }
 
+            it.selectMode.observe(viewLifecycleOwner) { selectMode ->
+                if (selectMode) {
+                    toolbar.setNavigationIcon(R.drawable.ic_close)
+                    toolbar.inflateMenu(R.menu.menu_entries_select)
+                } else {
+                    toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
+                    toolbar.menu.clear()
+                }
+            }
+
             it.entries.observe(viewLifecycleOwner) { entriesList ->
                 adapter.submitList(entriesList)
             }
@@ -133,6 +147,7 @@ class EntriesFragment : Fragment() {
 
             it.eventFlow.collectWhileStarted(viewLifecycleOwner) { event ->
                 when (event) {
+                    is EntriesViewModel.Event.NavigateUp -> findNavController().navigateUp()
                     is EntriesViewModel.Event.GoToEntryCreate -> {
                         val directions = EntriesFragmentDirections
                             .actionEntriesFragmentToEntriesEditFragment(list.id, event.type)
