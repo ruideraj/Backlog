@@ -31,6 +31,7 @@ class EntriesFragment : Fragment() {
 
     companion object {
         const val TAG = "EntriesFragment"
+        const val DELETE_DIALOG_TAG = "DeleteEntriesDialog"
     }
 
     private val viewModel by viewModels<EntriesViewModel>()
@@ -61,7 +62,7 @@ class EntriesFragment : Fragment() {
 
         toolbar = view.findViewById<Toolbar>(R.id.entries_toolbar).apply {
             setNavigationOnClickListener {
-                viewModel.onNavigationIconClicked()
+                viewModel.onClickNavigationIcon()
             }
         }
 
@@ -120,12 +121,18 @@ class EntriesFragment : Fragment() {
             }
 
             it.selectMode.observe(viewLifecycleOwner) { selectMode ->
-                if (selectMode) {
-                    toolbar.setNavigationIcon(R.drawable.ic_close)
-                    toolbar.inflateMenu(R.menu.menu_entries_select)
-                } else {
-                    toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
-                    toolbar.menu.clear()
+                toolbar.apply {
+                    if (selectMode) {
+                        setNavigationIcon(R.drawable.ic_close)
+                        inflateMenu(R.menu.menu_entries_select)
+                        menu.getItem(0).setOnMenuItemClickListener {
+                            viewModel.onClickDelete()
+                            true
+                        }
+                    } else {
+                        setNavigationIcon(R.drawable.ic_arrow_back)
+                        menu.clear()
+                    }
                 }
             }
 
@@ -158,6 +165,13 @@ class EntriesFragment : Fragment() {
                     }
                     is EntriesViewModel.Event.SelectedEntriesCleared -> {
                         adapter.notifyDataSetChanged()
+                    }
+                    is EntriesViewModel.Event.ShowDeleteConfirmation -> {
+                        val args = Bundle().apply { putInt(Constants.ARG_COUNT, event.count) }
+                        DeleteEntriesDialogFragment().let { dialog ->
+                            dialog.arguments = args
+                            dialog.show(childFragmentManager, DELETE_DIALOG_TAG)
+                        }
                     }
                 }
             }

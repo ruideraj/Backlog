@@ -25,6 +25,7 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
         data class GoToEntryCreate(val listId: Long, val type: MediaType) : Event()
         data class EntrySelectedChanged(val position: Int) : Event()
         object SelectedEntriesCleared : Event()
+        data class ShowDeleteConfirmation(val count: Int) : Event()
     }
 
     private lateinit var list: BacklogList
@@ -136,12 +137,24 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
         }
     }
 
-    fun onNavigationIconClicked() {
+    fun onClickNavigationIcon() {
         if (_selectMode.value == true) {
             setSelectMode(false)
         } else {
             viewModelScope.launch { eventChannel.send(Event.NavigateUp) }
         }
+    }
+
+    fun onClickDelete() {
+        if (_selectedEntries.size > 0) {
+            viewModelScope.launch { eventChannel.send(Event.ShowDeleteConfirmation(_selectedEntries.size)) }
+        }
+    }
+
+    fun onConfirmDelete() {
+        val ids = _selectedEntries.map { entry -> entry.id }
+        viewModelScope.launch { entriesRepository.deleteEntries(ids) }
+        setSelectMode(false)
     }
 
     private fun setSelectMode(enable: Boolean) {
@@ -150,14 +163,12 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
             _expandCreateMenu.value = false
             _showCreateMenu.value = false
             _title.value = selectedEntries.size.toString()
-            // TODO Enable select mode actions, e.g. Delete
         } else {
             _selectMode.value = false
             _showCreateMenu.value = true
             _selectedEntries.clear()
             viewModelScope.launch { eventChannel.send(Event.SelectedEntriesCleared) }
             list.let { _title.value = it.title }
-            // TODO Disable select mode actions
         }
     }
 

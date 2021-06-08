@@ -35,6 +35,8 @@
     <string name="field_creator_publisher">Publisher</string>
 
     <string name="entry_title">Add %1$s</string>
+    <string name="entries_delete_title">Delete Entries</string>
+    <string name="entries_delete_confirm">Are you sure you want to delete the %1$d selected entries?</string>
 
     <plurals name="items">
         <item quantity="one">%d item</item>

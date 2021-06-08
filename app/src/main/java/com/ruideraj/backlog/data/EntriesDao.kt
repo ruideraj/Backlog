@@ -15,7 +15,7 @@ interface EntriesDao {
     @Query("SELECT * FROM $TABLE_NAME_ENTRIES WHERE listId = :listId")
     fun getEntriesForList(listId: Long): Flow<List<Entry>>
 
-    @Query("SELECT MAX(position) from $TABLE_NAME_ENTRIES WHERE listId = :listId")
+    @Query("SELECT MAX(position) FROM $TABLE_NAME_ENTRIES WHERE listId = :listId")
     fun getMaxPositionForList(listId: Long): Double
 
     @Insert
@@ -24,5 +24,8 @@ interface EntriesDao {
     @Query("UPDATE $TABLE_NAME_ENTRIES SET status = :status WHERE id = :entryId")
     @TypeConverters(StatusConverters::class)
     fun updateEntryStatus(entryId: Long, status: Status)
+
+    @Query("DELETE FROM $TABLE_NAME_ENTRIES WHERE id IN (:ids)")
+    fun deleteEntries(ids: List<Long>)
 
 }
