@@ -19,19 +19,24 @@ enum class ListIcon { LIST, FILM, SHOW, GAME, BOOK }
 
 @Entity(tableName = TABLE_NAME_LISTS)
 @Parcelize
-data class BacklogList (
+data class BacklogList(
     @PrimaryKey(autoGenerate = true) val id: Long,
     val title: String,
     @field:TypeConverters(ListIconConverters::class) val icon: ListIcon,
     val position: Double,
-    val count: Int) : Parcelable
+    val count: Int
+) : Parcelable
 
-@Entity(tableName = TABLE_NAME_ENTRIES, foreignKeys = [
-    ForeignKey(entity = BacklogList::class,
-        parentColumns = ["id"],
-        childColumns = ["listId"],
-        onDelete = ForeignKey.CASCADE)],
-    indices = [Index(value = ["listId"])])
+@Entity(
+    tableName = TABLE_NAME_ENTRIES, foreignKeys = [
+        ForeignKey(
+            entity = BacklogList::class,
+            parentColumns = ["id"],
+            childColumns = ["listId"],
+            onDelete = ForeignKey.CASCADE
+        )],
+    indices = [Index(value = ["listId"])]
+)
 @Parcelize
 data class Entry(
     @PrimaryKey(autoGenerate = true) val id: Long,
@@ -40,15 +45,29 @@ data class Entry(
     @field:TypeConverters(MediaTypeConverters::class) val type: MediaType,
     val position: Double,
     @field:TypeConverters(MetadataConverters::class) val metadata: Metadata,
-    @field:TypeConverters(StatusConverters::class) val status: Status) : Parcelable
+    @field:TypeConverters(StatusConverters::class) val status: Status
+) : Parcelable
 
 sealed class Metadata : Parcelable {
+    abstract val releaseDate: Date?
+    abstract val imageUrl: String?
+
     @Parcelize
-    data class FilmData(val director: String?, val releaseDate: Date?, val imageUrl: String?) : Metadata()
+    data class FilmData(val director: String?, override val releaseDate: Date?, override val imageUrl: String?) :
+        Metadata()
+
     @Parcelize
-    data class ShowData(val releaseDate: Date?, val imageUrl: String?) : Metadata()
+    data class ShowData(override val releaseDate: Date?, override val imageUrl: String?) : Metadata()
+
     @Parcelize
-    data class GameData(val developer: String?, val releaseDate: Date?, val imageUrl: String?) : Metadata()
+    data class GameData(val developer: String?, override val releaseDate: Date?, override val imageUrl: String?) :
+        Metadata()
+
     @Parcelize
-    data class BookData(val author: String?, val publisher: String?, val releaseDate: Date?, val imageUrl: String?) : Metadata()
+    data class BookData(
+        val author: String?,
+        val publisher: String?,
+        override val releaseDate: Date?,
+        override val imageUrl: String?
+    ) : Metadata()
 }

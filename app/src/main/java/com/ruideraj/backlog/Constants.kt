@@ -6,6 +6,7 @@ object Constants {
     const val TABLE_NAME_ENTRIES = "entries"
 
     const val ARG_LIST = "list"
+    const val ARG_ENTRY = "entry"
     const val ARG_MODE = "mode"
     const val ARG_TITLE = "title"
     const val ARG_ICON = "icon"

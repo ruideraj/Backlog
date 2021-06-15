@@ -157,7 +157,12 @@ class EntriesFragment : Fragment() {
                     is EntriesViewModel.Event.NavigateUp -> findNavController().navigateUp()
                     is EntriesViewModel.Event.GoToEntryCreate -> {
                         val directions = EntriesFragmentDirections
-                            .actionEntriesFragmentToEntriesEditFragment(list.id, event.type)
+                            .actionEntriesFragmentToEntriesEditFragment(list.id, event.type, null)
+                        findNavController().navigate(directions)
+                    }
+                    is EntriesViewModel.Event.GoToEntryView -> {
+                        val directions = EntriesFragmentDirections
+                            .actionEntriesFragmentToEntriesEditFragment(list.id, event.type, event.entry)
                         findNavController().navigate(directions)
                     }
                     is EntriesViewModel.Event.EntrySelectedChanged -> {

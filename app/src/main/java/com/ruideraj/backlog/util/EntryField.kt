@@ -24,7 +24,8 @@ class EntryField @JvmOverloads constructor(
         entryEditText = view.findViewById(R.id.entry_field_edit)
     }
 
-    var text: String
-        get() = entryEditText.editableText.toString()
-        set(value) = entryEditText.setText(value)
+    fun getText() = entryEditText.editableText.toString()
+
+    fun setText(string: String?) = entryEditText.setText(string)
+
 }

@@ -1,13 +1,16 @@
 package com.ruideraj.backlog.entries
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ruideraj.backlog.Entry
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.Metadata
 import com.ruideraj.backlog.R
 import com.ruideraj.backlog.data.EntriesRepository
+import com.ruideraj.backlog.util.Strings
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -17,7 +20,10 @@ import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-class EntryEditViewModel @Inject constructor(private val entriesRepository: EntriesRepository) : ViewModel() {
+class EntryEditViewModel @Inject constructor(
+    private val entriesRepository: EntriesRepository,
+    private val strings: Strings
+) : ViewModel() {
 
     companion object {
         private const val TAG = "EntryEditViewModel"
@@ -26,6 +32,12 @@ class EntryEditViewModel @Inject constructor(private val entriesRepository: Entr
 
     sealed class Event {
         object GoBackToList : Event()
+        data class PopulateFields(
+            val title: String,
+            val imageUrl: String?,
+            val creator1: String?,
+            val creator2: String?
+        ) : Event()
     }
 
     enum class ShownFields(val releaseDate: Int, val creator1: Int, val creator2: Int) {
@@ -37,6 +49,19 @@ class EntryEditViewModel @Inject constructor(private val entriesRepository: Entr
 
     private var listId: Long = -1L
     private lateinit var mediaType: MediaType
+    private var existingEntry: Entry? = null
+
+    private val _title = MutableLiveData<String>()
+    val title: LiveData<String> = _title
+
+    private val _editMode = MutableLiveData(true)
+    val editMode: LiveData<Boolean> = _editMode
+
+    private val _showCloseIcon = MutableLiveData(false)
+    val showCloseIcon: LiveData<Boolean> = _showCloseIcon
+
+    private val _showEditModeAction = MutableLiveData(false)
+    val showEditModeAction: LiveData<Boolean> = _showEditModeAction
 
     private val _fields = MutableLiveData<ShownFields>()
     val fields: LiveData<ShownFields> = _fields
@@ -51,7 +76,7 @@ class EntryEditViewModel @Inject constructor(private val entriesRepository: Entr
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow = eventChannel.receiveAsFlow()
 
-    fun initialize(listId: Long, type: MediaType) {
+    fun initialize(listId: Long, type: MediaType, entry: Entry? = null) {
         this.listId = listId
         if (listId < 0) throw IllegalArgumentException("Must include valid list id")
 
@@ -63,6 +88,27 @@ class EntryEditViewModel @Inject constructor(private val entriesRepository: Entr
             MediaType.GAME -> ShownFields.GAME
             MediaType.BOOK -> ShownFields.BOOK
         }
+
+        if (entry != null) {
+            _title.value = strings.getString(R.string.entry_view)
+            existingEntry = entry
+            setFieldData(entry)
+            setEditMode(false)
+        } else {
+            _title.value = strings.getString(R.string.entry_title, type.name.toLowerCase().capitalize())
+        }
+    }
+
+    fun onClickEditMode() {
+        setEditMode(true)
+    }
+
+    fun onClickNavigationIcon() {
+        if (existingEntry != null && _editMode.value == true) {
+            setEditMode(false)
+        } else {
+            viewModelScope.launch { eventChannel.send(Event.GoBackToList) }
+        }
     }
 
     fun setDate(year: Int, month: Int, day: Int) {
@@ -71,12 +117,11 @@ class EntryEditViewModel @Inject constructor(private val entriesRepository: Entr
             set(Calendar.MONTH, month)
             set(Calendar.DAY_OF_MONTH, day)
 
-            val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault())
-            _releaseDate.value = dateFormat.format(time)
+            _releaseDate.value = convertDateToString(time)
         }
     }
 
-    fun createEntry(title: String, imageUrl: String?, creator1: String?, creator2: String?) {
+    fun submit(title: String, imageUrl: String?, creator1: String?, creator2: String?) {
         if (title.isBlank()) {
             _titleError.value = true
         } else {
@@ -88,13 +133,65 @@ class EntryEditViewModel @Inject constructor(private val entriesRepository: Entr
             }
 
             viewModelScope.launch {
-                entriesRepository.createEntry(listId, mediaType, title, metadata)
-                eventChannel.send(Event.GoBackToList)
+                if (existingEntry != null) {
+                    Log.d(TAG, "edit existing entry")
+                    // TODO
+                } else {
+                    entriesRepository.createEntry(listId, mediaType, title, metadata)
+                    eventChannel.send(Event.GoBackToList)
+                }
             }
         }
     }
 
     fun onTitleTextChanged(input: String) {
         if (_titleError.value == true && input.isNotBlank()) _titleError.value = false
+    }
+
+    private fun setEditMode(enable: Boolean) {
+        _editMode.value = enable
+        if (existingEntry != null) {
+            _showCloseIcon.value = enable
+            _showEditModeAction.value = !enable
+        }
+    }
+
+    private fun setFieldData(entry: Entry) {
+        val title = entry.title
+        val imageUrl = entry.metadata.imageUrl
+
+        var creator1: String? = null
+        var creator2: String? = null
+        when (entry.metadata) {
+            is Metadata.FilmData -> {
+                creator1 = entry.metadata.director
+            }
+            is Metadata.GameData -> {
+                creator1 = entry.metadata.developer
+            }
+            is Metadata.BookData -> {
+                creator1 = entry.metadata.author
+                creator2 = entry.metadata.publisher
+            }
+            else -> {
+            }
+        }
+
+        viewModelScope.launch {
+            eventChannel.send(
+                Event.PopulateFields(
+                    title,
+                    imageUrl,
+                    creator1,
+                    creator2
+                )
+            )
+            entry.metadata.releaseDate?.let { _releaseDate.value = convertDateToString(it) }
+        }
+    }
+
+    private fun convertDateToString(date: Date): String {
+        val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault())
+        return dateFormat.format(date)
     }
 }

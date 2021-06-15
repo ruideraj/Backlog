@@ -23,6 +23,7 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
     sealed class Event {
         object NavigateUp : Event()
         data class GoToEntryCreate(val listId: Long, val type: MediaType) : Event()
+        data class GoToEntryView(val listId: Long, val type: MediaType, val entry: Entry) : Event()
         data class EntrySelectedChanged(val position: Int) : Event()
         object SelectedEntriesCleared : Event()
         data class ShowDeleteConfirmation(val count: Int) : Event()
@@ -82,22 +83,24 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
     }
 
     fun onClickEntry(position: Int) {
-        if (_selectMode.value == true) {
-            _entries.value?.let { entries ->
-                val clickedEntry = entries[position]
+        _entries.value?.let {
+            val entry = it[position]
 
-                if (_selectedEntries.contains(clickedEntry)) {
-                    _selectedEntries.remove(clickedEntry)
+            if (_selectMode.value == true) {
+                if (_selectedEntries.contains(entry)) {
+                    _selectedEntries.remove(entry)
                 } else {
-                    _selectedEntries.add(clickedEntry)
+                    _selectedEntries.add(entry)
                 }
 
                 viewModelScope.launch { eventChannel.send(Event.EntrySelectedChanged(position)) }
 
                 _title.value = _selectedEntries.size.toString()
+            } else {
+                viewModelScope.launch {
+                    eventChannel.send(Event.GoToEntryView(list.id, entry.type, entry))
+                }
             }
-        } else {
-            // TODO Go to Entry Details/Edit screen
         }
     }
 
@@ -158,14 +161,13 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
     }
 
     private fun setSelectMode(enable: Boolean) {
+        _selectMode.value = enable
+        _showCreateMenu.value = !enable
+
         if (enable) {
-            _selectMode.value = true
             _expandCreateMenu.value = false
-            _showCreateMenu.value = false
             _title.value = selectedEntries.size.toString()
         } else {
-            _selectMode.value = false
-            _showCreateMenu.value = true
             _selectedEntries.clear()
             viewModelScope.launch { eventChannel.send(Event.SelectedEntriesCleared) }
             list.let { _title.value = it.title }

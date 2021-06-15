@@ -43,6 +43,13 @@
         <argument
             android:name="type"
             app:argType="com.ruideraj.backlog.MediaType" />
+        <argument
+            android:name="entry"
+            app:argType="com.ruideraj.backlog.Entry"
+            app:nullable="true"/>
+        <argument
+            android:name="showAppBar"
+            android:defaultValue="false"/>
     </fragment>
 
 </navigation>
