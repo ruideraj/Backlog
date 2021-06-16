@@ -1,6 +1,5 @@
 package com.ruideraj.backlog.entries
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -133,13 +132,13 @@ class EntryEditViewModel @Inject constructor(
             }
 
             viewModelScope.launch {
-                if (existingEntry != null) {
-                    Log.d(TAG, "edit existing entry")
-                    // TODO
+                val entry = existingEntry
+                if (entry != null) {
+                    entriesRepository.editEntry(entry.id, title, metadata)
                 } else {
                     entriesRepository.createEntry(listId, mediaType, title, metadata)
-                    eventChannel.send(Event.GoBackToList)
                 }
+                eventChannel.send(Event.GoBackToList)
             }
         }
     }

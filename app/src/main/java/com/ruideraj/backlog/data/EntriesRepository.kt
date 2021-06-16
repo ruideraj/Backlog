@@ -14,6 +14,7 @@ interface EntriesRepository {
     suspend fun loadEntriesForList(listId: Long): Flow<List<Entry>>
     suspend fun createEntry(listId: Long, type: MediaType, title: String, metadata: Metadata)
     suspend fun setStatusForEntry(entryId: Long, status: Status)
+    suspend fun editEntry(entryId: Long, title: String, metadata: Metadata)
     suspend fun deleteEntries(ids: List<Long>)
 }
 
@@ -39,6 +40,12 @@ class EntriesRepositoryImpl @Inject constructor (private val entriesDao: Entries
     override suspend fun setStatusForEntry(entryId: Long, status: Status) {
         withContext(ioDispatcher) {
             entriesDao.updateEntryStatus(entryId, status)
+        }
+    }
+
+    override suspend fun editEntry(entryId: Long, title: String, metadata: Metadata) {
+        withContext(ioDispatcher) {
+            entriesDao.editEntry(entryId, title, metadata)
         }
     }
 

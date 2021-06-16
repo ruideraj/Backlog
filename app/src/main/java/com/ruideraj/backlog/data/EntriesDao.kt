@@ -6,6 +6,7 @@ import androidx.room.Query
 import androidx.room.TypeConverters
 import com.ruideraj.backlog.Constants.TABLE_NAME_ENTRIES
 import com.ruideraj.backlog.Entry
+import com.ruideraj.backlog.Metadata
 import com.ruideraj.backlog.Status
 import kotlinx.coroutines.flow.Flow
 
@@ -20,6 +21,10 @@ interface EntriesDao {
 
     @Insert
     fun insertEntry(entry: Entry)
+
+    @Query("UPDATE $TABLE_NAME_ENTRIES SET title = :title, metadata = :metadata WHERE id = :entryId")
+    @TypeConverters(MetadataConverters::class)
+    fun editEntry(entryId: Long, title: String, metadata: Metadata)
 
     @Query("UPDATE $TABLE_NAME_ENTRIES SET status = :status WHERE id = :entryId")
     @TypeConverters(StatusConverters::class)
