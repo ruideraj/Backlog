@@ -105,10 +105,10 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
     }
 
     fun onLongClickEntry(position: Int) {
-        if (_selectMode.value == false) {
-            setSelectMode(true)
-            onClickEntry(position)
-        }
+//        if (_selectMode.value == false) {
+//            setSelectMode(true)
+//            onClickEntry(position)
+//        }
     }
 
     fun onClickEntryStatus(position: Int) {
@@ -146,6 +146,10 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
         } else {
             viewModelScope.launch { eventChannel.send(Event.NavigateUp) }
         }
+    }
+
+    fun onClickDeleteMode() {
+        setSelectMode(true)
     }
 
     fun onClickDelete() {

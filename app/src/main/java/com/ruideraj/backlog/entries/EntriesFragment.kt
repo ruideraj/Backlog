@@ -32,6 +32,9 @@ class EntriesFragment : Fragment() {
     companion object {
         const val TAG = "EntriesFragment"
         const val DELETE_DIALOG_TAG = "DeleteEntriesDialog"
+
+        private const val MENU_DELETE_MODE = 0
+        private const val MENU_DELETE = 1
     }
 
     private val viewModel by viewModels<EntriesViewModel>()
@@ -64,6 +67,17 @@ class EntriesFragment : Fragment() {
             setNavigationOnClickListener {
                 viewModel.onClickNavigationIcon()
             }
+            inflateMenu(R.menu.menu_entries_select)
+            menu.let {
+                it.getItem(MENU_DELETE_MODE).setOnMenuItemClickListener {
+                    viewModel.onClickDeleteMode()
+                    true
+                }
+                it.getItem(MENU_DELETE).setOnMenuItemClickListener {
+                    viewModel.onClickDelete()
+                    true
+                }
+            }
         }
 
         val recycler = view.findViewById<RecyclerView>(R.id.entries_recycler).apply {
@@ -79,7 +93,7 @@ class EntriesFragment : Fragment() {
         createFab = view.findViewById<FloatingActionButton>(R.id.entries_button_create).apply {
             setOnClickListener { viewModel.onClickCreateButton() }
 
-            viewTreeObserver.addOnGlobalLayoutListener(object: ViewTreeObserver.OnGlobalLayoutListener {
+            viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     viewModel.expandCreateMenu.observe(viewLifecycleOwner) { expand ->
                         if (expand) {
@@ -124,14 +138,12 @@ class EntriesFragment : Fragment() {
                 toolbar.apply {
                     if (selectMode) {
                         setNavigationIcon(R.drawable.ic_close)
-                        inflateMenu(R.menu.menu_entries_select)
-                        menu.getItem(0).setOnMenuItemClickListener {
-                            viewModel.onClickDelete()
-                            true
-                        }
+                        menu.getItem(MENU_DELETE_MODE).isVisible = false
+                        menu.getItem(MENU_DELETE).isVisible = true
                     } else {
                         setNavigationIcon(R.drawable.ic_arrow_back)
-                        menu.clear()
+                        menu.getItem(MENU_DELETE_MODE).isVisible = true
+                        menu.getItem(MENU_DELETE).isVisible = false
                     }
                 }
             }
@@ -194,7 +206,7 @@ class EntriesFragment : Fragment() {
     }
 
     private fun expandFabMenu() {
-        val fabDifference = - (createFab.height - filmFab.height)
+        val fabDifference = -(createFab.height - filmFab.height)
 
         val resources = resources
         val height = filmFab.height
