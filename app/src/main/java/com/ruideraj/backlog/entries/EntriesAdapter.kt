@@ -12,9 +12,10 @@ import com.ruideraj.backlog.Entry
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.R
 import com.ruideraj.backlog.Status
+import com.ruideraj.backlog.util.DragDropListAdapter
 
 class EntriesAdapter(private val viewModel: EntriesViewModel)
-    : ListAdapter<Entry, RecyclerView.ViewHolder>(EntryCallback()) {
+    : DragDropListAdapter<Entry, RecyclerView.ViewHolder>(EntryCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)

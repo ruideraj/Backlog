@@ -15,6 +15,7 @@ interface EntriesRepository {
     suspend fun createEntry(listId: Long, type: MediaType, title: String, metadata: Metadata)
     suspend fun setStatusForEntry(entryId: Long, status: Status)
     suspend fun editEntry(entryId: Long, title: String, metadata: Metadata)
+    suspend fun moveEntry(entryId: Long, newPosition: Int)
     suspend fun deleteEntries(ids: List<Long>)
 }
 
@@ -45,7 +46,16 @@ class EntriesRepositoryImpl @Inject constructor (private val entriesDao: Entries
 
     override suspend fun editEntry(entryId: Long, title: String, metadata: Metadata) {
         withContext(ioDispatcher) {
-            entriesDao.editEntry(entryId, title, metadata)
+            entriesDao.updateEntry(entryId, title, metadata)
+        }
+    }
+
+    override suspend fun moveEntry(entryId: Long, newPosition: Int) {
+        withContext(ioDispatcher) {
+            val listId = entriesDao.getListIdForEntry(entryId)
+            val entryPositions = entriesDao.getAllEntryPositionsForList(listId)
+            val newPositionValue = findNewPositionValue(entryPositions, entryId, newPosition)
+            entriesDao.updateEntryPosition(entryId, newPositionValue)
         }
     }
 

@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -20,6 +21,7 @@ import com.ruideraj.backlog.BacklogList
 import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.R
+import com.ruideraj.backlog.lists.DragDropHelperCallback
 import com.ruideraj.backlog.lists.ScrollOnAddObserver
 import com.ruideraj.backlog.util.UpDownScrollListener
 import com.ruideraj.backlog.util.asDp
@@ -89,6 +91,13 @@ class EntriesFragment : Fragment() {
             registerAdapterDataObserver(ScrollOnAddObserver(recycler))
         }
         recycler.adapter = adapter
+
+        val dragDropCallback = DragDropHelperCallback(adapter, { dragStartPosition ->
+            viewModel.moveEntryStarted(dragStartPosition)
+        }) { dragEndPosition ->
+            viewModel.moveEntryEnded(dragEndPosition)
+        }
+        ItemTouchHelper(dragDropCallback).attachToRecyclerView(recycler)
 
         createFab = view.findViewById<FloatingActionButton>(R.id.entries_button_create).apply {
             setOnClickListener { viewModel.onClickCreateButton() }

@@ -2,8 +2,9 @@ package com.ruideraj.backlog.lists
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.ruideraj.backlog.util.DragDropListAdapter
 
-class DragDropHelperCallback(private val adapter: ListsAdapter,
+class DragDropHelperCallback<T, VH: RecyclerView.ViewHolder>(private val adapter: DragDropListAdapter<T, VH>,
                              private val onDragStarted: (dragStartPosition: Int) -> Unit,
                              private val onDragFinished: (dragEndPosition: Int) -> Unit )
     : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
@@ -18,14 +19,7 @@ class DragDropHelperCallback(private val adapter: ListsAdapter,
 
     override fun onMove(recyclerView: RecyclerView,
                         viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-        val fromPos = viewHolder.adapterPosition
-        val toPos = target.adapterPosition
-
-        adapter.run {
-            moveItem(fromPos, toPos)
-            notifyItemMoved(fromPos, toPos)
-        }
-
+        adapter.moveItem(viewHolder.adapterPosition, target.adapterPosition)
         return true
     }
 

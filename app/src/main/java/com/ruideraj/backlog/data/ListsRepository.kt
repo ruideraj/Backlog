@@ -45,23 +45,7 @@ class ListsRepositoryImpl @Inject constructor(private val listsDao: ListsDao,
     override suspend fun moveList(listId: Long, newPosition: Int) {
         withContext(ioDispatcher) {
             val listPositions = listsDao.getAllListPositions()
-            val currentPosition = listPositions.indexOfFirst { it.id == listId }
-
-            val newPositionValue = when (newPosition) {
-                0 -> listPositions[0].position - 1
-                listPositions.size - 1 -> listPositions[listPositions.size - 1].position + 1
-                else -> {
-                    val positionA = listPositions[newPosition].position
-                    val positionB = if (newPosition > currentPosition) {
-                        listPositions[newPosition + 1].position
-                    } else {
-                        listPositions[newPosition - 1].position
-                    }
-
-                    (positionA + positionB) / 2
-                }
-            }
-
+            val newPositionValue = findNewPositionValue(listPositions, listId, newPosition)
             listsDao.updateListPosition(listId, newPositionValue)
         }
     }

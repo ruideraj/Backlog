@@ -32,8 +32,3 @@ interface ListsDao {
     fun getAllListPositions(): List<PositionTuple>
 
 }
-
-data class PositionTuple(
-    @ColumnInfo(name = "id") val id: Long,
-    @ColumnInfo(name = "position") val position: Double
-)

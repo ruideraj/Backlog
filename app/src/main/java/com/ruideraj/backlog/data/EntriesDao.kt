@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface EntriesDao {
 
-    @Query("SELECT * FROM $TABLE_NAME_ENTRIES WHERE listId = :listId")
+    @Query("SELECT * FROM $TABLE_NAME_ENTRIES WHERE listId = :listId ORDER BY position")
     fun getEntriesForList(listId: Long): Flow<List<Entry>>
 
     @Query("SELECT MAX(position) FROM $TABLE_NAME_ENTRIES WHERE listId = :listId")
@@ -24,11 +24,20 @@ interface EntriesDao {
 
     @Query("UPDATE $TABLE_NAME_ENTRIES SET title = :title, metadata = :metadata WHERE id = :entryId")
     @TypeConverters(MetadataConverters::class)
-    fun editEntry(entryId: Long, title: String, metadata: Metadata)
+    fun updateEntry(entryId: Long, title: String, metadata: Metadata)
 
     @Query("UPDATE $TABLE_NAME_ENTRIES SET status = :status WHERE id = :entryId")
     @TypeConverters(StatusConverters::class)
     fun updateEntryStatus(entryId: Long, status: Status)
+
+    @Query("UPDATE $TABLE_NAME_ENTRIES SET position = :position WHERE id = :entryId")
+    fun updateEntryPosition(entryId: Long, position: Double)
+
+    @Query("SELECT listId FROM $TABLE_NAME_ENTRIES WHERE id = :entryId")
+    fun getListIdForEntry(entryId: Long): Long
+
+    @Query("SELECT id, position FROM $TABLE_NAME_ENTRIES WHERE listId = :listId ORDER BY position")
+    fun getAllEntryPositionsForList(listId: Long): List<PositionTuple>
 
     @Query("DELETE FROM $TABLE_NAME_ENTRIES WHERE id IN (:ids)")
     fun deleteEntries(ids: List<Long>)

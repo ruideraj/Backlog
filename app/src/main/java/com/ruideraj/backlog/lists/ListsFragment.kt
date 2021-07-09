@@ -30,8 +30,6 @@ class ListsFragment : Fragment() {
     }
 
     private val viewModel by viewModels<ListsViewModel>()
-    private lateinit var recycler: RecyclerView
-    private lateinit var adapter: ListsAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -43,21 +41,21 @@ class ListsFragment : Fragment() {
 
         (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
 
-        recycler = view.findViewById<RecyclerView>(R.id.lists_recycler).apply {
+        val recycler = view.findViewById<RecyclerView>(R.id.lists_recycler).apply {
             layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         }
 
-        adapter = ListsAdapter(viewModel).apply {
+        val adapter = ListsAdapter(viewModel).apply {
             registerAdapterDataObserver(ScrollOnAddObserver(recycler))
         }
         recycler.adapter = adapter
 
         val dragDropCallback = DragDropHelperCallback(adapter, { dragStartPosition ->
             viewModel.moveListStarted(dragStartPosition)
-        }, { dragEndPosition ->
+        }) { dragEndPosition ->
             viewModel.moveListEnded(dragEndPosition)
-        })
+        }
         ItemTouchHelper(dragDropCallback).attachToRecyclerView(recycler)
 
         val fab = view.findViewById<FloatingActionButton>(R.id.lists_button_create).apply {

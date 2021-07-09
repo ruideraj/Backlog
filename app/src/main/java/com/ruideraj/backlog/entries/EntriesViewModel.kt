@@ -31,6 +31,8 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
 
     private lateinit var list: BacklogList
 
+    private var entryBeingMoved: Long = -1
+
     private val _title = MutableLiveData<String>()
     val title: LiveData<String> = _title
 
@@ -130,6 +132,16 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
     fun onClickCreateMenuButton(type: MediaType) {
         _expandCreateMenu.value = false
         viewModelScope.launch { list.let { eventChannel.send(Event.GoToEntryCreate(it.id, type)) } }
+    }
+
+    fun moveEntryStarted(position: Int) {
+        _entries.value?.let { entryBeingMoved = it[position].id }
+    }
+
+    fun moveEntryEnded(newPosition: Int) {
+        viewModelScope.launch {
+            entriesRepository.moveEntry(entryBeingMoved, newPosition)
+        }
     }
 
     fun onBackPressed() {

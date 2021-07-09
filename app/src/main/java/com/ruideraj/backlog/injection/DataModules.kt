@@ -41,6 +41,7 @@ object DatabaseModule {
     @Singleton
     fun providesAppDatabase(@ApplicationContext context: Context, metadataConverters: MetadataConverters) =
         Room.databaseBuilder(context, AppDatabase::class.java, Constants.DATABASE_NAME)
+            .createFromAsset("database/testDb100.db")
             .addTypeConverter(metadataConverters)
             .build()
 

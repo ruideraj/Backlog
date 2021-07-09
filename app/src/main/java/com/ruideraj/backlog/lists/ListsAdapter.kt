@@ -12,11 +12,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ruideraj.backlog.BacklogList
 import com.ruideraj.backlog.ListIcon
 import com.ruideraj.backlog.R
+import com.ruideraj.backlog.util.DragDropListAdapter
 
-class ListsAdapter(private val viewModel: ListsViewModel) : ListAdapter<BacklogList,
+class ListsAdapter(private val viewModel: ListsViewModel) : DragDropListAdapter<BacklogList,
         RecyclerView.ViewHolder>(ListItemCallback()) {
-
-    private lateinit var backingList: MutableList<BacklogList>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -39,36 +38,6 @@ class ListsAdapter(private val viewModel: ListsViewModel) : ListAdapter<BacklogL
         ListIcon.SHOW -> R.drawable.ic_show
         ListIcon.GAME -> R.drawable.ic_game
         ListIcon.BOOK -> R.drawable.ic_book
-    }
-
-    override fun submitList(list: List<BacklogList>?) {
-        // Using a mutable list allows us to use drag and drop without performing database I/O
-        // while the user is moving the item around.
-        backingList = mutableListOf<BacklogList>().apply {
-            list?.let { addAll(list) }
-        }
-        super.submitList(backingList)
-    }
-
-    /**
-     * Moves the item at index `fromPos` to `toPos`.
-     *
-     * This is needed in order to take advantage of [notifyItemMoved] which animates the items in the UI while the
-     * user is dragging an item during drag-and-drop.  Without this, an extra animation plays after the drag-and-drop
-     * is completed due to the new list differing from the unmodified backing list within [ListAdapter]
-     */
-    fun moveItem(fromPos: Int, toPos: Int) {
-        /*
-        Simple swap to move the item because the alternative, shifting all affected items to make room for the move,
-        would be inefficient.
-        Since this function is used for drag-and-drop the user will have to move the item over the intermediate
-        positions, thus swapping the items into their correct positions along the way.
-        Any potential inconsistencies should be corrected when the updated list from data sources
-        (which should be identical to the now modified backing list) is submitted in submitList().
-         */
-        val temp = backingList[fromPos]
-        backingList[fromPos] = backingList[toPos]
-        backingList[toPos] = temp
     }
 
     private inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
