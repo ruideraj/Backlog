@@ -69,10 +69,6 @@ class EntriesAdapter(private val viewModel: EntriesViewModel)
                 it.setOnClickListener {
                     viewModel.onClickEntry(adapterPosition)
                 }
-                it.setOnLongClickListener {
-                    viewModel.onLongClickEntry(adapterPosition)
-                    true
-                }
             }
 
             status.setOnClickListener {

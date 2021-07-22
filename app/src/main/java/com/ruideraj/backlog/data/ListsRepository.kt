@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
  interface ListsRepository {
-    fun loadLists(): Flow<List<BacklogList>>
+    fun loadLists(): Flow<List<ListItem>>
     suspend fun createList(title: String, icon: ListIcon)
     suspend fun editList(listId: Long, title: String, icon: ListIcon)
     suspend fun deleteList(listId: Long)
@@ -20,12 +20,12 @@ class ListsRepositoryImpl @Inject constructor(private val listsDao: ListsDao,
                                               @IoDispatcher private val ioDispatcher: CoroutineDispatcher)
     : ListsRepository {
 
-    override fun loadLists(): Flow<List<BacklogList>> = listsDao.getAllLists()
+    override fun loadLists(): Flow<List<ListItem>> = listsDao.getAllLists()
 
     override suspend fun createList(title: String, icon: ListIcon) {
         withContext(ioDispatcher) {
             val position = listsDao.getMaxPosition() + 1
-            val newList = BacklogList(0, title, icon, position, 0) // id automatically set by Room
+            val newList = BacklogList(0, title, icon, position) // id automatically set by Room
             listsDao.insertList(newList)
         }
     }

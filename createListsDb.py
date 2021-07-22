@@ -4,10 +4,9 @@ create_lists_stmt = 'CREATE TABLE IF NOT EXISTS `lists`'\
                '(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, '\
                '`title` TEXT NOT NULL, '\
                '`icon` INTEGER NOT NULL, '\
-               '`position` REAL NOT NULL, '\
-               '`count` INTEGER NOT NULL)'
-insert_lists_stmt = 'INSERT INTO lists (title, icon, position, count) '\
-              'VALUES (:title, :icon, :position, 0)'
+               '`position` REAL NOT NULL)'
+insert_lists_stmt = 'INSERT INTO lists (title, icon, position) '\
+              'VALUES (:title, :icon, :position)'
 check_list_list_rows_stmt = 'SELECT COUNT(*) FROM lists'
 
 list_rows = 100

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "3ef6524961ae68a49da1a3326a5ec26a",
+    "identityHash": "ac1503a0c7ed94ddcc800bb78a7f9617",
     "entities": [
       {
         "tableName": "lists",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `icon` INTEGER NOT NULL, `position` REAL NOT NULL, `count` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `icon` INTEGER NOT NULL, `position` REAL NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -30,12 +30,6 @@
             "fieldPath": "position",
             "columnName": "position",
             "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "count",
-            "columnName": "count",
-            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -129,7 +123,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3ef6524961ae68a49da1a3326a5ec26a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ac1503a0c7ed94ddcc800bb78a7f9617')"
     ]
   }
 }

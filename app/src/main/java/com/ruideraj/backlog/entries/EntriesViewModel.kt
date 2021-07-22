@@ -106,13 +106,6 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
         }
     }
 
-    fun onLongClickEntry(position: Int) {
-//        if (_selectMode.value == false) {
-//            setSelectMode(true)
-//            onClickEntry(position)
-//        }
-    }
-
     fun onClickEntryStatus(position: Int) {
         _entries.value?.let {
             val entry = it[position]

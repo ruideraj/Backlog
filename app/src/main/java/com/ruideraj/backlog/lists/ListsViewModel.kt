@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ruideraj.backlog.BacklogList
 import com.ruideraj.backlog.ListIcon
+import com.ruideraj.backlog.data.ListItem
 import com.ruideraj.backlog.data.ListsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -29,8 +30,8 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
         private const val TAG = "ListsViewModel"
     }
 
-    private val _lists = MutableLiveData<List<BacklogList>>()
-    val lists: LiveData<List<BacklogList>> = _lists
+    private val _lists = MutableLiveData<List<ListItem>>()
+    val lists: LiveData<List<ListItem>> = _lists
 
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow = eventChannel.receiveAsFlow()
@@ -49,19 +50,20 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
     }
 
     fun onClickEditList(position: Int) {
-        val list = _lists.value!![position]
-        viewModelScope.launch { eventChannel.send(Event.ShowEditList(list.id, list.title, list.icon)) }
+        val listItem = _lists.value!![position]
+        viewModelScope.launch { eventChannel.send(
+            Event.ShowEditList(listItem.list.id, listItem.list.title, listItem.list.icon)) }
     }
 
     fun onClickDeleteList(position: Int) {
-        val listToDelete = _lists.value!![position]
-        viewModelScope.launch { eventChannel.send(Event.ShowDeleteDialog(listToDelete)) }
+        val listItem = _lists.value!![position]
+        viewModelScope.launch { eventChannel.send(Event.ShowDeleteDialog(listItem.list)) }
     }
 
     fun onClickList(position: Int) {
         viewModelScope.launch {
             _lists.value?.let {
-                val list = it[position]
+                val list = it[position].list
                 viewModelScope.launch { eventChannel.send(Event.GoToEntries(list)) }
             }
         }
@@ -94,7 +96,7 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
     fun deleteList(listId: Long) = viewModelScope.launch { listsRepository.deleteList(listId) }
 
     fun moveListStarted(position: Int) {
-        _lists.value?.let { listBeingMoved = it[position].id }
+        _lists.value?.let { listBeingMoved = it[position].list.id }
     }
 
     fun moveListEnded(newPosition: Int) {

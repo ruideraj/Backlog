@@ -2,6 +2,7 @@ package com.ruideraj.backlog.data
 
 import androidx.room.*
 import com.ruideraj.backlog.BacklogList
+import com.ruideraj.backlog.Constants.TABLE_NAME_ENTRIES
 import com.ruideraj.backlog.Constants.TABLE_NAME_LISTS
 import com.ruideraj.backlog.ListIcon
 import kotlinx.coroutines.flow.Flow
@@ -9,8 +10,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ListsDao {
 
-    @Query("SELECT * FROM $TABLE_NAME_LISTS ORDER BY position")
-    fun getAllLists(): Flow<List<BacklogList>>
+    @Query("SELECT *, (SELECT COUNT(entry.id) FROM $TABLE_NAME_ENTRIES entry WHERE listId = list.id) AS entries FROM $TABLE_NAME_LISTS list ORDER BY position")
+    fun getAllLists(): Flow<List<ListItem>>
 
     @Query("SELECT MAX(position) FROM $TABLE_NAME_LISTS")
     fun getMaxPosition(): Double
@@ -32,3 +33,5 @@ interface ListsDao {
     fun getAllListPositions(): List<PositionTuple>
 
 }
+
+data class ListItem(@Embedded val list: BacklogList, val entries: Int)

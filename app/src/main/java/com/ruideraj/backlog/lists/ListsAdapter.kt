@@ -7,14 +7,13 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.ruideraj.backlog.BacklogList
 import com.ruideraj.backlog.ListIcon
 import com.ruideraj.backlog.R
+import com.ruideraj.backlog.data.ListItem
 import com.ruideraj.backlog.util.DragDropListAdapter
 
-class ListsAdapter(private val viewModel: ListsViewModel) : DragDropListAdapter<BacklogList,
+class ListsAdapter(private val viewModel: ListsViewModel) : DragDropListAdapter<ListItem,
         RecyclerView.ViewHolder>(ListItemCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -24,12 +23,12 @@ class ListsAdapter(private val viewModel: ListsViewModel) : DragDropListAdapter<
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val vh = holder as ViewHolder
-        val list = getItem(position)
+        val listItem = getItem(position)
         val resources = vh.title.resources
 
-        vh.title.text = list.title
-        vh.detail.text = resources.getQuantityString(R.plurals.items, list.count, list.count)
-        vh.icon.setImageResource(getIconResource(list.icon))
+        vh.title.text = listItem.list.title
+        vh.detail.text = resources.getQuantityString(R.plurals.items, listItem.entries, listItem.entries)
+        vh.icon.setImageResource(getIconResource(listItem.list.icon))
     }
 
     private fun getIconResource(icon: ListIcon) = when(icon) {
@@ -73,9 +72,9 @@ class ListsAdapter(private val viewModel: ListsViewModel) : DragDropListAdapter<
         }
     }
 
-    private class ListItemCallback : DiffUtil.ItemCallback<BacklogList>() {
-        override fun areItemsTheSame(oldItem: BacklogList, newItem: BacklogList) = oldItem.id == newItem.id
+    private class ListItemCallback : DiffUtil.ItemCallback<ListItem>() {
+        override fun areItemsTheSame(oldItem: ListItem, newItem: ListItem) = oldItem.list.id == newItem.list.id
 
-        override fun areContentsTheSame(oldItem: BacklogList, newItem: BacklogList) = oldItem == newItem
+        override fun areContentsTheSame(oldItem: ListItem, newItem: ListItem) = oldItem == newItem
     }
 }
