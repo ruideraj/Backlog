@@ -1,14 +1,21 @@
 package com.ruideraj.backlog.entries
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
 import android.view.*
+import android.widget.ImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.android.material.textfield.TextInputEditText
 import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.Entry
@@ -38,6 +45,8 @@ class EntryEditFragment : Fragment() {
     private lateinit var dateField: EntryField
     private lateinit var creator1Field: EntryField
     private lateinit var creator2Field: EntryField
+
+    private lateinit var imageThumbnail: ImageView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_entry_edit, container, false)
@@ -86,7 +95,14 @@ class EntryEditFragment : Fragment() {
                 }
             }
         }
-        imageField = view.findViewById(R.id.entry_field_image_url)
+
+        imageThumbnail = view.findViewById(R.id.entry_field_image)
+        imageField = view.findViewById<EntryField>(R.id.entry_field_image_url).apply {
+            editText?.addTextChangedListener { editable ->
+                viewModel.onImageTextChanged(editable.toString())
+            }
+        }
+
         dateField = view.findViewById<EntryField>(R.id.entry_field_date).apply {
             findViewById<TextInputEditText>(R.id.entry_field_edit).apply {
                 isClickable = true
@@ -100,6 +116,7 @@ class EntryEditFragment : Fragment() {
                 }
             }
         }
+
         creator1Field = view.findViewById(R.id.entry_field_creator1)
         creator2Field = view.findViewById(R.id.entry_field_creator2)
 
@@ -143,6 +160,35 @@ class EntryEditFragment : Fragment() {
                     titleField.error = getString(R.string.error_title)
                 } else {
                     titleField.error = null
+                }
+            })
+
+            it.imageUrl.observe(viewLifecycleOwner, { imageInput ->
+                if (imageInput.isNullOrBlank()) {
+                    Glide.with(this).clear(imageThumbnail)
+                } else {
+                    Glide.with(this)
+                        .load(imageInput)
+                        .circleCrop()
+                        .addListener(object : RequestListener<Drawable> {
+                            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?,
+                                                      isFirstResource: Boolean): Boolean {
+                                viewModel.onImageLoadError()
+                                return false
+                            }
+
+                            override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?,
+                                                         dataSource: DataSource?, isFirstResource: Boolean): Boolean = false
+                        })
+                        .into(imageThumbnail)
+                }
+            })
+
+            it.imageError.observe(viewLifecycleOwner, { error ->
+                if (error) {
+                    imageField.error = getString(R.string.error_image)
+                } else {
+                    imageField.error = null
                 }
             })
 

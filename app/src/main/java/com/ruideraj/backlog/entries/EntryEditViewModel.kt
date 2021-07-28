@@ -11,7 +11,9 @@ import com.ruideraj.backlog.R
 import com.ruideraj.backlog.data.EntriesRepository
 import com.ruideraj.backlog.util.Strings
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.text.DateFormat
@@ -71,6 +73,14 @@ class EntryEditViewModel @Inject constructor(
 
     private val _titleError = MutableLiveData(false)
     val titleError: LiveData<Boolean> = _titleError
+
+    private val _imageUrl = MutableLiveData<String>()
+    val imageUrl: LiveData<String> = _imageUrl
+
+    private var imageInputJob: Job? = null
+
+    private val _imageError = MutableLiveData(false)
+    val imageError: LiveData<Boolean> = _imageError
 
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow = eventChannel.receiveAsFlow()
@@ -145,6 +155,24 @@ class EntryEditViewModel @Inject constructor(
 
     fun onTitleTextChanged(input: String) {
         if (_titleError.value == true && input.isNotBlank()) _titleError.value = false
+    }
+
+    fun onImageTextChanged(input: String) {
+        imageInputJob?.run { if (!isCompleted) cancel() }
+
+        imageInputJob = viewModelScope.launch {
+            delay(2000)
+
+            if (_imageError.value == true) {
+                _imageError.value = false
+            }
+
+            _imageUrl.value = input
+        }
+    }
+
+    fun onImageLoadError() {
+        _imageError.value = true
     }
 
     private fun setEditMode(enable: Boolean) {
