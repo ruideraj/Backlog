@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="AppBar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="popupTheme">@style/Theme.Backlog.PopupOverlay</item>
+    </style>
 
     <style name="ListDialogRadioButton">
         <item name="android:layout_width">@dimen/button_radio_size</item>
