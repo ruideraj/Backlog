@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.ruideraj.backlog.Entry
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.R
@@ -27,7 +27,12 @@ class EntriesAdapter(private val viewModel: EntriesViewModel)
         val entry = getItem(position)
 
         vh.title.text = entry.title
-        vh.image.setImageResource(getImageForType(entry.type))
+
+        Glide.with(vh.image.context)
+            .load(entry.metadata.imageUrl)
+            .circleCrop()
+            .placeholder(getImageForType(entry.type))
+            .into(vh.image)
 
         if (entry.status == Status.TODO) {
             vh.status.setImageDrawable(null)
@@ -44,10 +49,10 @@ class EntriesAdapter(private val viewModel: EntriesViewModel)
 
     private fun getImageForType(type: MediaType): Int {
         return when (type) {
-            MediaType.FILM -> R.drawable.ic_film
-            MediaType.SHOW -> R.drawable.ic_show
-            MediaType.GAME -> R.drawable.ic_game
-            MediaType.BOOK -> R.drawable.ic_book
+            MediaType.FILM -> R.drawable.ic_film_40
+            MediaType.SHOW -> R.drawable.ic_show_40
+            MediaType.GAME -> R.drawable.ic_game_40
+            MediaType.BOOK -> R.drawable.ic_book_40
         }
     }
 
