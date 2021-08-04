@@ -54,4 +54,9 @@
     <style name="AlertDialogButton" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
         <item name="android:textColor">@color/color_control_normal</item>
     </style>
+
+    <style name="SearchView" parent="Widget.AppCompat.Light.SearchView">
+        <item name="searchIcon">@null</item>
+        <item name="searchHintIcon">@null</item>
+    </style>
 </resources>

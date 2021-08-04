@@ -1,11 +1,14 @@
 <resources>
     <string name="app_name">Backlog</string>
-    <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
+
+    <string name="film">Film</string>
+    <string name="show">Show</string>
+    <string name="game">Game</string>
+    <string name="book">Book</string>
+    <string name="films">Films</string>
+    <string name="shows">Shows</string>
+    <string name="games">Games</string>
+    <string name="books">Books</string>
 
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
@@ -41,6 +44,10 @@
     <string name="entries_delete_mode">Delete Mode</string>
     <string name="entries_delete_title">Delete Entries</string>
     <string name="entries_delete_confirm">Are you sure you want to delete the %1$d selected entries?</string>
+
+    <string name="search_title">Entry Search</string>
+    <string name="search_hint">Search %1$s</string>
+
 
     <plurals name="items">
         <item quantity="one">%d item</item>

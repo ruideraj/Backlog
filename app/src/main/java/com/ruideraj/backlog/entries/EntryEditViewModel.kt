@@ -39,6 +39,7 @@ class EntryEditViewModel @Inject constructor(
             val creator1: String?,
             val creator2: String?
         ) : Event()
+        object GoToSearch : Event()
     }
 
     enum class ShownFields(val releaseDate: Int, val creator1: Int, val creator2: Int) {
@@ -104,7 +105,13 @@ class EntryEditViewModel @Inject constructor(
             setFieldData(entry)
             setEditMode(false)
         } else {
-            _title.value = strings.getString(R.string.entry_title, type.name.toLowerCase().capitalize())
+            val typeRes = when (type) {
+                MediaType.FILM -> R.string.film
+                MediaType.SHOW -> R.string.show
+                MediaType.GAME -> R.string.game
+                MediaType.BOOK -> R.string.book
+            }
+            _title.value = strings.getString(R.string.entry_title, strings.getString(typeRes))
         }
     }
 
@@ -118,6 +125,10 @@ class EntryEditViewModel @Inject constructor(
         } else {
             viewModelScope.launch { eventChannel.send(Event.GoBackToList) }
         }
+    }
+
+    fun onClickSearch() {
+        viewModelScope.launch { eventChannel.send(Event.GoToSearch) }
     }
 
     fun setDate(year: Int, month: Int, day: Int) {

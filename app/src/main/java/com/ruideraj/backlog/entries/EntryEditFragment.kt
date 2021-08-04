@@ -3,7 +3,6 @@ package com.ruideraj.backlog.entries
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import androidx.appcompat.widget.Toolbar
@@ -72,8 +71,7 @@ class EntryEditFragment : Fragment() {
                     true
                 }
                 getItem(MENU_SEARCH).setOnMenuItemClickListener {
-                    // TODO
-                    Log.d(TAG, "search clicked")
+                    viewModel.onClickSearch()
                     true
                 }
                 getItem(MENU_CONFIRM).setOnMenuItemClickListener {
@@ -206,6 +204,10 @@ class EntryEditFragment : Fragment() {
                         imageField.setText(event.imageUrl)
                         creator1Field.setText(event.creator1)
                         creator2Field.setText(event.creator2)
+                    }
+                    EntryEditViewModel.Event.GoToSearch -> {
+                        val directions = EntryEditFragmentDirections.actionEntriesEditFragmentToSearchFragment(type)
+                        findNavController().navigate(directions)
                     }
                 }
             }

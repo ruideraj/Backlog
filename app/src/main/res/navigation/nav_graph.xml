@@ -50,6 +50,22 @@
         <argument
             android:name="showAppBar"
             android:defaultValue="false"/>
+        <action
+            android:id="@+id/action_entriesEditFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.ruideraj.backlog.search.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" >
+        <argument
+            android:name="type"
+            app:argType="com.ruideraj.backlog.MediaType"/>
+        <argument
+            android:name="showAppBar"
+            android:defaultValue="false"/>
     </fragment>
 
 </navigation>
