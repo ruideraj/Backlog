@@ -65,8 +65,15 @@ sealed class Metadata : Parcelable {
     @Parcelize
     data class BookData(
         val author: String?,
-        val publisher: String?,
+        //val publisher: String?,
         override val releaseDate: Date?,
         override val imageUrl: String?
     ) : Metadata()
 }
+
+@Parcelize
+data class SearchResult(
+    val type: MediaType,
+    val title: String,
+    val metadata: Metadata
+) : Parcelable

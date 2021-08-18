@@ -46,7 +46,7 @@ class EntryEditViewModel @Inject constructor(
         FILM(R.string.field_date_release, R.string.field_creator_director, NOT_SHOWN),
         SHOW(R.string.field_date_first_aired, NOT_SHOWN, NOT_SHOWN),
         GAME(R.string.field_date_release, R.string.field_creator_developer, NOT_SHOWN),
-        BOOK(R.string.field_date_publication, R.string.field_creator_author, R.string.field_creator_publisher)
+        BOOK(R.string.field_date_publication, R.string.field_creator_author, NOT_SHOWN)
     }
 
     private var listId: Long = -1L
@@ -149,7 +149,7 @@ class EntryEditViewModel @Inject constructor(
                 MediaType.FILM -> Metadata.FilmData(creator1, date?.time, imageUrl)
                 MediaType.SHOW -> Metadata.ShowData(date?.time, imageUrl)
                 MediaType.GAME -> Metadata.GameData(creator1, date?.time, imageUrl)
-                MediaType.BOOK -> Metadata.BookData(creator1, creator2, date?.time, imageUrl)
+                MediaType.BOOK -> Metadata.BookData(creator1, date?.time, imageUrl)
             }
 
             viewModelScope.launch {
@@ -209,7 +209,7 @@ class EntryEditViewModel @Inject constructor(
             }
             is Metadata.BookData -> {
                 creator1 = entry.metadata.author
-                creator2 = entry.metadata.publisher
+                //creator2 = entry.metadata.publisher
             }
             else -> {
             }

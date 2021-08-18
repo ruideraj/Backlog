@@ -40,7 +40,7 @@ def create_metadata(type_int):
         return "{\"type\":2,\"developer\":\"developer\"}"
     # Book
     elif type_int == 3:
-        return "{\"type\":3,\"author\":\"author\",\"publisher\":\"publisher\"}"
+        return "{\"type\":3,\"author\":\"author\"}"
     else:
         return "{}"
 
