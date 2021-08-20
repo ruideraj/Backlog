@@ -8,6 +8,7 @@ import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.Metadata
 import com.ruideraj.backlog.SearchResult
 import java.lang.reflect.Type
+import java.time.Year
 
 class OpenLibraryDeserializer : JsonDeserializer<OpenLibraryResponse> {
     companion object {
@@ -21,11 +22,13 @@ class OpenLibraryDeserializer : JsonDeserializer<OpenLibraryResponse> {
         val docs = json.getAsJsonArray("docs")
         val results = docs.map { doc ->
             val work = doc.asJsonObject
-            val authors = work.get("author_name").asJsonArray.joinToString { it.asString }
-            val firstYearPublished = work.get("first_publish_year").asInt
+            val authors = work.get("author_name")?.let {
+                it.asJsonArray.joinToString { author -> author.asString }
+            }
+            val yearPublished = work.get("first_publish_year")?.let { Year.of(it.asInt) }
+            val imageUrl = work.get("cover_i")?.let { "https://covers.openlibrary.org/b/id/${it.asInt}-S.jpg" }
 
-            // TODO Parse publish date/year and publisher(?)
-            val bookData = Metadata.BookData(authors, null, null)
+            val bookData = Metadata.BookData(authors, yearPublished, imageUrl)
 
             SearchResult(MediaType.BOOK, work.get("title").asString, bookData)
         }

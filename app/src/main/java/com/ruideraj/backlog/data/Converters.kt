@@ -2,12 +2,13 @@ package com.ruideraj.backlog.data
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
-import com.google.gson.Gson
-import com.google.gson.JsonObject
+import com.google.gson.*
 import com.ruideraj.backlog.ListIcon
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.Metadata
 import com.ruideraj.backlog.Status
+import java.lang.reflect.Type
+import java.time.Year
 
 class ListIconConverters {
     @TypeConverter
@@ -71,5 +72,15 @@ class MetadataConverters(private val gson: Gson) {
             ?: throw IllegalArgumentException("Invalid int for Metadata type")
 
         return gson.fromJson(jsonObject, metadataClass.java)
+    }
+}
+
+class YearConverter : JsonSerializer<Year>, JsonDeserializer<Year> {
+    override fun serialize(src: Year, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
+        return JsonPrimitive(src.toString())
+    }
+
+    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Year {
+        return Year.of(json.asInt)
     }
 }

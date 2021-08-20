@@ -2,6 +2,7 @@ package com.ruideraj.backlog
 
 import android.os.Parcelable
 import androidx.room.*
+import com.google.gson.annotations.SerializedName
 import com.ruideraj.backlog.Constants.TABLE_NAME_ENTRIES
 import com.ruideraj.backlog.Constants.TABLE_NAME_LISTS
 import com.ruideraj.backlog.data.ListIconConverters
@@ -9,6 +10,7 @@ import com.ruideraj.backlog.data.MediaTypeConverters
 import com.ruideraj.backlog.data.MetadataConverters
 import com.ruideraj.backlog.data.StatusConverters
 import kotlinx.parcelize.Parcelize
+import java.time.Year
 import java.util.*
 
 enum class MediaType { FILM, SHOW, GAME, BOOK }
@@ -48,25 +50,24 @@ data class Entry(
 ) : Parcelable
 
 sealed class Metadata : Parcelable {
-    abstract val releaseDate: Date?
     abstract val imageUrl: String?
 
     @Parcelize
-    data class FilmData(val director: String?, override val releaseDate: Date?, override val imageUrl: String?) :
+    data class FilmData(val director: String?, val releaseDate: Date?, override val imageUrl: String?) :
         Metadata()
 
     @Parcelize
-    data class ShowData(override val releaseDate: Date?, override val imageUrl: String?) : Metadata()
+    data class ShowData(val releaseDate: Date?, override val imageUrl: String?) : Metadata()
 
     @Parcelize
-    data class GameData(val developer: String?, override val releaseDate: Date?, override val imageUrl: String?) :
+    data class GameData(val developer: String?, val releaseDate: Date?, override val imageUrl: String?) :
         Metadata()
 
     @Parcelize
     data class BookData(
         val author: String?,
         //val publisher: String?,
-        override val releaseDate: Date?,
+        @SerializedName(value = "year_published") val yearPublished: Year?,
         override val imageUrl: String?
     ) : Metadata()
 }

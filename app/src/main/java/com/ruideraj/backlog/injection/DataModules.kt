@@ -14,6 +14,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.Year
 import javax.inject.Singleton
 
 @Module
@@ -58,7 +59,12 @@ object DatabaseModule {
     fun providesMetadataConverters(gson: Gson) = MetadataConverters(gson)
 
     @Provides
-    fun providesGson() = Gson()
+    fun providesGson(): Gson {
+        val gsonBuilder = GsonBuilder().apply {
+            registerTypeAdapter(Year::class.java, YearConverter())
+        }
+        return gsonBuilder.create()
+    }
 
 }
 
