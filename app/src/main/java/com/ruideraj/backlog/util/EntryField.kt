@@ -13,15 +13,16 @@ class EntryField @JvmOverloads constructor(
     @AttrRes defStyleAttr: Int = R.attr.entryFieldStyle)
     : TextInputLayout(context, attrs, defStyleAttr) {
 
+    private var entryEditText: TextInputEditText
+
     init {
-        initView()
-    }
-
-    private lateinit var entryEditText: TextInputEditText
-
-    private fun initView() {
-        val view = inflate(context, R.layout.view_entry_field, this)
-        entryEditText = view.findViewById(R.id.entry_field_edit)
+        // Using getContext() instead of Context in constructor args because
+        // using contructor Context sets a background on the TextInputEditText in the inflated layout.
+        // Inflating with the one from getContext() leaves the background null,
+        // allowing for the custom styling defined through defStyleAttr.
+        // This behavior is determined by TextInputLayout.shouldUseEditTextBackgroundForBoxBackground()
+        inflate(getContext(), R.layout.view_entry_field, this)
+        entryEditText = findViewById(R.id.entry_field_edit)
     }
 
     fun getText() = entryEditText.editableText.toString()
