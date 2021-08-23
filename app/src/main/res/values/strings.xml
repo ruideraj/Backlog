@@ -17,6 +17,7 @@
     <string name="search">Search</string>
 
     <string name="error_title">Please enter a title.</string>
+    <string name="error_year">Please enter a valid year.</string>
     <string name="error_image">There was an error loading the image.</string>
 
     <string name="lists_fragment_label">Lists</string>
@@ -32,6 +33,7 @@
     <string name="field_date_release">Release Date</string>
     <string name="field_date_first_aired">First Aired</string>
     <string name="field_date_publication">Publication Date</string>
+    <string name="field_year_first_year_published">First Year Published</string>
     <string name="field_creator_director">Director</string>
     <string name="field_creator_developer">Developer</string>
     <string name="field_creator_showrunner">Showrunner</string>

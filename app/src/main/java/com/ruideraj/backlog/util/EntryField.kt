@@ -1,6 +1,7 @@
 package com.ruideraj.backlog.util
 
 import android.content.Context
+import android.text.InputType
 import android.util.AttributeSet
 import androidx.annotation.AttrRes
 import com.google.android.material.textfield.TextInputEditText
@@ -23,6 +24,11 @@ class EntryField @JvmOverloads constructor(
         // This behavior is determined by TextInputLayout.shouldUseEditTextBackgroundForBoxBackground()
         inflate(getContext(), R.layout.view_entry_field, this)
         entryEditText = findViewById(R.id.entry_field_edit)
+
+        context.theme.obtainStyledAttributes(attrs, R.styleable.EntryField, 0, 0).apply {
+            val inputType = getInteger(R.styleable.EntryField_android_inputType, InputType.TYPE_CLASS_TEXT)
+            entryEditText.setRawInputType(inputType)
+        }
     }
 
     fun getText() = entryEditText.editableText.toString()

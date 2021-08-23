@@ -17,6 +17,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.text.DateFormat
+import java.time.Year
 import java.util.*
 import javax.inject.Inject
 
@@ -35,6 +36,7 @@ class EntryEditViewModel @Inject constructor(
         object GoBackToList : Event()
         data class PopulateFields(
             val title: String,
+            val releaseYear: String?,
             val imageUrl: String?,
             val creator1: String?,
             val creator2: String?
@@ -42,11 +44,11 @@ class EntryEditViewModel @Inject constructor(
         object GoToSearch : Event()
     }
 
-    enum class ShownFields(val releaseDate: Int, val creator1: Int, val creator2: Int) {
-        FILM(R.string.field_date_release, R.string.field_creator_director, NOT_SHOWN),
-        SHOW(R.string.field_date_first_aired, NOT_SHOWN, NOT_SHOWN),
-        GAME(R.string.field_date_release, R.string.field_creator_developer, NOT_SHOWN),
-        BOOK(R.string.field_date_publication, R.string.field_creator_author, NOT_SHOWN)
+    enum class ShownFields(val releaseDate: Int, val releaseYear: Int, val creator1: Int, val creator2: Int) {
+        FILM(R.string.field_date_release, NOT_SHOWN, R.string.field_creator_director, NOT_SHOWN),
+        SHOW(R.string.field_date_first_aired, NOT_SHOWN, NOT_SHOWN, NOT_SHOWN),
+        GAME(R.string.field_date_release, NOT_SHOWN, R.string.field_creator_developer, NOT_SHOWN),
+        BOOK(NOT_SHOWN, R.string.field_year_first_year_published, R.string.field_creator_author, NOT_SHOWN)
     }
 
     private var listId: Long = -1L
@@ -74,6 +76,9 @@ class EntryEditViewModel @Inject constructor(
 
     private val _titleError = MutableLiveData(false)
     val titleError: LiveData<Boolean> = _titleError
+
+    private val _yearError = MutableLiveData(false)
+    val yearError: LiveData<Boolean> = _yearError
 
     private val _imageUrl = MutableLiveData<String>()
     val imageUrl: LiveData<String> = _imageUrl
@@ -141,31 +146,47 @@ class EntryEditViewModel @Inject constructor(
         }
     }
 
-    fun submit(title: String, imageUrl: String?, creator1: String?, creator2: String?) {
+    fun submit(title: String, year: String?, imageUrl: String?, creator1: String?, creator2: String?) {
         if (title.isBlank()) {
             _titleError.value = true
-        } else {
-            val metadata = when (mediaType) {
-                MediaType.FILM -> Metadata.FilmData(creator1, date?.time, imageUrl)
-                MediaType.SHOW -> Metadata.ShowData(date?.time, imageUrl)
-                MediaType.GAME -> Metadata.GameData(creator1, date?.time, imageUrl)
-                MediaType.BOOK -> Metadata.BookData(creator1, date?.time, imageUrl)
-            }
+            return
+        }
 
-            viewModelScope.launch {
-                val entry = existingEntry
-                if (entry != null) {
-                    entriesRepository.editEntry(entry.id, title, metadata)
-                } else {
-                    entriesRepository.createEntry(listId, mediaType, title, metadata)
-                }
-                eventChannel.send(Event.GoBackToList)
+        val yearVal = if (mediaType == MediaType.BOOK && !year.isNullOrBlank()) {
+            try {
+                Year.of(year.toInt())
+            } catch (e: NumberFormatException) {
+                _yearError.value = true;
+                return
             }
+        } else {
+            null
+        }
+
+        val metadata = when (mediaType) {
+            MediaType.FILM -> Metadata.FilmData(creator1, date?.time, imageUrl)
+            MediaType.SHOW -> Metadata.ShowData(date?.time, imageUrl)
+            MediaType.GAME -> Metadata.GameData(creator1, date?.time, imageUrl)
+            MediaType.BOOK -> Metadata.BookData(creator1, yearVal, imageUrl)
+        }
+
+        viewModelScope.launch {
+            val entry = existingEntry
+            if (entry != null) {
+                entriesRepository.editEntry(entry.id, title, metadata)
+            } else {
+                entriesRepository.createEntry(listId, mediaType, title, metadata)
+            }
+            eventChannel.send(Event.GoBackToList)
         }
     }
 
     fun onTitleTextChanged(input: String) {
         if (_titleError.value == true && input.isNotBlank()) _titleError.value = false
+    }
+
+    fun onYearTextChanged() {
+        if (_yearError.value == true) _yearError.value = false
     }
 
     fun onImageTextChanged(input: String) {
@@ -200,15 +221,20 @@ class EntryEditViewModel @Inject constructor(
 
         var creator1: String? = null
         var creator2: String? = null
+        var releaseDate: String? = null
+        var releaseYear: String? = null
         when (entry.metadata) {
             is Metadata.FilmData -> {
                 creator1 = entry.metadata.director
+                releaseDate = entry.metadata.releaseDate?.let { convertDateToString(it) }
             }
             is Metadata.GameData -> {
                 creator1 = entry.metadata.developer
+                releaseDate = entry.metadata.releaseDate?.let { convertDateToString(it) }
             }
             is Metadata.BookData -> {
                 creator1 = entry.metadata.author
+                releaseYear = entry.metadata.yearPublished?.toString()
                 //creator2 = entry.metadata.publisher
             }
             else -> {
@@ -219,12 +245,13 @@ class EntryEditViewModel @Inject constructor(
             eventChannel.send(
                 Event.PopulateFields(
                     title,
+                    releaseYear,
                     imageUrl,
                     creator1,
                     creator2
                 )
             )
-            entry.metadata.releaseDate?.let { _releaseDate.value = convertDateToString(it) }
+            releaseDate?.let { _releaseDate.value = it }
         }
     }
 

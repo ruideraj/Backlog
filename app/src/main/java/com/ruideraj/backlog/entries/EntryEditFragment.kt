@@ -42,6 +42,7 @@ class EntryEditFragment : Fragment() {
     private lateinit var titleField: EntryField
     private lateinit var imageField: EntryField
     private lateinit var dateField: EntryField
+    private lateinit var yearField: EntryField
     private lateinit var creator1Field: EntryField
     private lateinit var creator2Field: EntryField
 
@@ -77,6 +78,7 @@ class EntryEditFragment : Fragment() {
                 getItem(MENU_CONFIRM).setOnMenuItemClickListener {
                     viewModel.submit(
                         titleField.getText(),
+                        yearField.getText(),
                         imageField.getText(),
                         creator1Field.getText(),
                         creator2Field.getText()
@@ -87,10 +89,8 @@ class EntryEditFragment : Fragment() {
         }
 
         titleField = view.findViewById<EntryField>(R.id.entry_field_title).apply {
-            findViewById<TextInputEditText>(R.id.entry_field_edit).apply {
-                addTextChangedListener { editable ->
-                    viewModel.onTitleTextChanged(editable.toString())
-                }
+            editText?.addTextChangedListener { editable ->
+                viewModel.onTitleTextChanged(editable.toString())
             }
         }
 
@@ -113,6 +113,10 @@ class EntryEditFragment : Fragment() {
                     }
                 }
             }
+        }
+
+        yearField = view.findViewById<EntryField>(R.id.entry_field_year).apply {
+            editText?.addTextChangedListener { viewModel.onYearTextChanged() }
         }
 
         creator1Field = view.findViewById(R.id.entry_field_creator1)
@@ -139,6 +143,7 @@ class EntryEditFragment : Fragment() {
                 titleField.isEnabled = editMode
                 imageField.isEnabled = editMode
                 dateField.isEnabled = editMode
+                yearField.isEnabled = editMode
                 creator1Field.isEnabled = editMode
                 creator2Field.isEnabled = editMode
             })
@@ -149,6 +154,7 @@ class EntryEditFragment : Fragment() {
 
             it.fields.observe(viewLifecycleOwner, { shownFields ->
                 setFieldVisibilityAndHint(dateField, shownFields.releaseDate)
+                setFieldVisibilityAndHint(yearField, shownFields.releaseYear)
                 setFieldVisibilityAndHint(creator1Field, shownFields.creator1)
                 setFieldVisibilityAndHint(creator2Field, shownFields.creator2)
             })
@@ -158,6 +164,14 @@ class EntryEditFragment : Fragment() {
                     titleField.error = getString(R.string.error_title)
                 } else {
                     titleField.error = null
+                }
+            })
+
+            it.yearError.observe(viewLifecycleOwner, { error ->
+                if (error) {
+                    yearField.error = getString(R.string.error_year)
+                } else {
+                    yearField.error = null
                 }
             })
 
@@ -201,6 +215,7 @@ class EntryEditFragment : Fragment() {
                     }
                     is EntryEditViewModel.Event.PopulateFields -> {
                         titleField.setText(event.title)
+                        yearField.setText(event.releaseYear)
                         imageField.setText(event.imageUrl)
                         creator1Field.setText(event.creator1)
                         creator2Field.setText(event.creator2)

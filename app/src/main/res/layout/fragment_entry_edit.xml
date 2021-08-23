@@ -72,6 +72,14 @@
                 tools:hint="@string/field_date_publication"/>
 
             <com.ruideraj.backlog.util.EntryField
+                android:id="@+id/entry_field_year"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/entry_field_top_margin"
+                android:inputType="number"
+                tools:hint="@string/field_year_first_year_published"/>
+
+            <com.ruideraj.backlog.util.EntryField
                 android:id="@+id/entry_field_creator1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
