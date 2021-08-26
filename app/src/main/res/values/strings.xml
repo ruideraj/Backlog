@@ -49,7 +49,7 @@
 
     <string name="search_title">Entry Search</string>
     <string name="search_hint">Search %1$s</string>
-
+    <string name="search_field_published">Published %1$d</string>
 
     <plurals name="items">
         <item quantity="one">%d item</item>

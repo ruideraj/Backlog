@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/search_item_image"
+        android:layout_width="@dimen/entry_image_size"
+        android:layout_height="@dimen/entry_image_size"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_game" />
+
+    <TextView
+        android:id="@+id/search_item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/item_text_margin"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="@dimen/search_item_title_size"
+        app:layout_constraintLeft_toRightOf="@id/search_item_image"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Result title" />
+
+    <ImageView
+        android:id="@+id/search_item_field1_icon"
+        style="@style/SearchResultFieldIcon"
+        app:layout_constraintStart_toEndOf="@id/search_item_image"
+        app:layout_constraintTop_toTopOf="@id/search_item_field1"
+        app:layout_constraintBottom_toBottomOf="@id/search_item_field1"
+        app:srcCompat="@drawable/ic_people" />
+
+    <TextView
+        android:id="@+id/search_item_field1"
+        style="@style/SearchResultTextField"
+        app:layout_constraintTop_toBottomOf="@id/search_item_title"
+        app:layout_constraintLeft_toRightOf="@id/search_item_field1_icon"
+        tools:text="Creator text" />
+
+    <ImageView
+        android:id="@+id/search_item_field2_icon"
+        style="@style/SearchResultFieldIcon"
+        app:layout_constraintLeft_toRightOf="@id/search_item_image"
+        app:layout_constraintTop_toTopOf="@id/search_item_field2"
+        app:layout_constraintBottom_toBottomOf="@id/search_item_field2"
+        tools:src="@drawable/ic_business"/>
+
+    <TextView
+        android:id="@+id/search_item_field2"
+        style="@style/SearchResultTextField"
+        app:layout_constraintTop_toBottomOf="@id/search_item_field1"
+        app:layout_constraintLeft_toRightOf="@id/search_item_field2_icon"
+        tools:text="Creator text 2" />
+
+    <ImageView
+        android:id="@+id/search_item_field3_icon"
+        style="@style/SearchResultFieldIcon"
+        app:layout_constraintLeft_toRightOf="@id/search_item_image"
+        app:layout_constraintTop_toTopOf="@id/search_item_field3"
+        app:layout_constraintBottom_toBottomOf="@id/search_item_field3"
+        tools:src="@drawable/ic_event" />
+
+    <TextView
+        android:id="@+id/search_item_field3"
+        style="@style/SearchResultTextField"
+        app:layout_constraintTop_toBottomOf="@id/search_item_field2"
+        app:layout_constraintLeft_toRightOf="@id/search_item_field3_icon"
+        tools:text="Release date" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

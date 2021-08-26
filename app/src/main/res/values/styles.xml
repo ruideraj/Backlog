@@ -59,4 +59,17 @@
         <item name="searchIcon">@null</item>
         <item name="searchHintIcon">@null</item>
     </style>
+
+    <style name="SearchResultTextField">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">6dp</item>
+        <item name="android:textSize">@dimen/search_item_field_text_size</item>
+    </style>
+
+    <style name="SearchResultFieldIcon">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/item_text_margin</item>
+    </style>
 </resources>

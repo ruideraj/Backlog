@@ -9,6 +9,9 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.R
@@ -39,7 +42,7 @@ class SearchFragment : Fragment() {
             setNavigationOnClickListener { findNavController().navigateUp() }
         }
 
-        val searchInput = toolbar.findViewById<SearchView>(R.id.search_input).apply {
+        toolbar.findViewById<SearchView>(R.id.search_input).apply {
             setIconifiedByDefault(false)
             maxWidth = Integer.MAX_VALUE
             val typePluralRes = when (type) {
@@ -61,6 +64,17 @@ class SearchFragment : Fragment() {
                     return true
                 }
             })
+        }
+
+        val recycler = view.findViewById<RecyclerView>(R.id.search_recycler).apply {
+            layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
+            addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+        }
+        val adapter = SearchAdapter()
+        recycler.adapter = adapter
+
+        viewModel.searchResults.observe(viewLifecycleOwner) { results ->
+            adapter.submitList(results)
         }
     }
 }

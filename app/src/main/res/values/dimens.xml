@@ -18,4 +18,7 @@
 
     <dimen name="image_circle_stroke_width">2dp</dimen>
 
+    <dimen name="search_item_title_size">20sp</dimen>
+    <dimen name="search_item_field_text_size">16sp</dimen>
+
 </resources>
