@@ -13,12 +13,11 @@ interface SearchRepository {
 }
 
 class SearchRepositoryImpl @Inject constructor(
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     private val openLibraryApi: OpenLibraryApi
 ) : SearchRepository {
 
     override suspend fun searchByTitle(type: MediaType, query: String, pageSize: Int, page: Int)
-    : List<SearchResult> = withContext(ioDispatcher) {
+    : List<SearchResult> {
 
         val testMetadata = when (type) {
             MediaType.FILM -> Metadata.FilmData(null, null, null)
@@ -27,7 +26,7 @@ class SearchRepositoryImpl @Inject constructor(
             MediaType.BOOK -> Metadata.BookData(null, null, null)
         }
 
-        val testResults = when (type) {
+        return when (type) {
             MediaType.BOOK -> openLibraryApi.search(query, pageSize, page * pageSize).docs
             else -> if ("sample title".contains(query, true)) {
                 listOf(
@@ -38,7 +37,5 @@ class SearchRepositoryImpl @Inject constructor(
                 listOf()
             }
         }
-
-        testResults
     }
 }
