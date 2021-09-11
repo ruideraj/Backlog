@@ -8,6 +8,9 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +19,8 @@ import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.R
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
@@ -54,13 +59,13 @@ class SearchFragment : Fragment() {
             queryHint = getString(R.string.search_hint, getString(typePluralRes))
 
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    viewModel.onSearchInputChanged(type, newText)
+                override fun onQueryTextChange(newText: String): Boolean {
+                    viewModel.queryInput(type, newText)
                     return true
                 }
 
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    viewModel.onSearchInputChanged(type, query)
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    viewModel.queryInput(type, query)
                     return true
                 }
             })
@@ -73,8 +78,13 @@ class SearchFragment : Fragment() {
         val adapter = SearchAdapter()
         recycler.adapter = adapter
 
-        viewModel.searchResults.observe(viewLifecycleOwner) { results ->
-            adapter.submitList(results)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.searchResultsFlow.collectLatest { results ->
+                    adapter.submitData(results)
+                    recycler.scrollToPosition(0)
+                }
+            }
         }
     }
 }

@@ -1,58 +1,48 @@
 package com.ruideraj.backlog.search
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.SearchResult
 import com.ruideraj.backlog.data.SearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchViewModel @Inject constructor(private val searchRepository: SearchRepository): ViewModel() {
+class SearchViewModel @Inject constructor(private val searchRepository: SearchRepository) : ViewModel() {
 
     companion object {
-        private const val TAG = "SearchViewModel"
-        private const val PAGE_SIZE = 20
+        private const val INPUT_CHANGE_TIMEOUT = 1500L
     }
 
-    private var lastSearchInput = ""
-    private var searchJob: Job? = null
+    val searchResultsFlow: StateFlow<PagingData<SearchResult>>
 
-    private val _searchResults = MutableLiveData<List<SearchResult>>()
-    val searchResults: LiveData<List<SearchResult>> = _searchResults
+    val queryInput: (type: MediaType, query: String) -> Unit
 
-    fun onSearchInputChanged(type: MediaType, input: String?) {
-        if (!input.isNullOrBlank()) {
-            if (lastSearchInput == input) {
-                Log.d(TAG, "Same search input, skipping search")
-                return
+    init {
+        val queriesFlow = MutableSharedFlow<Pair<MediaType, String>>()
+
+        searchResultsFlow = queriesFlow
+            .debounce(INPUT_CHANGE_TIMEOUT) // Wait some time for user to stop typing before searching
+            .filter { it.second.trim().isNotBlank() }
+            .distinctUntilChangedBy { it.second }
+            .flatMapLatest { (type, query) ->
+                searchRepository.getTitleSearchStream(type, query).cachedIn(viewModelScope)
             }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+                initialValue = PagingData.empty()
+            )
 
-            searchJob?.run { if (!isCompleted) {
-                cancel()
-            } }
-
-            searchJob = viewModelScope.launch {
-                lastSearchInput = input
-                delay(2000)
-                Log.d(TAG, "Run search with: $input")
-
-                val results = searchRepository.searchByTitle(type, input, PAGE_SIZE)
-                Log.d(TAG, results.toString())
-
-                _searchResults.value = results
-            }
-        } else {
-            Log.d(TAG, "Blank search input")
-            lastSearchInput = ""
+        queryInput = { type, query ->
+            viewModelScope.launch { queriesFlow.emit(Pair(type, query)) }
         }
     }
-
 }
+
+const val PAGE_SIZE = 20

@@ -5,8 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ruideraj.backlog.MediaType
@@ -14,7 +14,7 @@ import com.ruideraj.backlog.Metadata
 import com.ruideraj.backlog.R
 import com.ruideraj.backlog.SearchResult
 
-class SearchAdapter : ListAdapter<SearchResult, RecyclerView.ViewHolder>(SearchCallback()) {
+class SearchAdapter : PagingDataAdapter<SearchResult, RecyclerView.ViewHolder>(SearchCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -23,7 +23,7 @@ class SearchAdapter : ListAdapter<SearchResult, RecyclerView.ViewHolder>(SearchC
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val vh = holder as ViewHolder
-        val searchResult = getItem(position)
+        val searchResult = getItem(position) ?: return
 
         vh.title.text = searchResult.title
 
