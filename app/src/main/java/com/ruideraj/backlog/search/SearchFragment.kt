@@ -76,7 +76,10 @@ class SearchFragment : Fragment() {
             addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         }
         val adapter = SearchAdapter()
-        recycler.adapter = adapter
+        recycler.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = SearchLoadStateAdapter { adapter.retry() },
+            footer = SearchLoadStateAdapter { adapter.retry() }
+        )
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {

@@ -3,6 +3,7 @@ package com.ruideraj.backlog.data
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.ruideraj.backlog.SearchResult
+import com.ruideraj.backlog.search.PAGE_SIZE
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -24,7 +25,9 @@ class OpenLibraryPagingSource(private val openLibraryApi: OpenLibraryApi,
             val nextKey = if (searchResults.isEmpty()) {
                 null
             } else {
-                page + 1
+                // Initial load size may be larger than normal page size, due to PagingConfig.initialLoadSize
+                // so calculate next page based on current load size
+                page + (params.loadSize / PAGE_SIZE)
             }
 
             LoadResult.Page(searchResults, prevKey, nextKey)
