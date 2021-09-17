@@ -19,6 +19,7 @@ import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.R
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -60,12 +61,12 @@ class SearchFragment : Fragment() {
 
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextChange(newText: String): Boolean {
-                    viewModel.queryInput(type, newText)
+                    viewModel.onQueryInputChanged(type, newText)
                     return true
                 }
 
                 override fun onQueryTextSubmit(query: String): Boolean {
-                    viewModel.queryInput(type, query)
+                    viewModel.onQueryInputChanged(type, query)
                     return true
                 }
             })
@@ -75,17 +76,37 @@ class SearchFragment : Fragment() {
             layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         }
-        val adapter = SearchAdapter()
+        val adapter = SearchAdapter { searchResult ->
+            viewModel.onClickSearchResult(searchResult)
+        }
         recycler.adapter = adapter.withLoadStateHeaderAndFooter(
             header = SearchLoadStateAdapter { adapter.retry() },
             footer = SearchLoadStateAdapter { adapter.retry() }
         )
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.searchResultsFlow.collectLatest { results ->
-                    adapter.submitData(results)
-                    recycler.scrollToPosition(0)
+        viewModel.let {
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    it.searchResultsFlow.collectLatest { results ->
+                        adapter.submitData(results)
+                        recycler.scrollToPosition(0)
+                    }
+                }
+            }
+
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    it.eventFlow.collect { event ->
+                        when (event) {
+                            is SearchViewModel.Event.ReturnToEdit -> {
+                                findNavController().run {
+                                    previousBackStackEntry?.savedStateHandle
+                                        ?.set(Constants.ARG_SEARCH_RESULT, event.searchResult)
+                                    navigateUp()
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

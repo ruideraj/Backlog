@@ -14,7 +14,8 @@ import com.ruideraj.backlog.Metadata
 import com.ruideraj.backlog.R
 import com.ruideraj.backlog.SearchResult
 
-class SearchAdapter : PagingDataAdapter<SearchResult, RecyclerView.ViewHolder>(SearchCallback()) {
+class SearchAdapter(private val onItemClick: (SearchResult) -> Unit)
+    : PagingDataAdapter<SearchResult, RecyclerView.ViewHolder>(SearchCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -55,6 +56,8 @@ class SearchAdapter : PagingDataAdapter<SearchResult, RecyclerView.ViewHolder>(S
                 }
             }
         }
+
+        vh.itemView.setOnClickListener { onItemClick.invoke(searchResult) }
     }
 
     private fun getImageForType(type: MediaType): Int {

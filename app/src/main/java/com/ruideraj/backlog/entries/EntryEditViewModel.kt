@@ -4,10 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ruideraj.backlog.Entry
-import com.ruideraj.backlog.MediaType
-import com.ruideraj.backlog.Metadata
-import com.ruideraj.backlog.R
+import com.ruideraj.backlog.*
 import com.ruideraj.backlog.data.EntriesRepository
 import com.ruideraj.backlog.util.Strings
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -107,7 +104,7 @@ class EntryEditViewModel @Inject constructor(
         if (entry != null) {
             _title.value = strings.getString(R.string.entry_view)
             existingEntry = entry
-            setFieldData(entry)
+            setFieldData(entry.title, entry.metadata)
             setEditMode(false)
         } else {
             val typeRes = when (type) {
@@ -207,6 +204,10 @@ class EntryEditViewModel @Inject constructor(
         _imageError.value = true
     }
 
+    fun onSearchResultReceived(searchResult: SearchResult) {
+        setFieldData(searchResult.title, searchResult.metadata)
+    }
+
     private fun setEditMode(enable: Boolean) {
         _editMode.value = enable
         if (existingEntry != null) {
@@ -215,26 +216,25 @@ class EntryEditViewModel @Inject constructor(
         }
     }
 
-    private fun setFieldData(entry: Entry) {
-        val title = entry.title
-        val imageUrl = entry.metadata.imageUrl
+    private fun setFieldData(title: String, metadata: Metadata) {
+        val imageUrl = metadata.imageUrl
 
         var creator1: String? = null
         var creator2: String? = null
         var releaseDate: String? = null
         var releaseYear: String? = null
-        when (entry.metadata) {
+        when (metadata) {
             is Metadata.FilmData -> {
-                creator1 = entry.metadata.director
-                releaseDate = entry.metadata.releaseDate?.let { convertDateToString(it) }
+                creator1 = metadata.director
+                releaseDate = metadata.releaseDate?.let { convertDateToString(it) }
             }
             is Metadata.GameData -> {
-                creator1 = entry.metadata.developer
-                releaseDate = entry.metadata.releaseDate?.let { convertDateToString(it) }
+                creator1 = metadata.developer
+                releaseDate = metadata.releaseDate?.let { convertDateToString(it) }
             }
             is Metadata.BookData -> {
-                creator1 = entry.metadata.author
-                releaseYear = entry.metadata.yearPublished?.toString()
+                creator1 = metadata.author
+                releaseYear = metadata.yearPublished?.toString()
                 //creator2 = entry.metadata.publisher
             }
             else -> {

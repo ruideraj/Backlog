@@ -8,6 +8,7 @@ import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.SearchResult
 import com.ruideraj.backlog.data.SearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -15,17 +16,22 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(private val searchRepository: SearchRepository) : ViewModel() {
 
+    sealed class Event {
+        data class ReturnToEdit(val searchResult: SearchResult) : Event()
+    }
+
     companion object {
         private const val INPUT_CHANGE_TIMEOUT = 1500L
     }
 
     val searchResultsFlow: StateFlow<PagingData<SearchResult>>
 
-    val queryInput: (type: MediaType, query: String) -> Unit
+    private val eventChannel = Channel<Event>(Channel.BUFFERED)
+    val eventFlow = eventChannel.receiveAsFlow()
+
+    private val queriesFlow: MutableSharedFlow<Pair<MediaType, String>> = MutableSharedFlow()
 
     init {
-        val queriesFlow = MutableSharedFlow<Pair<MediaType, String>>()
-
         searchResultsFlow = queriesFlow
             .debounce(INPUT_CHANGE_TIMEOUT) // Wait some time for user to stop typing before searching
             .filter { it.second.trim().isNotBlank() }
@@ -38,9 +44,15 @@ class SearchViewModel @Inject constructor(private val searchRepository: SearchRe
                 started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
                 initialValue = PagingData.empty()
             )
+    }
 
-        queryInput = { type, query ->
-            viewModelScope.launch { queriesFlow.emit(Pair(type, query)) }
+    fun onQueryInputChanged(type: MediaType, query: String) {
+        viewModelScope.launch { queriesFlow.emit(Pair(type, query)) }
+    }
+
+    fun onClickSearchResult(searchResult: SearchResult) {
+        viewModelScope.launch {
+            eventChannel.send(Event.ReturnToEdit(searchResult))
         }
     }
 }

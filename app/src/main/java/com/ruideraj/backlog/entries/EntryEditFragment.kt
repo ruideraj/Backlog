@@ -16,10 +16,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.textfield.TextInputEditText
-import com.ruideraj.backlog.Constants
-import com.ruideraj.backlog.Entry
-import com.ruideraj.backlog.MediaType
-import com.ruideraj.backlog.R
+import com.ruideraj.backlog.*
 import com.ruideraj.backlog.util.EntryField
 import com.ruideraj.backlog.util.collectWhileStarted
 import dagger.hilt.android.AndroidEntryPoint
@@ -208,7 +205,7 @@ class EntryEditFragment : Fragment() {
                 dateField.setText(releaseDate)
             })
 
-            it.eventFlow.collectWhileStarted(this) { event ->
+            it.eventFlow.collectWhileStarted(viewLifecycleOwner) { event ->
                 when (event) {
                     EntryEditViewModel.Event.GoBackToList -> {
                         findNavController().navigateUp()
@@ -226,6 +223,14 @@ class EntryEditFragment : Fragment() {
                     }
                 }
             }
+        }
+
+        findNavController().apply {
+            currentBackStackEntry?.savedStateHandle
+                ?.getLiveData<SearchResult>(Constants.ARG_SEARCH_RESULT)?.observe(viewLifecycleOwner) { searchResult ->
+                    currentBackStackEntry?.savedStateHandle?.remove<SearchResult>(Constants.ARG_SEARCH_RESULT)
+                    viewModel.onSearchResultReceived(searchResult)
+                }
         }
     }
 
