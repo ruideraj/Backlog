@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.ruideraj.backlog.BuildConfig
 import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.data.*
 import dagger.Binds
@@ -12,6 +13,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.Year
@@ -79,6 +82,15 @@ object SearchModule {
     @Provides
     @Singleton
     fun providesOpenLibraryApi(): OpenLibraryApi {
+        val httpClientBuilder = OkHttpClient.Builder()
+
+        if (BuildConfig.DEBUG) {
+            val loggingInterceptor = HttpLoggingInterceptor().apply {
+                setLevel(HttpLoggingInterceptor.Level.BASIC)
+            }
+            httpClientBuilder.addInterceptor(loggingInterceptor)
+        }
+
         val gson = GsonBuilder().apply {
             registerTypeAdapter(OpenLibraryResponse::class.java, OpenLibraryDeserializer())
         }.create()
@@ -86,6 +98,7 @@ object SearchModule {
         return Retrofit.Builder()
             .baseUrl("https://openlibrary.org")
             .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(httpClientBuilder.build())
             .build().create(OpenLibraryApi::class.java)
     }
 }

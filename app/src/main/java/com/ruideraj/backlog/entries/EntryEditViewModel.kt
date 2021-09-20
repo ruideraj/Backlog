@@ -48,6 +48,7 @@ class EntryEditViewModel @Inject constructor(
         BOOK(NOT_SHOWN, R.string.field_year_first_year_published, R.string.field_creator_author, NOT_SHOWN)
     }
 
+    private var initialized = false
     private var listId: Long = -1L
     private lateinit var mediaType: MediaType
     private var existingEntry: Entry? = null
@@ -89,6 +90,8 @@ class EntryEditViewModel @Inject constructor(
     val eventFlow = eventChannel.receiveAsFlow()
 
     fun initialize(listId: Long, type: MediaType, entry: Entry? = null) {
+        if (initialized) return
+
         this.listId = listId
         if (listId < 0) throw IllegalArgumentException("Must include valid list id")
 
@@ -115,6 +118,8 @@ class EntryEditViewModel @Inject constructor(
             }
             _title.value = strings.getString(R.string.entry_title, strings.getString(typeRes))
         }
+
+        initialized = true
     }
 
     fun onClickEditMode() {
