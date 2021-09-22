@@ -17,7 +17,9 @@ interface SearchRepository {
 }
 
 class SearchRepositoryImpl @Inject constructor(
-    private val openLibraryApi: OpenLibraryApi
+    private val openLibraryApi: OpenLibraryApi,
+    private val rawgApi: RawgApi,
+    private val propertiesReader: PropertiesReader
 ) : SearchRepository {
     companion object {
         private const val TAG = "SearchRepositoryImpl"
@@ -55,6 +57,15 @@ class SearchRepositoryImpl @Inject constructor(
                         enablePlaceholders = false
                     ),
                     pagingSourceFactory = { OpenLibraryPagingSource(openLibraryApi, query) }
+                ).flow
+            }
+            MediaType.GAME -> {
+                Pager(
+                    config = PagingConfig(
+                        pageSize = PAGE_SIZE,
+                        enablePlaceholders = false
+                    ),
+                    pagingSourceFactory = { RawgPagingSource(rawgApi, propertiesReader, query) }
                 ).flow
             }
             else -> flowOf()

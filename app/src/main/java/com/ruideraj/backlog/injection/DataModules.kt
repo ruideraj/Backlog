@@ -6,6 +6,8 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.ruideraj.backlog.BuildConfig
 import com.ruideraj.backlog.Constants
+import com.ruideraj.backlog.Constants.API_OPEN_LIBRARY
+import com.ruideraj.backlog.Constants.API_RAWG
 import com.ruideraj.backlog.data.*
 import dagger.Binds
 import dagger.Module
@@ -81,6 +83,29 @@ object SearchModule {
 
     @Provides
     @Singleton
+    fun providesRawgApi(): RawgApi {
+        val httpClientBuilder = OkHttpClient.Builder()
+
+        if (BuildConfig.DEBUG) {
+            val loggingInterceptor = HttpLoggingInterceptor().apply {
+                setLevel(HttpLoggingInterceptor.Level.BASIC)
+            }
+            httpClientBuilder.addInterceptor(loggingInterceptor)
+        }
+
+        val gson = GsonBuilder().apply {
+            registerTypeAdapter(RawgResponse::class.java, RawgDeserializer())
+        }.create()
+
+        return Retrofit.Builder()
+            .baseUrl(API_RAWG)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(httpClientBuilder.build())
+            .build().create(RawgApi::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun providesOpenLibraryApi(): OpenLibraryApi {
         val httpClientBuilder = OkHttpClient.Builder()
 
@@ -96,9 +121,19 @@ object SearchModule {
         }.create()
 
         return Retrofit.Builder()
-            .baseUrl("https://openlibrary.org")
+            .baseUrl(API_OPEN_LIBRARY)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(httpClientBuilder.build())
             .build().create(OpenLibraryApi::class.java)
     }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class PropertiesModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindsPropertiesReader(propertiesReaderImpl: PropertiesReaderImpl): PropertiesReader
+
 }

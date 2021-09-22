@@ -13,6 +13,7 @@ import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.Metadata
 import com.ruideraj.backlog.R
 import com.ruideraj.backlog.SearchResult
+import java.text.DateFormat
 
 class SearchAdapter(private val onItemClick: (SearchResult) -> Unit)
     : PagingDataAdapter<SearchResult, RecyclerView.ViewHolder>(SearchCallback()) {
@@ -27,6 +28,8 @@ class SearchAdapter(private val onItemClick: (SearchResult) -> Unit)
         val searchResult = getItem(position) ?: return
 
         vh.title.text = searchResult.title
+
+        vh.field2Icon.setImageResource(R.drawable.ic_event)
 
         Glide.with(vh.image.context)
             .load(searchResult.metadata.imageUrl)
@@ -43,14 +46,22 @@ class SearchAdapter(private val onItemClick: (SearchResult) -> Unit)
 
             }
             MediaType.SHOW -> { }
-            MediaType.GAME -> { }
+            MediaType.GAME -> {
+                val metadata = searchResult.metadata as Metadata.GameData
+
+                vh.field1Icon.setImageResource(R.drawable.ic_business)
+                vh.field1.text = metadata.developer
+
+                metadata.releaseDate?.let { releaseDate ->
+                    vh.field2.text = DateFormat.getDateInstance().format(releaseDate)
+                }
+            }
             MediaType.BOOK -> {
                 val metadata = searchResult.metadata as Metadata.BookData
 
                 vh.field1Icon.setImageResource(R.drawable.ic_person)
-                vh.field1.text = (metadata.author)
+                vh.field1.text = metadata.author
 
-                vh.field2Icon.setImageResource(R.drawable.ic_event)
                 metadata.yearPublished?.let { year ->
                     vh.field2.run { text = context.getString(R.string.search_field_published, year.value) }
                 }

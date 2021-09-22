@@ -5,6 +5,12 @@ object Constants {
     const val TABLE_NAME_LISTS = "lists"
     const val TABLE_NAME_ENTRIES = "entries"
 
+    const val PROPS_FILE_NAME = "config.properties"
+    const val PROP_RAWG_KEY = "rawgKey"
+
+    const val API_OPEN_LIBRARY = "https://openlibrary.org/"
+    const val API_RAWG = "https://api.rawg.io/api/"
+
     const val ARG_LIST = "list"
     const val ARG_ENTRY = "entry"
     const val ARG_MODE = "mode"
