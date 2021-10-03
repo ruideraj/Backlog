@@ -6,8 +6,11 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.ruideraj.backlog.BuildConfig
 import com.ruideraj.backlog.Constants
+import com.ruideraj.backlog.Constants.API_IGDB
 import com.ruideraj.backlog.Constants.API_OPEN_LIBRARY
 import com.ruideraj.backlog.Constants.API_RAWG
+import com.ruideraj.backlog.Constants.PROP_TWITCH_ID
+import com.ruideraj.backlog.Constants.PROP_TWITCH_TOKEN
 import com.ruideraj.backlog.data.*
 import dagger.Binds
 import dagger.Module
@@ -86,12 +89,7 @@ object SearchModule {
     fun providesRawgApi(): RawgApi {
         val httpClientBuilder = OkHttpClient.Builder()
 
-        if (BuildConfig.DEBUG) {
-            val loggingInterceptor = HttpLoggingInterceptor().apply {
-                setLevel(HttpLoggingInterceptor.Level.BASIC)
-            }
-            httpClientBuilder.addInterceptor(loggingInterceptor)
-        }
+        addDebugLogging(httpClientBuilder)
 
         val gson = GsonBuilder().apply {
             registerTypeAdapter(RawgResponse::class.java, RawgDeserializer())
@@ -106,15 +104,39 @@ object SearchModule {
 
     @Provides
     @Singleton
+    fun providesIgdbApi(propertiesReader: PropertiesReader): IgdbApi {
+        val httpClientBuilder = OkHttpClient.Builder()
+
+        addDebugLogging(httpClientBuilder)
+
+        httpClientBuilder.addInterceptor { chain ->
+            val originalRequest = chain.request()
+
+            val requestBuilder = originalRequest.newBuilder()
+                .header("Client-ID", propertiesReader.getProperty(PROP_TWITCH_ID))
+                .header("Authorization", "Bearer " + propertiesReader.getProperty(PROP_TWITCH_TOKEN))
+                .header("Accept", "application/json")
+
+            chain.proceed(requestBuilder.build())
+        }
+
+        val gson = GsonBuilder().apply {
+            registerTypeAdapter(IgdbResponse::class.java, IgdbDeserializer())
+        }.create()
+
+        return Retrofit.Builder()
+            .baseUrl(API_IGDB)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(httpClientBuilder.build())
+            .build().create(IgdbApi::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun providesOpenLibraryApi(): OpenLibraryApi {
         val httpClientBuilder = OkHttpClient.Builder()
 
-        if (BuildConfig.DEBUG) {
-            val loggingInterceptor = HttpLoggingInterceptor().apply {
-                setLevel(HttpLoggingInterceptor.Level.BASIC)
-            }
-            httpClientBuilder.addInterceptor(loggingInterceptor)
-        }
+        addDebugLogging(httpClientBuilder)
 
         val gson = GsonBuilder().apply {
             registerTypeAdapter(OpenLibraryResponse::class.java, OpenLibraryDeserializer())
@@ -125,6 +147,15 @@ object SearchModule {
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(httpClientBuilder.build())
             .build().create(OpenLibraryApi::class.java)
+    }
+
+    private fun addDebugLogging(httpClientBuilder: OkHttpClient.Builder) {
+        if (BuildConfig.DEBUG) {
+            val loggingInterceptor = HttpLoggingInterceptor().apply {
+                setLevel(HttpLoggingInterceptor.Level.BODY)
+            }
+            httpClientBuilder.addInterceptor(loggingInterceptor)
+        }
     }
 }
 

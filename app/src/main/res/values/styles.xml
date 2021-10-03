@@ -66,7 +66,7 @@
         <item name="android:layout_marginLeft">6dp</item>
         <item name="layout_constraintRight_toRightOf">parent</item>
         <item name="android:textSize">@dimen/search_item_field_text_size</item>
-        <item name="android:maxLines">1</item>
+        <item name="android:maxLines">2</item>
         <item name="android:ellipsize">end</item>
     </style>
 
