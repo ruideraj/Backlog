@@ -21,10 +21,6 @@ class IgdbDeserializer : JsonDeserializer<IgdbResponse> {
         val searchResults = jsonArray.map { element ->
             val gameJson = element.asJsonObject
 
-            if (gameJson.get("name").asString.contains("solarus", ignoreCase = true)) {
-                Log.d(TAG, "Solarus found")
-            }
-
             val developersJson = gameJson.get("involved_companies")
             val developers = if (developersJson != null && developersJson !is JsonNull) {
                  developersJson.asJsonArray.joinToString { company ->

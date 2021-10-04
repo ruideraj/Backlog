@@ -37,11 +37,11 @@ class SearchAdapter(private val onItemClick: (SearchResult) -> Unit)
         private val title: TextView = itemView.findViewById(R.id.search_item_title)
         private val image: ImageView = itemView.findViewById(R.id.search_item_image)
         private val field1: TextView = itemView.findViewById(R.id.search_item_field1)
-        private val field1Icon: ImageView = itemView.findViewById(R.id.search_item_field1_icon)
+        private val field1Icon: ImageView = itemView.findViewById(R.id.search_item_icon1)
         private val field2: TextView = itemView.findViewById(R.id.search_item_field2)
-        private val field2Icon: ImageView = itemView.findViewById(R.id.search_item_field2_icon)
+        private val field2Icon: ImageView = itemView.findViewById(R.id.search_item_icon2)
         private val field3: TextView = itemView.findViewById(R.id.search_item_field3)
-        private val field3Icon: ImageView = itemView.findViewById(R.id.search_item_field3_icon)
+        private val field3Icon: ImageView = itemView.findViewById(R.id.search_item_icon3)
 
         fun bind(searchResult: SearchResult) {
             title.text = searchResult.title

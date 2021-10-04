@@ -29,48 +29,66 @@
         tools:text="Result title" />
 
     <ImageView
-        android:id="@+id/search_item_field1_icon"
+        android:id="@+id/search_item_icon1"
         style="@style/SearchResultFieldIcon"
         app:layout_constraintStart_toEndOf="@id/search_item_image"
-        app:layout_constraintTop_toTopOf="@id/search_item_field1"
-        app:layout_constraintBottom_toBottomOf="@id/search_item_field1"
+        app:layout_constraintTop_toTopOf="@id/search_item_anchor1"
+        app:layout_constraintBottom_toBottomOf="@id/search_item_anchor1"
         app:srcCompat="@drawable/ic_people" />
 
     <TextView
         android:id="@+id/search_item_field1"
         style="@style/SearchResultTextField"
         app:layout_constraintTop_toBottomOf="@id/search_item_title"
-        app:layout_constraintLeft_toRightOf="@id/search_item_field1_icon"
-        tools:text="Creator text" />
+        app:layout_constraintLeft_toRightOf="@id/search_item_icon1"
+        tools:text="Creator text Creator text Creator text Creator text Creator text Creator text" />
+
+    <TextView
+        android:id="@+id/search_item_anchor1"
+        style="@style/SearchResultAnchor"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBaseline_toBaselineOf="@id/search_item_field1" />
 
     <ImageView
-        android:id="@+id/search_item_field2_icon"
+        android:id="@+id/search_item_icon2"
         style="@style/SearchResultFieldIcon"
         app:layout_constraintLeft_toRightOf="@id/search_item_image"
-        app:layout_constraintTop_toTopOf="@id/search_item_field2"
-        app:layout_constraintBottom_toBottomOf="@id/search_item_field2"
+        app:layout_constraintTop_toTopOf="@id/search_item_anchor2"
+        app:layout_constraintBottom_toBottomOf="@id/search_item_anchor2"
         tools:src="@drawable/ic_business"/>
 
     <TextView
         android:id="@+id/search_item_field2"
         style="@style/SearchResultTextField"
         app:layout_constraintTop_toBottomOf="@id/search_item_field1"
-        app:layout_constraintLeft_toRightOf="@id/search_item_field2_icon"
+        app:layout_constraintLeft_toRightOf="@id/search_item_icon2"
         tools:text="Creator text 2" />
 
+    <TextView
+        android:id="@+id/search_item_anchor2"
+        style="@style/SearchResultAnchor"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBaseline_toBaselineOf="@id/search_item_field2"/>
+
     <ImageView
-        android:id="@+id/search_item_field3_icon"
+        android:id="@+id/search_item_icon3"
         style="@style/SearchResultFieldIcon"
         app:layout_constraintLeft_toRightOf="@id/search_item_image"
-        app:layout_constraintTop_toTopOf="@id/search_item_field3"
-        app:layout_constraintBottom_toBottomOf="@id/search_item_field3"
+        app:layout_constraintTop_toTopOf="@id/search_item_anchor3"
+        app:layout_constraintBottom_toBottomOf="@id/search_item_anchor3"
         tools:src="@drawable/ic_event" />
 
     <TextView
         android:id="@+id/search_item_field3"
         style="@style/SearchResultTextField"
         app:layout_constraintTop_toBottomOf="@id/search_item_field2"
-        app:layout_constraintLeft_toRightOf="@id/search_item_field3_icon"
+        app:layout_constraintLeft_toRightOf="@id/search_item_icon3"
         tools:text="Release date" />
+
+    <TextView
+        android:id="@+id/search_item_anchor3"
+        style="@style/SearchResultAnchor"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBaseline_toBaselineOf="@id/search_item_field3"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
