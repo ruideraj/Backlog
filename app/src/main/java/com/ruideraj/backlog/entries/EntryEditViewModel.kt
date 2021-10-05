@@ -138,7 +138,7 @@ class EntryEditViewModel @Inject constructor(
         viewModelScope.launch { eventChannel.send(Event.GoToSearch) }
     }
 
-    fun setDate(year: Int, month: Int, day: Int) {
+    fun onDateSelected(year: Int, month: Int, day: Int) {
         date = Calendar.getInstance().apply {
             set(Calendar.YEAR, year)
             set(Calendar.MONTH, month)
@@ -231,11 +231,17 @@ class EntryEditViewModel @Inject constructor(
         when (metadata) {
             is Metadata.FilmData -> {
                 creator1 = metadata.director
-                releaseDate = metadata.releaseDate?.let { convertDateToString(it) }
+                if (metadata.releaseDate != null) {
+                    releaseDate = convertDateToString(metadata.releaseDate)
+                    date = Calendar.getInstance().apply { time = metadata.releaseDate }
+                }
             }
             is Metadata.GameData -> {
                 creator1 = metadata.developer
-                releaseDate = metadata.releaseDate?.let { convertDateToString(it) }
+                if (metadata.releaseDate != null) {
+                    releaseDate = convertDateToString(metadata.releaseDate)
+                    date = Calendar.getInstance().apply { time = metadata.releaseDate }
+                }
             }
             is Metadata.BookData -> {
                 creator1 = metadata.author
@@ -256,8 +262,8 @@ class EntryEditViewModel @Inject constructor(
                     creator2
                 )
             )
-            releaseDate?.let { _releaseDate.value = it }
         }
+        releaseDate?.let { _releaseDate.value = it }
     }
 
     private fun convertDateToString(date: Date): String {
