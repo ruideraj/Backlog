@@ -8,11 +8,9 @@ object Constants {
     const val PROPS_FILE_NAME = "config.properties"
     const val PROP_TWITCH_ID = "twitchClientId"
     const val PROP_TWITCH_TOKEN = "twitchAccessToken"
-    const val PROP_RAWG_KEY = "rawgKey"
 
     const val API_IGDB = "https://api.igdb.com/v4/"
     const val API_OPEN_LIBRARY = "https://openlibrary.org/"
-    const val API_RAWG = "https://api.rawg.io/api/"
 
     const val ARG_LIST = "list"
     const val ARG_ENTRY = "entry"

@@ -20,7 +20,7 @@ class IgdbPagingSource(private val igdbApi: IgdbApi,
             val fields = "fields name,involved_companies.company.name,first_release_date,cover.url;"
             val search = "search \"$query\";"
             val limit = "limit $pageSize;"
-            val offset ="offset ${page * pageSize};"
+            val offset = "offset ${page * pageSize};"
 
             val bodyText = fields + search + limit + offset
             val requestBody = bodyText.toRequestBody("text/plain".toMediaTypeOrNull())

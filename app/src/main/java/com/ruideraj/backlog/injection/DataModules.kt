@@ -8,7 +8,6 @@ import com.ruideraj.backlog.BuildConfig
 import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.Constants.API_IGDB
 import com.ruideraj.backlog.Constants.API_OPEN_LIBRARY
-import com.ruideraj.backlog.Constants.API_RAWG
 import com.ruideraj.backlog.Constants.PROP_TWITCH_ID
 import com.ruideraj.backlog.Constants.PROP_TWITCH_TOKEN
 import com.ruideraj.backlog.data.*
@@ -83,24 +82,6 @@ object SearchModule {
     @Provides
     @Singleton
     fun providesSearchRepository(searchRepositoryImpl: SearchRepositoryImpl): SearchRepository = searchRepositoryImpl
-
-    @Provides
-    @Singleton
-    fun providesRawgApi(): RawgApi {
-        val httpClientBuilder = OkHttpClient.Builder()
-
-        addDebugLogging(httpClientBuilder)
-
-        val gson = GsonBuilder().apply {
-            registerTypeAdapter(RawgResponse::class.java, RawgDeserializer())
-        }.create()
-
-        return Retrofit.Builder()
-            .baseUrl(API_RAWG)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(httpClientBuilder.build())
-            .build().create(RawgApi::class.java)
-    }
 
     @Provides
     @Singleton
