@@ -6,9 +6,11 @@ object Constants {
     const val TABLE_NAME_ENTRIES = "entries"
 
     const val PROPS_FILE_NAME = "config.properties"
+    const val PROP_RAPIDAPI_KEY = "rapidApi"
     const val PROP_TWITCH_ID = "twitchClientId"
     const val PROP_TWITCH_TOKEN = "twitchAccessToken"
 
+    const val API_MOVIES = "https://movie-database-imdb-alternative.p.rapidapi.com/"
     const val API_IGDB = "https://api.igdb.com/v4/"
     const val API_OPEN_LIBRARY = "https://openlibrary.org/"
 

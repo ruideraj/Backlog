@@ -31,6 +31,7 @@
     <string name="field_title">Title</string>
     <string name="field_image_url">Image URL</string>
     <string name="field_date_release">Release Date</string>
+    <string name="field_run_dates">Run Dates</string>
     <string name="field_date_first_aired">First Aired</string>
     <string name="field_date_publication">Publication Date</string>
     <string name="field_year_first_year_published">First Year Published</string>

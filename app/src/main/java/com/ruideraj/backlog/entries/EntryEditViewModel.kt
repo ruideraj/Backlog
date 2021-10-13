@@ -43,7 +43,7 @@ class EntryEditViewModel @Inject constructor(
 
     enum class ShownFields(val releaseDate: Int, val releaseYear: Int, val creator1: Int, val creator2: Int) {
         FILM(R.string.field_date_release, NOT_SHOWN, R.string.field_creator_director, NOT_SHOWN),
-        SHOW(R.string.field_date_first_aired, NOT_SHOWN, NOT_SHOWN, NOT_SHOWN),
+        SHOW(NOT_SHOWN, R.string.field_run_dates, NOT_SHOWN, NOT_SHOWN),
         GAME(R.string.field_date_release, NOT_SHOWN, R.string.field_creator_developer, NOT_SHOWN),
         BOOK(NOT_SHOWN, R.string.field_year_first_year_published, R.string.field_creator_author, NOT_SHOWN)
     }
@@ -154,22 +154,24 @@ class EntryEditViewModel @Inject constructor(
             return
         }
 
-        val yearVal = if (mediaType == MediaType.BOOK && !year.isNullOrBlank()) {
-            try {
-                Year.of(year.toInt())
-            } catch (e: NumberFormatException) {
-                _yearError.value = true;
-                return
-            }
-        } else {
-            null
-        }
-
         val metadata = when (mediaType) {
-            MediaType.FILM -> Metadata.FilmData(creator1, date?.time, imageUrl)
-            MediaType.SHOW -> Metadata.ShowData(date?.time, imageUrl)
+            MediaType.FILM -> Metadata.FilmData(creator1, date?.time, imageUrl, null)
+            MediaType.SHOW -> Metadata.ShowData(year, imageUrl, null)
             MediaType.GAME -> Metadata.GameData(creator1, date?.time, imageUrl)
-            MediaType.BOOK -> Metadata.BookData(creator1, yearVal, imageUrl)
+            MediaType.BOOK -> {
+                val yearVal = if (!year.isNullOrBlank()) {
+                    try {
+                        Year.of(year.toInt())
+                    } catch (e: NumberFormatException) {
+                        _yearError.value = true;
+                        return
+                    }
+                } else {
+                    null
+                }
+
+                Metadata.BookData(creator1, yearVal, imageUrl)
+            }
         }
 
         viewModelScope.launch {
@@ -222,8 +224,6 @@ class EntryEditViewModel @Inject constructor(
     }
 
     private fun setFieldData(title: String, metadata: Metadata) {
-        val imageUrl = metadata.imageUrl
-
         var creator1: String? = null
         var creator2: String? = null
         var releaseDate: String? = null
@@ -235,6 +235,9 @@ class EntryEditViewModel @Inject constructor(
                     releaseDate = convertDateToString(metadata.releaseDate)
                     date = Calendar.getInstance().apply { time = metadata.releaseDate }
                 }
+            }
+            is Metadata.ShowData -> {
+                releaseYear = metadata.runDates
             }
             is Metadata.GameData -> {
                 creator1 = metadata.developer
@@ -248,8 +251,6 @@ class EntryEditViewModel @Inject constructor(
                 releaseYear = metadata.yearPublished?.toString()
                 //creator2 = entry.metadata.publisher
             }
-            else -> {
-            }
         }
 
         viewModelScope.launch {
@@ -257,7 +258,7 @@ class EntryEditViewModel @Inject constructor(
                 Event.PopulateFields(
                     title,
                     releaseYear,
-                    imageUrl,
+                    metadata.imageUrl,
                     creator1,
                     creator2
                 )

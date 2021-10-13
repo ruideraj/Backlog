@@ -53,15 +53,26 @@ sealed class Metadata : Parcelable {
     abstract val imageUrl: String?
 
     @Parcelize
-    data class FilmData(val director: String?, val releaseDate: Date?, override val imageUrl: String?) :
-        Metadata()
+    data class FilmData(
+        val director: String?,
+        val releaseDate: Date?,
+        override val imageUrl: String?,
+        val imdbId: String?
+    ) : Metadata()
 
     @Parcelize
-    data class ShowData(val releaseDate: Date?, override val imageUrl: String?) : Metadata()
+    data class ShowData(
+        val runDates: String?,
+        override val imageUrl: String?,
+        val imdbID: String?
+    ) : Metadata()
 
     @Parcelize
-    data class GameData(val developer: String?, val releaseDate: Date?, override val imageUrl: String?) :
-        Metadata()
+    data class GameData(
+        val developer: String?,
+        val releaseDate: Date?,
+        override val imageUrl: String?
+    ) : Metadata()
 
     @Parcelize
     data class BookData(

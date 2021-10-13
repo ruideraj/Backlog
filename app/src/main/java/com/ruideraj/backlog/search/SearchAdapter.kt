@@ -15,6 +15,7 @@ import com.ruideraj.backlog.Metadata
 import com.ruideraj.backlog.R
 import com.ruideraj.backlog.SearchResult
 import java.text.DateFormat
+import java.text.SimpleDateFormat
 
 class SearchAdapter(private val onItemClick: (SearchResult) -> Unit)
     : PagingDataAdapter<SearchResult, RecyclerView.ViewHolder>(SearchCallback()) {
@@ -34,6 +35,11 @@ class SearchAdapter(private val onItemClick: (SearchResult) -> Unit)
     private class ViewHolder(itemView: View,
                              private val onClick: (searchResult: SearchResult) -> Unit)
         : RecyclerView.ViewHolder(itemView) {
+
+        companion object {
+            private val MOVIE_DATE_FORMAT = SimpleDateFormat("yyyy")
+        }
+
         private val title: TextView = itemView.findViewById(R.id.search_item_title)
         private val image: ImageView = itemView.findViewById(R.id.search_item_image)
         private val field1: TextView = itemView.findViewById(R.id.search_item_field1)
@@ -60,44 +66,69 @@ class SearchAdapter(private val onItemClick: (SearchResult) -> Unit)
 
             when (searchResult.type) {
                 MediaType.FILM -> {
+                    val filmData = searchResult.metadata as Metadata.FilmData
 
+                    val directorPresent = filmData.director != null
+                    field1Icon.isVisible = directorPresent
+                    field1.isVisible = directorPresent
+                    if (directorPresent) {
+                        field1Icon.setImageResource(R.drawable.ic_person)
+                        field1.text = filmData.director
+                    }
+
+                    val releaseDatePresent = filmData.releaseDate != null
+                    field2Icon.isVisible = releaseDatePresent
+                    field2.isVisible = releaseDatePresent
+                    if (releaseDatePresent) {
+                        field2.text = MOVIE_DATE_FORMAT.format(filmData.releaseDate)
+                    }
                 }
                 MediaType.SHOW -> {
+                    val showData = searchResult.metadata as Metadata.ShowData
 
+                    field1Icon.isVisible = false
+                    field1.isVisible = false
+
+                    val runDatesPresent = showData.runDates != null
+                    field2Icon.isVisible = runDatesPresent
+                    field2.isVisible = runDatesPresent
+                    if (runDatesPresent) {
+                        field2.text = showData.runDates
+                    }
                 }
                 MediaType.GAME -> {
-                    val metadata = searchResult.metadata as Metadata.GameData
+                    val gameData = searchResult.metadata as Metadata.GameData
 
-                    val developerPresent = metadata.developer != null
+                    val developerPresent = gameData.developer != null
                     field1Icon.isVisible = developerPresent
                     field1.isVisible = developerPresent
                     if (developerPresent) {
                         field1Icon.setImageResource(R.drawable.ic_business)
-                        field1.text = metadata.developer
+                        field1.text = gameData.developer
                     }
 
-                    val releaseDatePresent = metadata.releaseDate != null
+                    val releaseDatePresent = gameData.releaseDate != null
                     field2Icon.isVisible = releaseDatePresent
                     field2.isVisible = releaseDatePresent
                     if (releaseDatePresent) {
-                        field2.text = DateFormat.getDateInstance().format(metadata.releaseDate)
+                        field2.text = DateFormat.getDateInstance().format(gameData.releaseDate)
                     }
                 }
                 MediaType.BOOK -> {
-                    val metadata = searchResult.metadata as Metadata.BookData
+                    val bookData = searchResult.metadata as Metadata.BookData
 
-                    val authorPresent = metadata.author != null
+                    val authorPresent = bookData.author != null
                     field1Icon.isVisible = authorPresent
                     field1.isVisible = authorPresent
                     if (authorPresent) {
                         field1Icon.setImageResource(R.drawable.ic_person)
-                        field1.text = metadata.author
+                        field1.text = bookData.author
                     }
 
-                    val publishYearPresent = metadata.yearPublished != null
+                    val publishYearPresent = bookData.yearPublished != null
                     field2Icon.isVisible = publishYearPresent
                     field2.isVisible = publishYearPresent
-                    metadata.yearPublished?.let { year ->
+                    bookData.yearPublished?.let { year ->
                         field2.run { text = context.getString(R.string.search_field_published, year.value) }
                     }
                 }

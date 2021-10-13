@@ -7,7 +7,9 @@ import com.google.gson.GsonBuilder
 import com.ruideraj.backlog.BuildConfig
 import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.Constants.API_IGDB
+import com.ruideraj.backlog.Constants.API_MOVIES
 import com.ruideraj.backlog.Constants.API_OPEN_LIBRARY
+import com.ruideraj.backlog.Constants.PROP_RAPIDAPI_KEY
 import com.ruideraj.backlog.Constants.PROP_TWITCH_ID
 import com.ruideraj.backlog.Constants.PROP_TWITCH_TOKEN
 import com.ruideraj.backlog.data.*
@@ -82,6 +84,34 @@ object SearchModule {
     @Provides
     @Singleton
     fun providesSearchRepository(searchRepositoryImpl: SearchRepositoryImpl): SearchRepository = searchRepositoryImpl
+
+    @Provides
+    @Singleton
+    fun providesMoviesApi(propertiesReader: PropertiesReader): MoviesApi {
+        val httpClientBuilder = OkHttpClient.Builder()
+
+        addDebugLogging(httpClientBuilder)
+
+        httpClientBuilder.addInterceptor { chain ->
+            val originalRequest = chain.request()
+
+            val requestBuilder = originalRequest.newBuilder()
+                .header("x-rapidapi-host", "movie-database-imdb-alternative.p.rapidapi.com")
+                .header("x-rapidapi-key", propertiesReader.getProperty(PROP_RAPIDAPI_KEY))
+
+            chain.proceed(requestBuilder.build())
+        }
+
+        val gson = GsonBuilder().apply {
+            registerTypeAdapter(MoviesSearchResponse::class.java, MoviesDeserializer())
+        }.create()
+
+        return Retrofit.Builder()
+            .baseUrl(API_MOVIES)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(httpClientBuilder.build())
+            .build().create(MoviesApi::class.java)
+    }
 
     @Provides
     @Singleton

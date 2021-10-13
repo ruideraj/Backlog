@@ -58,3 +58,4 @@ class SearchViewModel @Inject constructor(private val searchRepository: SearchRe
 }
 
 const val PAGE_SIZE = 20
+const val MOVIES_PAGE_SIZE = 10
