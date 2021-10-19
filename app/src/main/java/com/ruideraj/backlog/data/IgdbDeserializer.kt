@@ -1,6 +1,5 @@
 package com.ruideraj.backlog.data
 
-import android.util.Log
 import com.google.gson.*
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.Metadata
@@ -21,24 +20,13 @@ class IgdbDeserializer : JsonDeserializer<IgdbResponse> {
         val searchResults = jsonArray.map { element ->
             val gameJson = element.asJsonObject
 
-            val developersJson = gameJson.get("involved_companies")
-            val developers = if (developersJson != null && developersJson !is JsonNull) {
-                 developersJson.asJsonArray.joinToString { company ->
-                     company.asJsonObject.get("company").asJsonObject.get("name").asString
-                 }
-            } else null
-
-            var releaseDate: Date? = null
-            val releaseDateJson = gameJson.get("first_release_date")
-            if (releaseDateJson != null && releaseDateJson !is JsonNull) {
-                releaseDate = Date(releaseDateJson.asLong * 1000)
+            val developers = gameJson.parseIfNotNull("involved_companies") {
+                it.asJsonArray.joinToString { company ->
+                    company.asJsonObject.get("company").asJsonObject.get("name").asString
+                }
             }
-
-            var imageUrl: String? = null
-            val coverJson = gameJson.get("cover")
-            if (coverJson != null && coverJson !is JsonNull) {
-                imageUrl = "https:" + coverJson.asJsonObject.get("url").asString
-            }
+            val releaseDate = gameJson.parseIfNotNull("first_release_date") { Date(it.asLong * 1000) }
+            val imageUrl = gameJson.parseIfNotNull("cover") { "https:" + it.asJsonObject.get("url").asString }
 
             SearchResult(MediaType.GAME,
                 gameJson.get("name").asString,

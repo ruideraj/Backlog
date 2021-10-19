@@ -8,7 +8,6 @@ import com.ruideraj.backlog.SearchResult
 import com.ruideraj.backlog.search.MOVIES_PAGE_SIZE
 import com.ruideraj.backlog.search.PAGE_SIZE
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 interface SearchRepository {
@@ -36,15 +35,6 @@ class SearchRepositoryImpl @Inject constructor(
                     pagingSourceFactory = { MoviesPagingSource(moviesApi, type, query) }
                 ).flow
             }
-            MediaType.BOOK -> {
-                Pager(
-                    config = PagingConfig(
-                        pageSize = PAGE_SIZE,
-                        enablePlaceholders = false
-                    ),
-                    pagingSourceFactory = { OpenLibraryPagingSource(openLibraryApi, query) }
-                ).flow
-            }
             MediaType.GAME -> {
                 Pager(
                     config = PagingConfig(
@@ -52,6 +42,15 @@ class SearchRepositoryImpl @Inject constructor(
                         enablePlaceholders = false
                     ),
                     pagingSourceFactory = { IgdbPagingSource(igdbApi, query) }
+                ).flow
+            }
+            MediaType.BOOK -> {
+                Pager(
+                    config = PagingConfig(
+                        pageSize = PAGE_SIZE,
+                        enablePlaceholders = false
+                    ),
+                    pagingSourceFactory = { OpenLibraryPagingSource(openLibraryApi, query) }
                 ).flow
             }
         }

@@ -20,17 +20,23 @@ class MoviesPagingSource(private val moviesApi: MoviesApi,
 
             val response = moviesApi.searchTitles(query, apiType, page)
 
-            val searchResults = response.results
-            val prevKey = if (page == 1) null else page - 1
-            val nextKey = if (searchResults.isEmpty()) {
-                null
+            if (response is MoviesSearchResponse.Error) {
+                LoadResult.Error(ApiException(response.message))
             } else {
-                // Initial load size may be larger than normal page size, due to PagingConfig.initialLoadSize
-                // so calculate next page based on current load size
-                page + (params.loadSize / MOVIES_PAGE_SIZE)
-            }
+                val success = response as MoviesSearchResponse.Success
 
-            LoadResult.Page(searchResults, prevKey, nextKey)
+                val searchResults = success.results
+                val prevKey = if (page == 1) null else page - 1
+                val nextKey = if (searchResults.isEmpty()) {
+                    null
+                } else {
+                    // Initial load size may be larger than normal page size, due to PagingConfig.initialLoadSize
+                    // so calculate next page based on current load size
+                    page + (params.loadSize / MOVIES_PAGE_SIZE)
+                }
+
+                LoadResult.Page(searchResults, prevKey, nextKey)
+            }
         } catch (e: IOException) {
             LoadResult.Error(e)
         } catch (e: HttpException) {

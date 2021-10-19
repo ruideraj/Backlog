@@ -103,7 +103,8 @@ object SearchModule {
         }
 
         val gson = GsonBuilder().apply {
-            registerTypeAdapter(MoviesSearchResponse::class.java, MoviesDeserializer())
+            registerTypeAdapter(MoviesSearchResponse::class.java, MoviesSearchDeserializer())
+            registerTypeAdapter(MoviesDetailsResponse::class.java, MoviesDetailsDeserializer())
         }.create()
 
         return Retrofit.Builder()
