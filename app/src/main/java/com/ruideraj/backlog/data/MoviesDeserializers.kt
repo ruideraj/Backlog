@@ -41,7 +41,7 @@ class MoviesDeserializer : JsonDeserializer<MoviesSearchResponse> {
 
                 val metadata = if (mediaType == MediaType.FILM) {
                     val releaseYear = DATE_FORMAT.parse(item.get("Year").asString)
-                    Metadata.FilmData(null , releaseYear, imageUrl, imdbId)
+                    Metadata.FilmData(null , null, releaseYear, imageUrl, imdbId)
                 } else {
                     val runDates = item.get("Year").asString
                     Metadata.ShowData(runDates, imageUrl, imdbId)
