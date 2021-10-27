@@ -74,11 +74,11 @@ class EntryEditFragment : Fragment() {
                 }
                 getItem(MENU_CONFIRM).setOnMenuItemClickListener {
                     viewModel.submit(
-                        titleField.getText(),
-                        yearField.getText(),
-                        imageField.getText(),
-                        creator1Field.getText(),
-                        creator2Field.getText()
+                        titleField.text,
+                        yearField.text,
+                        imageField.text,
+                        creator1Field.text,
+                        creator2Field.text
                     )
                     true
                 }
@@ -202,7 +202,7 @@ class EntryEditFragment : Fragment() {
             })
 
             it.releaseDate.observe(viewLifecycleOwner, { releaseDate ->
-                dateField.setText(releaseDate)
+                dateField.text = releaseDate
             })
 
             it.eventFlow.collectWhileStarted(viewLifecycleOwner) { event ->
@@ -211,11 +211,11 @@ class EntryEditFragment : Fragment() {
                         findNavController().navigateUp()
                     }
                     is EntryEditViewModel.Event.PopulateFields -> {
-                        titleField.setText(event.title)
-                        yearField.setText(event.releaseYear)
-                        imageField.setText(event.imageUrl)
-                        creator1Field.setText(event.creator1)
-                        creator2Field.setText(event.creator2)
+                        titleField.text = event.title
+                        yearField.text = event.releaseYear
+                        imageField.text = event.imageUrl
+                        creator1Field.text = event.creator1
+                        creator2Field.text = event.creator2
                     }
                     EntryEditViewModel.Event.GoToSearch -> {
                         val directions = EntryEditFragmentDirections.actionEntriesEditFragmentToSearchFragment(type)

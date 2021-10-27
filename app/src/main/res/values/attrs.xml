@@ -4,5 +4,6 @@
 
     <declare-styleable name="EntryField">
         <attr name="android:inputType"/>
+        <attr name="android:text"/>
     </declare-styleable>
 </resources>

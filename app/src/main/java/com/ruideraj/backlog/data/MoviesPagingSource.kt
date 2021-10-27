@@ -19,14 +19,18 @@ class MoviesPagingSource(private val moviesApi: MoviesApi,
             val apiType = if (type == MediaType.FILM) MoviesApi.TYPE_MOVIE else MoviesApi.TYPE_SERIES
 
             val response = moviesApi.searchTitles(query, apiType, page)
+            val prevKey = if (page == 1) null else page - 1
 
             if (response is MoviesSearchResponse.Error) {
-                LoadResult.Error(ApiException(response.message))
+                if (response.message.contains("not found")) {
+                    LoadResult.Page(listOf(), prevKey, null)
+                } else {
+                    LoadResult.Error(ApiException(response.message))
+                }
             } else {
                 val success = response as MoviesSearchResponse.Success
 
                 val searchResults = success.results
-                val prevKey = if (page == 1) null else page - 1
                 val nextKey = if (searchResults.isEmpty()) {
                     null
                 } else {

@@ -16,6 +16,10 @@ class EntryField @JvmOverloads constructor(
 
     private var entryEditText: TextInputEditText
 
+    var text: String?
+        set(value) = entryEditText.setText(value)
+        get() = entryEditText.editableText.toString()
+
     init {
         // Using getContext() instead of Context in constructor args because
         // using contructor Context sets a background on the TextInputEditText in the inflated layout.
@@ -28,11 +32,10 @@ class EntryField @JvmOverloads constructor(
         context.theme.obtainStyledAttributes(attrs, R.styleable.EntryField, 0, 0).apply {
             val inputType = getInteger(R.styleable.EntryField_android_inputType, InputType.TYPE_CLASS_TEXT)
             entryEditText.setRawInputType(inputType)
+
+            val text = getString(R.styleable.EntryField_android_text)
+            entryEditText.setText(text)
         }
     }
-
-    fun getText() = entryEditText.editableText.toString()
-
-    fun setText(string: String?) = entryEditText.setText(string)
 
 }
