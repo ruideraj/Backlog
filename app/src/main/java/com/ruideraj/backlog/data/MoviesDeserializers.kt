@@ -7,6 +7,7 @@ import com.ruideraj.backlog.SearchResult
 import com.ruideraj.backlog.data.MoviesApi.Companion.TYPE_MOVIE
 import com.ruideraj.backlog.data.MoviesApi.Companion.TYPE_SERIES
 import java.lang.reflect.Type
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -34,7 +35,7 @@ class MoviesSearchDeserializer : JsonDeserializer<MoviesSearchResponse> {
                     val mediaType = if (type == TYPE_MOVIE) MediaType.FILM else MediaType.SHOW
                     val imdbId = item.get("imdbID").asString
 
-                    val imageUrl = item.get("Poster").asString
+                    val imageUrl = item.parseIfNotNull("Poster") { getImageUrl(it) }
 
                     val metadata = if (mediaType == MediaType.FILM) {
                         val releaseYear = DATE_FORMAT.parse(item.get("Year").asString)
@@ -71,33 +72,46 @@ class MoviesDetailsDeserializer : JsonDeserializer<MoviesDetailsResponse> {
 
         val response = json.get("Response").asBoolean
 
-        var searchResult: SearchResult? = null
-        var error: String? = null
-        if (response) {
+        return if (response) {
             val title = json.get("Title").asString
             val type = json.get("Type").asString
             val mediaType = if (type == TYPE_MOVIE) MediaType.FILM else MediaType.SHOW
 
-            val imageUrl = json.parseIfNotNull("Poster") { it.asString }
+            val imageUrl = json.parseIfNotNull("Poster") { getImageUrl(it) }
             val imdbID = json.parseIfNotNull("imdbID") { it.asString }
 
             val metadata = if (mediaType == MediaType.FILM) {
                 val director = json.parseIfNotNull("Director") { it.asString }
                 val actors = json.parseIfNotNull("Actors") { it.asString }
-                val releaseDate = json.parseIfNotNull("Released") { DATE_FORMAT.parse(it.asString) }
+                val releaseDate = json.parseIfNotNull("Released") {
+                    try {
+                        DATE_FORMAT.parse(it.asString)
+                    } catch (e: ParseException) {
+                        null
+                    }
+                }
                 Metadata.FilmData(director, actors, releaseDate, imageUrl, imdbID)
             } else {
                 val runDates = json.parseIfNotNull("Year") { it.asString }
                 Metadata.ShowData(runDates, imageUrl, imdbID)
             }
 
-            SearchResult(mediaType, title, metadata)
+            MoviesDetailsResponse.Success(SearchResult(mediaType, title, metadata))
         } else {
-            error = json.parseIfNotNull("Error") { it.asString }
+            val message = json.get("Error").asString
+            MoviesDetailsResponse.Error(message)
         }
-
-        return MoviesDetailsResponse(searchResult, error, response)
     }
 }
 
-data class MoviesDetailsResponse(val searchResult: SearchResult?, val error: String?, val response: Boolean)
+sealed class MoviesDetailsResponse {
+    data class Success(val searchResult: SearchResult) : MoviesDetailsResponse()
+    data class Error(val message: String) : MoviesDetailsResponse()
+}
+
+private fun getImageUrl(jsonElement: JsonElement) : String? {
+    val url = jsonElement.asString
+    return if (url.equals("n/a", true)) {
+        null
+    } else url
+}

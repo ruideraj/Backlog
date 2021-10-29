@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.observe
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.R
+import com.ruideraj.backlog.SearchResult
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -105,10 +107,24 @@ class SearchFragment : Fragment() {
                                     navigateUp()
                                 }
                             }
+                            is SearchViewModel.Event.ShowFilmDetails -> {
+                                val directions = SearchFragmentDirections
+                                    .actionSearchFragmentToSearchDetailsDialog(event.searchResult)
+                                findNavController().navigate(directions)
+                            }
                         }
                     }
                 }
             }
+        }
+
+        findNavController().apply {
+            val selfBackStackEntry = getBackStackEntry(R.id.searchFragment)
+            selfBackStackEntry.savedStateHandle.getLiveData<SearchResult>(Constants.ARG_SEARCH_RESULT)
+                .observe(viewLifecycleOwner) { searchResult ->
+                    selfBackStackEntry.savedStateHandle.remove<SearchResult>(Constants.ARG_SEARCH_RESULT)
+                    viewModel.onConfirmDetails(searchResult)
+                }
         }
     }
 }

@@ -42,7 +42,7 @@ class EntryEditViewModel @Inject constructor(
     }
 
     enum class ShownFields(val releaseDate: Int, val releaseYear: Int, val creator1: Int, val creator2: Int) {
-        FILM(R.string.field_date_release, NOT_SHOWN, R.string.field_creator_director, NOT_SHOWN),
+        FILM(R.string.field_date_release, NOT_SHOWN, R.string.field_creator_director, R.string.field_creator_actors),
         SHOW(NOT_SHOWN, R.string.field_run_dates, NOT_SHOWN, NOT_SHOWN),
         GAME(R.string.field_date_release, NOT_SHOWN, R.string.field_creator_developer, NOT_SHOWN),
         BOOK(NOT_SHOWN, R.string.field_year_first_year_published, R.string.field_creator_author, NOT_SHOWN)
@@ -148,14 +148,14 @@ class EntryEditViewModel @Inject constructor(
         }
     }
 
-    fun submit(title: String, year: String?, imageUrl: String?, creator1: String?, creator2: String?) {
-        if (title.isBlank()) {
+    fun submit(title: String?, year: String?, imageUrl: String?, creator1: String?, creator2: String?) {
+        if (title.isNullOrBlank()) {
             _titleError.value = true
             return
         }
 
         val metadata = when (mediaType) {
-            MediaType.FILM -> Metadata.FilmData(creator1, date?.time, imageUrl, null)
+            MediaType.FILM -> Metadata.FilmData(creator1, creator2, date?.time, imageUrl, null)
             MediaType.SHOW -> Metadata.ShowData(year, imageUrl, null)
             MediaType.GAME -> Metadata.GameData(creator1, date?.time, imageUrl)
             MediaType.BOOK -> {
@@ -231,6 +231,7 @@ class EntryEditViewModel @Inject constructor(
         when (metadata) {
             is Metadata.FilmData -> {
                 creator1 = metadata.director
+                creator2 = metadata.actors
                 if (metadata.releaseDate != null) {
                     releaseDate = convertDateToString(metadata.releaseDate)
                     date = Calendar.getInstance().apply { time = metadata.releaseDate }

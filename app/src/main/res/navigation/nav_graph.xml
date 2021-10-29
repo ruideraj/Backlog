@@ -66,6 +66,21 @@
         <argument
             android:name="showAppBar"
             android:defaultValue="false"/>
+        <action
+            android:id="@+id/action_searchFragment_to_searchDetailsDialog"
+            app:destination="@id/searchDetailsDialog" />
     </fragment>
+
+    <dialog
+        android:id="@+id/searchDetailsDialog"
+        android:name="com.ruideraj.backlog.search.SearchDetailsDialog"
+        android:label="dialog_search_details"
+        tools:layout="@layout/dialog_search_details">
+        <argument android:name="searchResult"
+            app:argType="com.ruideraj.backlog.SearchResult" />
+        <argument
+            android:name="showAppBar"
+            android:defaultValue="false"/>
+    </dialog>
 
 </navigation>

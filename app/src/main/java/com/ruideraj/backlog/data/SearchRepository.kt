@@ -5,6 +5,8 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.SearchResult
+import com.ruideraj.backlog.data.MoviesApi.Companion.TYPE_MOVIE
+import com.ruideraj.backlog.data.MoviesApi.Companion.TYPE_SERIES
 import com.ruideraj.backlog.search.MOVIES_PAGE_SIZE
 import com.ruideraj.backlog.search.PAGE_SIZE
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +14,7 @@ import javax.inject.Inject
 
 interface SearchRepository {
     fun getTitleSearchStream(type: MediaType, query: String): Flow<PagingData<SearchResult>>
+    suspend fun getDetails(inputResult: SearchResult): SearchResult
 }
 
 class SearchRepositoryImpl @Inject constructor(
@@ -53,6 +56,26 @@ class SearchRepositoryImpl @Inject constructor(
                     pagingSourceFactory = { OpenLibraryPagingSource(openLibraryApi, query) }
                 ).flow
             }
+        }
+    }
+
+    override suspend fun getDetails(inputResult: SearchResult): SearchResult {
+        val mediaType = inputResult.type
+
+        if (mediaType == MediaType.GAME || mediaType == MediaType.BOOK) {
+            throw IllegalArgumentException("Invalid types for Movies API")
+        }
+
+        val type = if (mediaType == MediaType.FILM) TYPE_MOVIE else TYPE_SERIES
+        val apiId = inputResult.metadata.apiId
+            ?: throw IllegalArgumentException("Must have API Id to fetch details")
+
+        val response = moviesApi.getDetailsById(type, apiId)
+
+        if (response is MoviesDetailsResponse.Error) {
+            throw ApiException(response.message)
+        } else {
+            return (response as MoviesDetailsResponse.Success).searchResult
         }
     }
 }

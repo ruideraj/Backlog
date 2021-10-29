@@ -18,6 +18,7 @@ class SearchViewModel @Inject constructor(private val searchRepository: SearchRe
 
     sealed class Event {
         data class ReturnToEdit(val searchResult: SearchResult) : Event()
+        data class ShowFilmDetails(val searchResult: SearchResult) : Event()
     }
 
     companion object {
@@ -51,6 +52,16 @@ class SearchViewModel @Inject constructor(private val searchRepository: SearchRe
     }
 
     fun onClickSearchResult(searchResult: SearchResult) {
+        viewModelScope.launch {
+            if (searchResult.type == MediaType.FILM) {
+                eventChannel.send(Event.ShowFilmDetails(searchResult))
+            } else {
+                eventChannel.send(Event.ReturnToEdit(searchResult))
+            }
+        }
+    }
+
+    fun onConfirmDetails(searchResult: SearchResult) {
         viewModelScope.launch {
             eventChannel.send(Event.ReturnToEdit(searchResult))
         }

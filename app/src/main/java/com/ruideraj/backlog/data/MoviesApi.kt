@@ -18,4 +18,7 @@ interface MoviesApi {
                              @Query("type") type: String,
                              @Query("page") page: Int = 1): MoviesSearchResponse
 
+    @GET("?r=json")
+    suspend fun getDetailsById(@Query("type") type: String, @Query("i") id: String): MoviesDetailsResponse
+
 }
