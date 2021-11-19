@@ -9,7 +9,7 @@ insert_lists_stmt = 'INSERT INTO lists (title, icon, position) '\
               'VALUES (:title, :icon, :position)'
 check_list_list_rows_stmt = 'SELECT COUNT(*) FROM lists'
 
-list_rows = 100
+list_rows = 5
 
 create_entries_stmt = 'CREATE TABLE IF NOT EXISTS `entries` '\
                     '(`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, '\
@@ -23,7 +23,7 @@ create_entries_stmt = 'CREATE TABLE IF NOT EXISTS `entries` '\
 					
 insert_entries_stmt = 'INSERT INTO entries (listId, title, type, position, metadata, status) '\
               'VALUES (:listId, :title, :type, :position, :metadata, :status)'
-			  
+
 entry_rows = 10
 
 db_filename = 'app\\src\\main\\assets\\database\\testDb' + str(list_rows) + '.db'

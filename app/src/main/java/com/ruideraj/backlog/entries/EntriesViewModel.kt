@@ -72,18 +72,6 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
         }
     }
 
-    fun onScrollUp() {
-        if (_selectMode.value != true) {
-            _showCreateMenu.value = true
-        }
-    }
-
-    fun onScrollDown() {
-        if (_selectMode.value != true) {
-            _showCreateMenu.value = false
-        }
-    }
-
     fun onClickEntry(position: Int) {
         _entries.value?.let {
             val entry = it[position]

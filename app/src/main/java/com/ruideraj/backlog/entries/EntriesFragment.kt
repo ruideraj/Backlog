@@ -132,12 +132,6 @@ class EntriesFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backPressedCallback)
 
-        recycler.addOnScrollListener(UpDownScrollListener({
-            viewModel.onScrollUp()
-        }, {
-            viewModel.onScrollDown()
-        }))
-
         viewModel.let {
             it.title.observe(viewLifecycleOwner) { title ->
                 toolbar.title = title
