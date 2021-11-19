@@ -26,7 +26,6 @@ class SearchDetailsViewModel @Inject constructor(private val searchRepository: S
 
     sealed class State {
         object Loading : State()
-//        data class Loaded(val result: SearchResult) : State()
         data class Loaded(val label1: String,
                           val label2: String,
                           val label3: String,

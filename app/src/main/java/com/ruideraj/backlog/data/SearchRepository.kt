@@ -62,7 +62,7 @@ class SearchRepositoryImpl @Inject constructor(
     override suspend fun getDetails(inputResult: SearchResult): SearchResult {
         val mediaType = inputResult.type
 
-        if (mediaType == MediaType.GAME || mediaType == MediaType.BOOK) {
+        if (!(mediaType == MediaType.FILM || mediaType == MediaType.SHOW)) {
             throw IllegalArgumentException("Invalid types for Movies API")
         }
 

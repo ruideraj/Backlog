@@ -46,7 +46,9 @@ class SearchDetailsDialog : DialogFragment() {
             setNegativeButton(R.string.cancel) { _, _ ->
                 // Do nothing, dialog should be automatically dismissed
             }
-        }.create()
+        }.create().apply {
+            setCanceledOnTouchOutside(false)
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) = createdView
@@ -85,9 +87,9 @@ class SearchDetailsDialog : DialogFragment() {
 
                 when (state) {
                     is SearchDetailsViewModel.State.Loaded -> {
-                        field1.hint = state.field1
-                        field2.hint = state.field2
-                        field3.hint = state.field3
+                        field1.hint = state.label1
+                        field2.hint = state.label2
+                        field3.hint = state.label3
 
                         field1.text = state.field1
                         field2.text = state.field2
