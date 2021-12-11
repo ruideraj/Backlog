@@ -15,7 +15,6 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.google.android.material.textfield.TextInputEditText
 import com.ruideraj.backlog.*
 import com.ruideraj.backlog.util.EntryField
 import com.ruideraj.backlog.util.collectWhileStarted
@@ -58,7 +57,7 @@ class EntryEditFragment : Fragment() {
         val type = args.getSerializable(Constants.ARG_TYPE) as MediaType
         val entry = args.getParcelable(Constants.ARG_ENTRY) as Entry?
 
-        viewModel.initialize(listId, type, entry)
+        viewModel.initialize(listId, type, entry, savedInstanceState != null)
 
         toolbar = view.findViewById<Toolbar>(R.id.entry_toolbar).apply {
             setNavigationOnClickListener { viewModel.onClickNavigationIcon() }
@@ -120,7 +119,7 @@ class EntryEditFragment : Fragment() {
         creator2Field = view.findViewById(R.id.entry_field_creator2)
 
         viewModel.let {
-            it.title.observe(viewLifecycleOwner, { title ->
+            it.screenTitle.observe(viewLifecycleOwner, { title ->
                 toolbar.title = title
             })
 
@@ -232,6 +231,16 @@ class EntryEditFragment : Fragment() {
                     viewModel.onSearchResultReceived(searchResult)
                 }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val title = titleField.text
+        val year = yearField.text
+        val imageUrl = imageField.text
+        val creator1 = creator1Field.text
+        val creator2 = creator2Field.text
+        viewModel.saveState(title, year, imageUrl, creator1, creator2)
     }
 
     private fun setFieldVisibilityAndHint(entryField: EntryField, hintTextRes: Int) {

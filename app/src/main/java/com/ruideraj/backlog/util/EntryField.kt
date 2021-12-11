@@ -4,7 +4,6 @@ import android.content.Context
 import android.text.InputType
 import android.util.AttributeSet
 import androidx.annotation.AttrRes
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.ruideraj.backlog.R
 

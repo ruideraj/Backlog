@@ -1,9 +1,6 @@
 package com.ruideraj.backlog.entries
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.ruideraj.backlog.*
 import com.ruideraj.backlog.data.EntriesRepository
 import com.ruideraj.backlog.util.Strings
@@ -21,18 +18,27 @@ import javax.inject.Inject
 @HiltViewModel
 class EntryEditViewModel @Inject constructor(
     private val entriesRepository: EntriesRepository,
-    private val strings: Strings
+    private val strings: Strings,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     companion object {
         private const val TAG = "EntryEditViewModel"
         private const val NOT_SHOWN = -1
+
+        private const val ARG_EDIT_MODE = "editMode"
+        private const val ARG_TITLE = "title"
+        private const val ARG_RELEASE_DATE = "date"
+        private const val ARG_YEAR = "year"
+        private const val ARG_IMAGE_URL = "imageUrl"
+        private const val ARG_CREATOR1 = "creator1"
+        private const val ARG_CREATOR2 = "creator2"
     }
 
     sealed class Event {
         object GoBackToList : Event()
         data class PopulateFields(
-            val title: String,
+            val title: String?,
             val releaseYear: String?,
             val imageUrl: String?,
             val creator1: String?,
@@ -53,8 +59,8 @@ class EntryEditViewModel @Inject constructor(
     private lateinit var mediaType: MediaType
     private var existingEntry: Entry? = null
 
-    private val _title = MutableLiveData<String>()
-    val title: LiveData<String> = _title
+    private val _screenTitle = MutableLiveData<String>()
+    val screenTitle: LiveData<String> = _screenTitle
 
     private val _editMode = MutableLiveData(true)
     val editMode: LiveData<Boolean> = _editMode
@@ -68,9 +74,10 @@ class EntryEditViewModel @Inject constructor(
     private val _fields = MutableLiveData<ShownFields>()
     val fields: LiveData<ShownFields> = _fields
 
-    private var date: Calendar? = null
-    private val _releaseDate = MutableLiveData<String>()
-    val releaseDate: LiveData<String> = _releaseDate
+    var date: Calendar? = null
+        private set
+    private val _releaseDateText = MutableLiveData<String>()
+    val releaseDate: LiveData<String> = _releaseDateText
 
     private val _titleError = MutableLiveData(false)
     val titleError: LiveData<Boolean> = _titleError
@@ -89,13 +96,12 @@ class EntryEditViewModel @Inject constructor(
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow = eventChannel.receiveAsFlow()
 
-    fun initialize(listId: Long, type: MediaType, entry: Entry? = null) {
-        if (initialized) return
-
+    fun initialize(listId: Long, type: MediaType, entry: Entry? = null, recreating: Boolean) {
         this.listId = listId
         if (listId < 0) throw IllegalArgumentException("Must include valid list id")
 
         mediaType = type
+        existingEntry = entry
 
         _fields.value = when (type) {
             MediaType.FILM -> ShownFields.FILM
@@ -104,11 +110,8 @@ class EntryEditViewModel @Inject constructor(
             MediaType.BOOK -> ShownFields.BOOK
         }
 
-        if (entry != null) {
-            _title.value = strings.getString(R.string.entry_view)
-            existingEntry = entry
-            setFieldData(entry.title, entry.metadata)
-            setEditMode(false)
+        _screenTitle.value = if (entry != null) {
+            strings.getString(R.string.entry_view)
         } else {
             val typeRes = when (type) {
                 MediaType.FILM -> R.string.film
@@ -116,10 +119,50 @@ class EntryEditViewModel @Inject constructor(
                 MediaType.GAME -> R.string.game
                 MediaType.BOOK -> R.string.book
             }
-            _title.value = strings.getString(R.string.entry_title, strings.getString(typeRes))
+            strings.getString(R.string.entry_title, strings.getString(typeRes))
         }
 
-        initialized = true
+        if (recreating) {
+            savedStateHandle.run {
+                val editMode = get<Boolean>(ARG_EDIT_MODE)
+                val title = get<String>(ARG_TITLE)
+                val releaseDate = get<Calendar>(ARG_RELEASE_DATE)
+                val year = get<String>(ARG_YEAR)
+                val imageUrl = get<String>(ARG_IMAGE_URL)
+                val creator1 = get<String>(ARG_CREATOR1)
+                val creator2 = get<String>(ARG_CREATOR2)
+
+                setEditMode(editMode == true)
+                date = releaseDate
+                _releaseDateText.value = releaseDate?.let { convertDateToString(it.time) }
+                viewModelScope.launch {
+                    eventChannel.send(
+                        Event.PopulateFields(
+                            title,
+                            year,
+                            imageUrl,
+                            creator1,
+                            creator2
+                        )
+                    )
+                }
+            }
+        } else if (entry != null) {
+            setFieldData(entry.title, entry.metadata)
+            setEditMode(false)
+        }
+    }
+
+    fun saveState(title: String?, year: String?, imageUrl: String?, creator1: String?, creator2: String?) {
+        savedStateHandle.run {
+            set(ARG_EDIT_MODE, _editMode.value)
+            set(ARG_TITLE, title)
+            set(ARG_RELEASE_DATE, date)
+            set(ARG_YEAR, year)
+            set(ARG_IMAGE_URL, imageUrl)
+            set(ARG_CREATOR1, creator1)
+            set(ARG_CREATOR2, creator2)
+        }
     }
 
     fun onClickEditMode() {
@@ -129,6 +172,7 @@ class EntryEditViewModel @Inject constructor(
     fun onClickNavigationIcon() {
         if (existingEntry != null && _editMode.value == true) {
             setEditMode(false)
+            existingEntry?.let { setFieldData(it.title, it.metadata) }
         } else {
             viewModelScope.launch { eventChannel.send(Event.GoBackToList) }
         }
@@ -144,7 +188,7 @@ class EntryEditViewModel @Inject constructor(
             set(Calendar.MONTH, month)
             set(Calendar.DAY_OF_MONTH, day)
 
-            _releaseDate.value = convertDateToString(time)
+            _releaseDateText.value = convertDateToString(time)
         }
     }
 
@@ -265,7 +309,7 @@ class EntryEditViewModel @Inject constructor(
                 )
             )
         }
-        releaseDate?.let { _releaseDate.value = it }
+        releaseDate?.let { _releaseDateText.value = it }
     }
 
     private fun convertDateToString(date: Date): String {
