@@ -14,11 +14,9 @@ class EntryField @JvmOverloads constructor(
     @AttrRes defStyleAttr: Int = R.attr.entryFieldStyle)
     : TextInputLayout(context, attrs, defStyleAttr) {
 
-    private var entryEditText: TextInputEditText
-
     var text: String?
-        set(value) = entryEditText.setText(value)
-        get() = entryEditText.editableText.toString()
+        set(value) = editText!!.setText(value)
+        get() = editText!!.editableText.toString()
 
     init {
         // Using getContext() instead of Context in constructor args because
@@ -27,14 +25,13 @@ class EntryField @JvmOverloads constructor(
         // allowing for the custom styling defined through defStyleAttr.
         // This behavior is determined by TextInputLayout.shouldUseEditTextBackgroundForBoxBackground()
         inflate(getContext(), R.layout.view_entry_field, this)
-        entryEditText = findViewById(R.id.entry_field_edit)
 
         context.theme.obtainStyledAttributes(attrs, R.styleable.EntryField, 0, 0).apply {
             val inputType = getInteger(R.styleable.EntryField_android_inputType, InputType.TYPE_CLASS_TEXT)
-            entryEditText.setRawInputType(inputType)
+            editText!!.setRawInputType(inputType)
 
             val text = getString(R.styleable.EntryField_android_text)
-            entryEditText.setText(text)
+            editText!!.setText(text)
         }
     }
 

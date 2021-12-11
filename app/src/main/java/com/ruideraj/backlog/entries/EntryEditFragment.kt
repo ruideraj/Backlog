@@ -99,7 +99,7 @@ class EntryEditFragment : Fragment() {
         }
 
         dateField = view.findViewById<EntryField>(R.id.entry_field_date).apply {
-            findViewById<TextInputEditText>(R.id.entry_field_edit).apply {
+            editText?.apply {
                 isClickable = true
                 isLongClickable = false
                 isFocusableInTouchMode = false
