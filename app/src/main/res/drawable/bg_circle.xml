@@ -3,5 +3,5 @@
     android:shape="oval">
     <stroke
         android:width="@dimen/image_circle_stroke_width"
-        android:color="@color/color_control_normal" />
+        android:color="?attr/colorControlNormal" />
 </shape>

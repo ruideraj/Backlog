@@ -6,14 +6,4 @@ import androidx.appcompat.app.AppCompatDelegate
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class BacklogApp : Application() {
-
-    override fun onCreate() {
-        super.onCreate()
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-        }
-    }
-
-}
+class BacklogApp : Application()
