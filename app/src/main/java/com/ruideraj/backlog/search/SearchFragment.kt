@@ -4,13 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -85,13 +88,34 @@ class SearchFragment : Fragment() {
             header = SearchLoadStateAdapter { adapter.retry() },
             footer = SearchLoadStateAdapter { adapter.retry() }
         )
+        val progressBar = view.findViewById<ProgressBar>(R.id.search_progress)
+        val loadMessage = view.findViewById<TextView>(R.id.search_message)
+        val retryButton = view.findViewById<Button>(R.id.search_retry).apply {
+            setOnClickListener { adapter.retry() }
+        }
 
         viewModel.let {
+            it.uiVisibility.observe(viewLifecycleOwner, { uiState ->
+                recycler.isVisible = uiState.isListVisible
+                progressBar.isVisible = uiState.isProgressVisible
+                loadMessage.isVisible = uiState.isMessageVisible
+                retryButton.isVisible = uiState.isRetryButtonVisible
+                loadMessage.text = uiState.loadMessage
+            })
+
             lifecycleScope.launch {
                 repeatOnLifecycle(Lifecycle.State.STARTED) {
                     it.searchResultsFlow.collectLatest { results ->
                         adapter.submitData(results)
                         recycler.scrollToPosition(0)
+                    }
+                }
+            }
+
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    adapter.loadStateFlow.collect { loadState ->
+                        viewModel.onLoadStateChanged(loadState, adapter.itemCount)
                     }
                 }
             }

@@ -18,9 +18,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="@dimen/search_load_text_margin"
         android:textAlignment="center"
-        android:textSize="20sp"
+        android:textSize="@dimen/search_load_text_size"
         android:textColor="?android:attr/textColorPrimary"
         android:text="@string/search_error"/>
 

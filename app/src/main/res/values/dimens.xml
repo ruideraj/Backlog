@@ -21,5 +21,7 @@
 
     <dimen name="search_item_title_size">20sp</dimen>
     <dimen name="search_item_field_text_size">16sp</dimen>
+    <dimen name="search_load_text_size">20sp</dimen>
+    <dimen name="search_load_text_margin">8dp</dimen>
 
 </resources>
