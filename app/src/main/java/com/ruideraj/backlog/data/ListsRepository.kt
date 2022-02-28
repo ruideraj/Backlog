@@ -1,14 +1,16 @@
- package com.ruideraj.backlog.data
+package com.ruideraj.backlog.data
 
 import com.ruideraj.backlog.BacklogList
 import com.ruideraj.backlog.ListIcon
+import com.ruideraj.backlog.data.local.ListItem
+import com.ruideraj.backlog.data.local.ListsDao
 import com.ruideraj.backlog.injection.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
- interface ListsRepository {
+interface ListsRepository {
     fun loadLists(): Flow<List<ListItem>>
     suspend fun createList(title: String, icon: ListIcon)
     suspend fun editList(listId: Long, title: String, icon: ListIcon)

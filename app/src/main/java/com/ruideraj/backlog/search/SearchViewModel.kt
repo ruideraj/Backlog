@@ -14,6 +14,8 @@ import com.ruideraj.backlog.SearchResult
 import com.ruideraj.backlog.data.SearchRepository
 import com.ruideraj.backlog.util.Strings
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

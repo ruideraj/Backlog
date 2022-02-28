@@ -102,6 +102,7 @@
             "columnNames": [
               "listId"
             ],
+            "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_entries_listId` ON `${TABLE_NAME}` (`listId`)"
           }
         ],

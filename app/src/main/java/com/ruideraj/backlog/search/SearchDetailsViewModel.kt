@@ -8,7 +8,7 @@ import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.Metadata
 import com.ruideraj.backlog.R
 import com.ruideraj.backlog.SearchResult
-import com.ruideraj.backlog.data.ApiException
+import com.ruideraj.backlog.data.remote.ApiException
 import com.ruideraj.backlog.data.SearchRepository
 import com.ruideraj.backlog.util.Strings
 import dagger.hilt.android.lifecycle.HiltViewModel

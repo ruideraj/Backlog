@@ -1,5 +1,7 @@
-package com.ruideraj.backlog.data
+package com.ruideraj.backlog.data.remote
 
+import com.ruideraj.backlog.data.remote.MoviesDetailsResponse
+import com.ruideraj.backlog.data.remote.MoviesSearchResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

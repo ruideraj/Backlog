@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ruideraj.backlog.BacklogList
 import com.ruideraj.backlog.ListIcon
-import com.ruideraj.backlog.data.ListItem
+import com.ruideraj.backlog.data.local.ListItem
 import com.ruideraj.backlog.data.ListsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel

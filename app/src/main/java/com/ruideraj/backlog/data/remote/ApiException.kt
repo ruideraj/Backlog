@@ -1,3 +1,3 @@
-package com.ruideraj.backlog.data
+package com.ruideraj.backlog.data.remote
 
 class ApiException(message: String) : Exception(message)

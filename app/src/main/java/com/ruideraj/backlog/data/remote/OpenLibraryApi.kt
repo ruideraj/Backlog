@@ -1,5 +1,6 @@
-package com.ruideraj.backlog.data
+package com.ruideraj.backlog.data.remote
 
+import com.ruideraj.backlog.data.remote.OpenLibraryResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

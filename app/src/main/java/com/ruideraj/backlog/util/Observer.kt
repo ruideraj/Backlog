@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.collect
 
 /**
  * Taken from: https://github.com/psteiger/flow-lifecycle-observer
- * Originating project has minSdk 21 while this one has minSdk 19
  */
 
 /**

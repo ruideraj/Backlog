@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.ruideraj.backlog.ListIcon
 import com.ruideraj.backlog.R
-import com.ruideraj.backlog.data.ListItem
+import com.ruideraj.backlog.data.local.ListItem
 import com.ruideraj.backlog.util.DragDropListAdapter
 
 class ListsAdapter(private val viewModel: ListsViewModel) : DragDropListAdapter<ListItem,

@@ -1,4 +1,4 @@
-package com.ruideraj.backlog.data
+package com.ruideraj.backlog.data.remote
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState

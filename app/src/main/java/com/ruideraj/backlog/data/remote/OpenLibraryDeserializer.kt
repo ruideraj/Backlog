@@ -1,4 +1,4 @@
-package com.ruideraj.backlog.data
+package com.ruideraj.backlog.data.remote
 
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer

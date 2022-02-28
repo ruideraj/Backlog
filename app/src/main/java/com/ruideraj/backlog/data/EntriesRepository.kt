@@ -4,6 +4,7 @@ import com.ruideraj.backlog.Entry
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.Metadata
 import com.ruideraj.backlog.Status
+import com.ruideraj.backlog.data.local.EntriesDao
 import com.ruideraj.backlog.injection.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow

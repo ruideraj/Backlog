@@ -13,6 +13,8 @@ import com.ruideraj.backlog.Constants.PROP_RAPIDAPI_KEY
 import com.ruideraj.backlog.Constants.PROP_TWITCH_ID
 import com.ruideraj.backlog.Constants.PROP_TWITCH_TOKEN
 import com.ruideraj.backlog.data.*
+import com.ruideraj.backlog.data.local.AppDatabase
+import com.ruideraj.backlog.data.remote.*
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

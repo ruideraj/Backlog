@@ -5,8 +5,9 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.SearchResult
-import com.ruideraj.backlog.data.MoviesApi.Companion.TYPE_MOVIE
-import com.ruideraj.backlog.data.MoviesApi.Companion.TYPE_SERIES
+import com.ruideraj.backlog.data.remote.*
+import com.ruideraj.backlog.data.remote.MoviesApi.Companion.TYPE_MOVIE
+import com.ruideraj.backlog.data.remote.MoviesApi.Companion.TYPE_SERIES
 import com.ruideraj.backlog.search.MOVIES_PAGE_SIZE
 import com.ruideraj.backlog.search.PAGE_SIZE
 import kotlinx.coroutines.flow.Flow
@@ -20,7 +21,8 @@ interface SearchRepository {
 class SearchRepositoryImpl @Inject constructor(
     private val moviesApi: MoviesApi,
     private val igdbApi: IgdbApi,
-    private val openLibraryApi: OpenLibraryApi)
+    private val openLibraryApi: OpenLibraryApi
+)
     : SearchRepository {
     companion object {
         private const val TAG = "SearchRepositoryImpl"
