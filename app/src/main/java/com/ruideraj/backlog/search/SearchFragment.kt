@@ -95,13 +95,13 @@ class SearchFragment : Fragment() {
         }
 
         viewModel.let {
-            it.uiVisibility.observe(viewLifecycleOwner, { uiState ->
+            it.uiVisibility.observe(viewLifecycleOwner) { uiState ->
                 recycler.isVisible = uiState.isListVisible
                 progressBar.isVisible = uiState.isProgressVisible
                 loadMessage.isVisible = uiState.isMessageVisible
                 retryButton.isVisible = uiState.isRetryButtonVisible
                 loadMessage.text = uiState.loadMessage
-            })
+            }
 
             lifecycleScope.launch {
                 repeatOnLifecycle(Lifecycle.State.STARTED) {

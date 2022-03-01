@@ -62,9 +62,9 @@ class ListsFragment : Fragment() {
         }
 
         viewModel.let { it ->
-            it.lists.observe(requireActivity(), { lists ->
+            it.lists.observe(requireActivity()) { lists ->
                 adapter.submitList(lists)
-            })
+            }
 
             it.eventFlow.collectWhileStarted(this) { event ->
                 when (event) {
