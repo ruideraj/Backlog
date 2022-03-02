@@ -5,10 +5,7 @@ import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.Metadata
 import com.ruideraj.backlog.Status
 import com.ruideraj.backlog.data.local.EntriesDao
-import com.ruideraj.backlog.injection.IoDispatcher
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface EntriesRepository {
@@ -20,8 +17,7 @@ interface EntriesRepository {
     suspend fun deleteEntries(ids: List<Long>)
 }
 
-class EntriesRepositoryImpl @Inject constructor (private val entriesDao: EntriesDao,
-                                                 @IoDispatcher private val ioDispatcher: CoroutineDispatcher)
+class EntriesRepositoryImpl @Inject constructor (private val entriesDao: EntriesDao)
     : EntriesRepository {
 
     override suspend fun loadEntriesForList(listId: Long) = entriesDao.getEntriesForList(listId)
@@ -32,37 +28,27 @@ class EntriesRepositoryImpl @Inject constructor (private val entriesDao: Entries
         title: String,
         metadata: Metadata
     ) {
-        withContext(ioDispatcher) {
-            val position = entriesDao.getMaxPositionForList(listId) + 1
-            val newEntry = Entry(0, listId, title, type, position, metadata, Status.TODO)
-            entriesDao.insertEntry(newEntry)
-        }
+        val position = entriesDao.getMaxPositionForList(listId) + 1
+        val newEntry = Entry(0, listId, title, type, position, metadata, Status.TODO)
+        entriesDao.insertEntry(newEntry)
     }
 
     override suspend fun setStatusForEntry(entryId: Long, status: Status) {
-        withContext(ioDispatcher) {
-            entriesDao.updateEntryStatus(entryId, status)
-        }
+        entriesDao.updateEntryStatus(entryId, status)
     }
 
     override suspend fun editEntry(entryId: Long, title: String, metadata: Metadata) {
-        withContext(ioDispatcher) {
-            entriesDao.updateEntry(entryId, title, metadata)
-        }
+        entriesDao.updateEntry(entryId, title, metadata)
     }
 
     override suspend fun moveEntry(entryId: Long, newPosition: Int) {
-        withContext(ioDispatcher) {
-            val listId = entriesDao.getListIdForEntry(entryId)
-            val entryPositions = entriesDao.getAllEntryPositionsForList(listId)
-            val newPositionValue = findNewPositionValue(entryPositions, entryId, newPosition)
-            entriesDao.updateEntryPosition(entryId, newPositionValue)
-        }
+        val listId = entriesDao.getListIdForEntry(entryId)
+        val entryPositions = entriesDao.getAllEntryPositionsForList(listId)
+        val newPositionValue = findNewPositionValue(entryPositions, entryId, newPosition)
+        entriesDao.updateEntryPosition(entryId, newPositionValue)
     }
 
     override suspend fun deleteEntries(ids: List<Long>) {
-        withContext(ioDispatcher) {
-            entriesDao.deleteEntries(ids)
-        }
+        entriesDao.deleteEntries(ids)
     }
 }

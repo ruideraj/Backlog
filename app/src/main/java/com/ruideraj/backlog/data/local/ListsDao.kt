@@ -16,23 +16,23 @@ interface ListsDao {
     fun getAllLists(): Flow<List<ListItem>>
 
     @Query("SELECT MAX(position) FROM $TABLE_NAME_LISTS")
-    fun getMaxPosition(): Double
+    suspend fun getMaxPosition(): Double
 
     @Insert
-    fun insertList(newList: BacklogList)
+    suspend fun insertList(newList: BacklogList)
 
     @Query("DELETE FROM $TABLE_NAME_LISTS WHERE id = :listId")
-    fun deleteList(listId: Long)
+    suspend fun deleteList(listId: Long)
 
     @Query("UPDATE $TABLE_NAME_LISTS SET title = :title, icon = :icon WHERE id = :listId")
     @TypeConverters(ListIconConverters::class)
-    fun updateListDetails(listId: Long, title: String, icon: ListIcon)
+    suspend fun updateListDetails(listId: Long, title: String, icon: ListIcon)
 
     @Query("UPDATE $TABLE_NAME_LISTS SET position = :newPosition WHERE id = :listId")
-    fun updateListPosition(listId: Long, newPosition: Double)
+    suspend fun updateListPosition(listId: Long, newPosition: Double)
 
     @Query("SELECT id, position FROM $TABLE_NAME_LISTS ORDER BY position")
-    fun getAllListPositions(): List<PositionTuple>
+    suspend fun getAllListPositions(): List<PositionTuple>
 
 }
 
