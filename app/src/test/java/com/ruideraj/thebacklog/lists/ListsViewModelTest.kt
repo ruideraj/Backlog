@@ -7,18 +7,18 @@ import com.ruideraj.backlog.data.ListsRepository
 import com.ruideraj.backlog.data.local.ListItem
 import com.ruideraj.backlog.lists.ListsViewModel
 import com.ruideraj.thebacklog.MainDispatcherRule
-import com.ruideraj.thebacklog.data.FakeListsRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
-import org.hamcrest.CoreMatchers.*
+import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.IsEqual
 import org.hamcrest.core.IsInstanceOf
-import org.hamcrest.core.IsNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mockito.*
 
 @ExperimentalCoroutinesApi
 class ListsViewModelTest {
@@ -40,7 +40,10 @@ class ListsViewModelTest {
 
     @Before
     fun setup() {
-        testRepository = FakeListsRepository().apply { addLists(testLists) }
+        testRepository = mock(ListsRepository::class.java)
+        val listsFlow = flow { emit(testLists) }
+        `when`(testRepository.loadLists()).thenReturn(listsFlow)
+
         viewModel = ListsViewModel(testRepository)
     }
 
@@ -104,9 +107,7 @@ class ListsViewModelTest {
         viewModel.createList(title, icon)
 
         assertThat(viewModel.eventFlow.first(), `is`(ListsViewModel.Event.CloseListDialog))
-        assertThat(viewModel.lists.value, not(nullValue()))
-        assertThat(viewModel.lists.value?.last()?.list?.title, `is`(title))
-        assertThat(viewModel.lists.value?.last()?.list?.icon, `is`(icon))
+        verify(testRepository).createList(title, icon)
     }
 
     @Test
@@ -119,7 +120,7 @@ class ListsViewModelTest {
     }
 
     @Test
-    fun editList_changesSuccessful() {
+    fun editList_dialogClosedAndChangesMade() = runTest {
         val icons = ListIcon.values()
         testLists.forEachIndexed { i, listItem ->
             val listId = listItem.list.id
@@ -128,22 +129,43 @@ class ListsViewModelTest {
 
             viewModel.editList(listId, newTitle, newIcon)
 
-            assertThat(viewModel.lists.value?.get(i)?.list?.title, `is`(newTitle))
-            assertThat(viewModel.lists.value?.get(i)?.list?.icon, `is`(newIcon))
+            assertThat(viewModel.eventFlow.first(), `is`(ListsViewModel.Event.CloseListDialog))
+            verify(testRepository).editList(listId, newTitle, newIcon)
         }
     }
 
     @Test
-    fun deleteList_listDeleted() {
+    fun deleteList_listDeleted() = runTest {
         testLists.forEach { listItem ->
             val listId = listItem.list.id
 
             viewModel.deleteList(listId)
-            val lists = viewModel.lists.value
 
-            assertThat(lists, not(nullValue()))
-            assertThat(lists?.find { it.list.id == listId }, IsNull())
+            verify(testRepository).deleteList(listId)
         }
     }
 
+    @Test
+    fun moveList_listMovedToCorrectPosition() = runTest {
+        testLists.forEachIndexed { i, listItem ->
+            val movedListId = listItem.list.id
+            val newPosition = (i + 1) % testLists.size
+
+            viewModel.moveListStarted(i)
+            viewModel.moveListEnded(newPosition)
+
+            verify(testRepository).moveList(movedListId, newPosition)
+        }
+    }
+
+    @Test
+    fun listDialogError_errorShownAndNewTextEntered_errorCleared() {
+        viewModel.createList("", ListIcon.LIST)
+
+        assertThat(viewModel.showListDialogTitleError.value, `is`(true))
+
+        viewModel.onDialogTitleTextChanged("new text")
+
+        assertThat(viewModel.showListDialogTitleError.value, `is`(false))
+    }
 }
