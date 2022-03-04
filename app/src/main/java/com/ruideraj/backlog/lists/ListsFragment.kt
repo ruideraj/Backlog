@@ -62,7 +62,7 @@ class ListsFragment : Fragment() {
         }
 
         viewModel.let { it ->
-            it.lists.observe(requireActivity()) { lists ->
+            it.lists.observe(viewLifecycleOwner) { lists ->
                 adapter.submitList(lists)
             }
 

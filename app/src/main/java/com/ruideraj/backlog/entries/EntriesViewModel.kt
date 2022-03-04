@@ -95,13 +95,17 @@ class EntriesViewModel @Inject constructor(private val entriesRepository: Entrie
     }
 
     fun onClickEntryStatus(position: Int) {
-        _entries.value?.let {
-            val entry = it[position]
-            viewModelScope.launch {
-                // TODO Should use a menu to select status
-                val nextStatus = getNextStatus(entry.status)
+        if (_selectMode.value == true) {
+            onClickEntry(position)
+        } else {
+            _entries.value?.let {
+                val entry = it[position]
+                viewModelScope.launch {
+                    // TODO Should use a menu to select status
+                    val nextStatus = getNextStatus(entry.status)
 
-                entriesRepository.setStatusForEntry(entry.id, nextStatus)
+                    entriesRepository.setStatusForEntry(entry.id, nextStatus)
+                }
             }
         }
     }

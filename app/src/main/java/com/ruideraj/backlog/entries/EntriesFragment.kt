@@ -23,7 +23,6 @@ import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.R
 import com.ruideraj.backlog.lists.DragDropHelperCallback
 import com.ruideraj.backlog.lists.ScrollOnAddObserver
-import com.ruideraj.backlog.util.UpDownScrollListener
 import com.ruideraj.backlog.util.asDp
 import com.ruideraj.backlog.util.collectWhileStarted
 import dagger.hilt.android.AndroidEntryPoint
@@ -148,6 +147,12 @@ class EntriesFragment : Fragment() {
                         menu.getItem(MENU_DELETE_MODE).isVisible = true
                         menu.getItem(MENU_DELETE).isVisible = false
                     }
+                }
+
+                if (selectMode) {
+                    dragDropCallback.setDefaultDragDirs(0)
+                } else {
+                    dragDropCallback.setDefaultDragDirs(ItemTouchHelper.UP or ItemTouchHelper.DOWN)
                 }
             }
 

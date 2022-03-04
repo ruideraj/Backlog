@@ -36,6 +36,12 @@ class ListsRepositoryImpl @Inject constructor(private val listsDao: ListsDao)
 
     override suspend fun moveList(listId: Long, newPosition: Int) {
         val listPositions = listsDao.getAllListPositions()
+
+        val index = listPositions.indexOfFirst { it.id == listId }
+        if (index == newPosition) {
+            return
+        }
+
         val newPositionValue = findNewPositionValue(listPositions, listId, newPosition)
         listsDao.updateListPosition(listId, newPositionValue)
     }

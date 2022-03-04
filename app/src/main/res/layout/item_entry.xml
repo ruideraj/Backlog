@@ -36,7 +36,9 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/entry_image"
+        app:layout_constraintRight_toLeftOf="@id/entry_status"
         android:layout_marginLeft="@dimen/item_text_margin"
+        android:layout_marginRight="@dimen/item_text_margin"
         android:textSize="@dimen/item_text_size"
         android:textColor="?android:attr/textColorPrimary"
         tools:text="Entry title" />

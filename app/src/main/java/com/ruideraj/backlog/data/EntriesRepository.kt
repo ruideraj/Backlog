@@ -44,6 +44,12 @@ class EntriesRepositoryImpl @Inject constructor (private val entriesDao: Entries
     override suspend fun moveEntry(entryId: Long, newPosition: Int) {
         val listId = entriesDao.getListIdForEntry(entryId)
         val entryPositions = entriesDao.getAllEntryPositionsForList(listId)
+
+        val index = entryPositions.indexOfFirst { it.id == entryId }
+        if (index == newPosition) {
+            return
+        }
+
         val newPositionValue = findNewPositionValue(entryPositions, entryId, newPosition)
         entriesDao.updateEntryPosition(entryId, newPositionValue)
     }
