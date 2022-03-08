@@ -3,7 +3,9 @@ package com.ruideraj.backlog.entries
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.InputType
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.widget.addTextChangedListener
@@ -119,19 +121,19 @@ class EntryEditFragment : Fragment() {
         creator2Field = view.findViewById(R.id.entry_field_creator2)
 
         viewModel.let {
-            it.screenTitle.observe(viewLifecycleOwner, { title ->
+            it.screenTitle.observe(viewLifecycleOwner) { title ->
                 toolbar.title = title
-            })
+            }
 
-            it.showCloseIcon.observe(viewLifecycleOwner, { show ->
+            it.showCloseIcon.observe(viewLifecycleOwner) { show ->
                 if (show) {
                     toolbar.setNavigationIcon(R.drawable.ic_close)
                 } else {
                     toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
                 }
-            })
+            }
 
-            it.editMode.observe(viewLifecycleOwner, { editMode ->
+            it.editMode.observe(viewLifecycleOwner) { editMode ->
                 toolbar.menu.apply {
                     getItem(MENU_SEARCH).isVisible = editMode
                     getItem(MENU_CONFIRM).isVisible = editMode
@@ -142,36 +144,36 @@ class EntryEditFragment : Fragment() {
                 yearField.isEnabled = editMode
                 creator1Field.isEnabled = editMode
                 creator2Field.isEnabled = editMode
-            })
+            }
 
-            it.showEditModeAction.observe(viewLifecycleOwner, { show ->
+            it.showEditModeAction.observe(viewLifecycleOwner) { show ->
                 toolbar.menu.getItem(MENU_EDIT).isVisible = show
-            })
+            }
 
-            it.fields.observe(viewLifecycleOwner, { shownFields ->
+            it.fields.observe(viewLifecycleOwner) { shownFields ->
                 setFieldVisibilityAndHint(dateField, shownFields.releaseDate)
                 setFieldVisibilityAndHint(yearField, shownFields.releaseYear)
                 setFieldVisibilityAndHint(creator1Field, shownFields.creator1)
                 setFieldVisibilityAndHint(creator2Field, shownFields.creator2)
-            })
+            }
 
-            it.titleError.observe(viewLifecycleOwner, { error ->
+            it.titleError.observe(viewLifecycleOwner) { error ->
                 if (error) {
                     titleField.error = getString(R.string.error_title)
                 } else {
                     titleField.error = null
                 }
-            })
+            }
 
-            it.yearError.observe(viewLifecycleOwner, { error ->
+            it.yearError.observe(viewLifecycleOwner) { error ->
                 if (error) {
                     yearField.error = getString(R.string.error_year)
                 } else {
                     yearField.error = null
                 }
-            })
+            }
 
-            it.imageUrl.observe(viewLifecycleOwner, { imageInput ->
+            it.imageUrl.observe(viewLifecycleOwner) { imageInput ->
                 if (imageInput.isNullOrBlank()) {
                     Glide.with(this).clear(imageThumbnail)
                 } else {
@@ -179,30 +181,33 @@ class EntryEditFragment : Fragment() {
                         .load(imageInput)
                         .circleCrop()
                         .addListener(object : RequestListener<Drawable> {
-                            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?,
-                                                      isFirstResource: Boolean): Boolean {
+                            override fun onLoadFailed(
+                                e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean
+                            ): Boolean {
                                 viewModel.onImageLoadError()
                                 return false
                             }
 
-                            override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?,
-                                                         dataSource: DataSource?, isFirstResource: Boolean): Boolean = false
+                            override fun onResourceReady(
+                                resource: Drawable?, model: Any?, target: Target<Drawable>?,
+                                dataSource: DataSource?, isFirstResource: Boolean
+                            ): Boolean = false
                         })
                         .into(imageThumbnail)
                 }
-            })
+            }
 
-            it.imageError.observe(viewLifecycleOwner, { error ->
+            it.imageError.observe(viewLifecycleOwner) { error ->
                 if (error) {
                     imageField.error = getString(R.string.error_image)
                 } else {
                     imageField.error = null
                 }
-            })
+            }
 
-            it.releaseDate.observe(viewLifecycleOwner, { releaseDate ->
+            it.releaseDate.observe(viewLifecycleOwner) { releaseDate ->
                 dateField.text = releaseDate
-            })
+            }
 
             it.eventFlow.collectWhileStarted(viewLifecycleOwner) { event ->
                 when (event) {
@@ -235,12 +240,7 @@ class EntryEditFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        val title = titleField.text
-        val year = yearField.text
-        val imageUrl = imageField.text
-        val creator1 = creator1Field.text
-        val creator2 = creator2Field.text
-        viewModel.saveState(title, year, imageUrl, creator1, creator2)
+        viewModel.saveState()
     }
 
     private fun setFieldVisibilityAndHint(entryField: EntryField, hintTextRes: Int) {

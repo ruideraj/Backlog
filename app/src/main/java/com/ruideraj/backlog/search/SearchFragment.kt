@@ -104,7 +104,7 @@ class SearchFragment : Fragment() {
             }
 
             lifecycleScope.launch {
-                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     it.searchResultsFlow.collectLatest { results ->
                         adapter.submitData(results)
                         recycler.scrollToPosition(0)
@@ -113,7 +113,7 @@ class SearchFragment : Fragment() {
             }
 
             lifecycleScope.launch {
-                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     adapter.loadStateFlow.collect { loadState ->
                         viewModel.onLoadStateChanged(loadState, adapter.itemCount)
                     }
@@ -121,7 +121,7 @@ class SearchFragment : Fragment() {
             }
 
             lifecycleScope.launch {
-                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     it.eventFlow.collect { event ->
                         when (event) {
                             is SearchViewModel.Event.ReturnToEdit -> {

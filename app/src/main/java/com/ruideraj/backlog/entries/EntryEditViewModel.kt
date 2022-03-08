@@ -125,27 +125,11 @@ class EntryEditViewModel @Inject constructor(
         if (recreating) {
             savedStateHandle.run {
                 val editMode = get<Boolean>(ARG_EDIT_MODE)
-                val title = get<String>(ARG_TITLE)
                 val releaseDate = get<Calendar>(ARG_RELEASE_DATE)
-                val year = get<String>(ARG_YEAR)
-                val imageUrl = get<String>(ARG_IMAGE_URL)
-                val creator1 = get<String>(ARG_CREATOR1)
-                val creator2 = get<String>(ARG_CREATOR2)
 
                 setEditMode(editMode == true)
                 date = releaseDate
                 _releaseDateText.value = releaseDate?.let { convertDateToString(it.time) }
-                viewModelScope.launch {
-                    eventChannel.send(
-                        Event.PopulateFields(
-                            title,
-                            year,
-                            imageUrl,
-                            creator1,
-                            creator2
-                        )
-                    )
-                }
             }
         } else if (entry != null) {
             setFieldData(entry.title, entry.metadata)
@@ -153,15 +137,10 @@ class EntryEditViewModel @Inject constructor(
         }
     }
 
-    fun saveState(title: String?, year: String?, imageUrl: String?, creator1: String?, creator2: String?) {
+    fun saveState() {
         savedStateHandle.run {
             set(ARG_EDIT_MODE, _editMode.value)
-            set(ARG_TITLE, title)
             set(ARG_RELEASE_DATE, date)
-            set(ARG_YEAR, year)
-            set(ARG_IMAGE_URL, imageUrl)
-            set(ARG_CREATOR1, creator1)
-            set(ARG_CREATOR2, creator2)
         }
     }
 
