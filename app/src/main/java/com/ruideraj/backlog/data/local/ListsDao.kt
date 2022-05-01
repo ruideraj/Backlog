@@ -5,7 +5,6 @@ import com.ruideraj.backlog.BacklogList
 import com.ruideraj.backlog.Constants.TABLE_NAME_ENTRIES
 import com.ruideraj.backlog.Constants.TABLE_NAME_LISTS
 import com.ruideraj.backlog.ListIcon
-import com.ruideraj.backlog.data.ListIconConverters
 import com.ruideraj.backlog.data.PositionTuple
 import kotlinx.coroutines.flow.Flow
 

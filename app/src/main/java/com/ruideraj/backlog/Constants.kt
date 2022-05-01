@@ -10,7 +10,8 @@ object Constants {
     const val PROP_TWITCH_ID = "twitchClientId"
     const val PROP_TWITCH_TOKEN = "twitchAccessToken"
 
-    const val API_MOVIES = "https://movie-database-imdb-alternative.p.rapidapi.com/"
+    const val API_MOVIES = "https://movie-database-alternative.p.rapidapi.com/"
+    const val API_MOVIES_SHORT = "movie-database-alternative.p.rapidapi.com"
     const val API_IGDB = "https://api.igdb.com/v4/"
     const val API_OPEN_LIBRARY = "https://openlibrary.org/"
 

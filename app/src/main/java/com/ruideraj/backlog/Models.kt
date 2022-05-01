@@ -5,10 +5,10 @@ import androidx.room.*
 import com.google.gson.annotations.SerializedName
 import com.ruideraj.backlog.Constants.TABLE_NAME_ENTRIES
 import com.ruideraj.backlog.Constants.TABLE_NAME_LISTS
-import com.ruideraj.backlog.data.ListIconConverters
-import com.ruideraj.backlog.data.MediaTypeConverters
-import com.ruideraj.backlog.data.MetadataConverters
-import com.ruideraj.backlog.data.StatusConverters
+import com.ruideraj.backlog.data.local.ListIconConverters
+import com.ruideraj.backlog.data.local.MediaTypeConverters
+import com.ruideraj.backlog.data.local.MetadataConverters
+import com.ruideraj.backlog.data.local.StatusConverters
 import kotlinx.parcelize.Parcelize
 import java.time.Year
 import java.util.*

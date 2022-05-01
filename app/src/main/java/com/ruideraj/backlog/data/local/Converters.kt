@@ -1,4 +1,4 @@
-package com.ruideraj.backlog.data
+package com.ruideraj.backlog.data.local
 
 import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter

@@ -8,12 +8,15 @@ import com.ruideraj.backlog.BuildConfig
 import com.ruideraj.backlog.Constants
 import com.ruideraj.backlog.Constants.API_IGDB
 import com.ruideraj.backlog.Constants.API_MOVIES
+import com.ruideraj.backlog.Constants.API_MOVIES_SHORT
 import com.ruideraj.backlog.Constants.API_OPEN_LIBRARY
 import com.ruideraj.backlog.Constants.PROP_RAPIDAPI_KEY
 import com.ruideraj.backlog.Constants.PROP_TWITCH_ID
 import com.ruideraj.backlog.Constants.PROP_TWITCH_TOKEN
 import com.ruideraj.backlog.data.*
 import com.ruideraj.backlog.data.local.AppDatabase
+import com.ruideraj.backlog.data.local.MetadataConverters
+import com.ruideraj.backlog.data.local.YearConverter
 import com.ruideraj.backlog.data.remote.*
 import dagger.Binds
 import dagger.Module
@@ -98,7 +101,7 @@ object SearchModule {
             val originalRequest = chain.request()
 
             val requestBuilder = originalRequest.newBuilder()
-                .header("x-rapidapi-host", "movie-database-imdb-alternative.p.rapidapi.com")
+                .header("x-rapidapi-host", API_MOVIES_SHORT)
                 .header("x-rapidapi-key", propertiesReader.getProperty(PROP_RAPIDAPI_KEY))
 
             chain.proceed(requestBuilder.build())
