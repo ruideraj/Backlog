@@ -46,20 +46,22 @@ class EntryEditFragment : Fragment() {
 
     private lateinit var imageThumbnail: ImageView
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val args = requireArguments()
+        val listId = args.getLong(Constants.ARG_LIST_ID, -1L)
+        val type = args.getSerializable(Constants.ARG_TYPE) as MediaType
+        val entry = args.getParcelable(Constants.ARG_ENTRY) as Entry?
+
+        viewModel.initialize(listId, type, entry, savedInstanceState != null)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_entry_edit, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val args = requireArguments()
-
-        val listId = args.getLong(Constants.ARG_LIST_ID, -1L)
-        val type = args.getSerializable(Constants.ARG_TYPE) as MediaType
-        val entry = args.getParcelable(Constants.ARG_ENTRY) as Entry?
-
-        viewModel.initialize(listId, type, entry, savedInstanceState != null)
 
         toolbar = view.findViewById<Toolbar>(R.id.entry_toolbar).apply {
             setNavigationOnClickListener { viewModel.onClickNavigationIcon() }
@@ -222,6 +224,8 @@ class EntryEditFragment : Fragment() {
                         creator2Field.text = event.creator2
                     }
                     EntryEditViewModel.Event.GoToSearch -> {
+                        val args = requireArguments()
+                        val type = args.getSerializable(Constants.ARG_TYPE) as MediaType
                         val directions = EntryEditFragmentDirections.actionEntriesEditFragmentToSearchFragment(type)
                         findNavController().navigate(directions)
                     }
