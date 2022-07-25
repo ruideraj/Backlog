@@ -17,7 +17,7 @@ interface EntriesDao {
     @Query("SELECT * FROM $TABLE_NAME_ENTRIES WHERE listId = :listId ORDER BY position")
     fun getEntriesForList(listId: Long): Flow<List<Entry>>
 
-    @Query("SELECT MAX(position) FROM $TABLE_NAME_ENTRIES WHERE listId = :listId")
+    @Query("SELECT COALESCE(MAX(position), 0) FROM $TABLE_NAME_ENTRIES WHERE listId = :listId")
     suspend fun getMaxPositionForList(listId: Long): Double
 
     @Insert

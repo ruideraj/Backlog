@@ -14,7 +14,7 @@ interface ListsDao {
     @Query("SELECT *, (SELECT COUNT(entry.id) FROM $TABLE_NAME_ENTRIES entry WHERE listId = list.id) AS entries FROM $TABLE_NAME_LISTS list ORDER BY position")
     fun getAllLists(): Flow<List<ListItem>>
 
-    @Query("SELECT MAX(position) FROM $TABLE_NAME_LISTS")
+    @Query("SELECT COALESCE(MAX(position), 0) FROM $TABLE_NAME_LISTS")
     suspend fun getMaxPosition(): Double
 
     @Insert
