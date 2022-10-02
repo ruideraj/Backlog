@@ -8,13 +8,14 @@ plugins {
 }
 
 android {
-    compileSdkVersion 32
+    namespace 'com.ruideraj.backlog'
+    compileSdkVersion 33
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.ruideraj.backlog"
         minSdkVersion 21
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
 
@@ -56,7 +57,7 @@ kapt {
 
 dependencies {
     // Desugaring for Java 8+ APIs
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.6'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.0'
 
     // Kotlin
     def coroutinesVersion = "1.6.0"
@@ -65,11 +66,11 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
 
     // Jetpack
-    implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.google.android.material:material:1.6.1'
-    def lifecycleVersion = "2.5.0"
+    def lifecycleVersion = "2.5.1"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
 
@@ -86,7 +87,7 @@ dependencies {
     kapt "com.google.dagger:hilt-compiler:$hiltVersion"
 
     // Room
-    def roomVersion = "2.4.2"
+    def roomVersion = "2.4.3"
     implementation "androidx.room:room-runtime:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"

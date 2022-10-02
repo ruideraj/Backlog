@@ -1,12 +1,14 @@
 package com.ruideraj.backlog.data.remote
 
-import com.google.gson.*
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.Metadata
 import com.ruideraj.backlog.SearchResult
 import com.ruideraj.backlog.data.remote.MoviesApi.Companion.TYPE_MOVIE
 import com.ruideraj.backlog.data.remote.MoviesApi.Companion.TYPE_SERIES
-import com.ruideraj.backlog.data.parseIfNotNull
 import java.lang.reflect.Type
 import java.text.ParseException
 import java.text.SimpleDateFormat

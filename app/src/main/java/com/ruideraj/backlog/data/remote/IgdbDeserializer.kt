@@ -1,10 +1,12 @@
 package com.ruideraj.backlog.data.remote
 
-import com.google.gson.*
+import com.google.gson.JsonArray
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
 import com.ruideraj.backlog.MediaType
 import com.ruideraj.backlog.Metadata
 import com.ruideraj.backlog.SearchResult
-import com.ruideraj.backlog.data.parseIfNotNull
 import java.lang.reflect.Type
 import java.util.*
 
