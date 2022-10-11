@@ -243,7 +243,7 @@ class EntriesFragment : Fragment() {
             alpha = 0f
             visibility = View.VISIBLE
             animate().alpha(1f).setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     alpha = 1f
                 }
             })
@@ -258,7 +258,7 @@ class EntriesFragment : Fragment() {
         bookFab.animate().translationY(0f)
         menuOverlay.apply {
             animate().alpha(0f).setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     visibility = View.GONE
                     filmFab.visibility = View.GONE
                     showFab.visibility = View.GONE
