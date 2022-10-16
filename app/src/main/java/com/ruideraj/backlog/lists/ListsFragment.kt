@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,7 +40,10 @@ class ListsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
+        view.findViewById<Toolbar>(R.id.lists_toolbar).apply {
+            val navController = findNavController()
+            setupWithNavController(navController, AppBarConfiguration(navController.graph))
+        }
 
         val recycler = view.findViewById<RecyclerView>(R.id.lists_recycler).apply {
             layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)

@@ -22,7 +22,6 @@ object Constants {
     const val ARG_ICON = "icon"
     const val ARG_LIST_ID = "listId"
     const val ARG_TYPE = "type"
-    const val ARG_SHOW_APP_BAR = "showAppBar"
     const val ARG_COUNT = "count"
     const val ARG_SEARCH_RESULT = "searchResult"
 
