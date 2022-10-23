@@ -3,11 +3,11 @@ package com.ruideraj.backlog.entries
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.InputType
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.MenuProvider
+import androidx.core.view.iterator
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -28,10 +28,6 @@ class EntryEditFragment : Fragment() {
     companion object {
         private const val TAG = "EntryEditFragment"
         private const val DATE_DIALOG_TAG = "DateDialog"
-
-        private const val MENU_EDIT = 0
-        private const val MENU_SEARCH = 1
-        private const val MENU_CONFIRM = 2
     }
 
     private val viewModel by viewModels<EntryEditViewModel>()
@@ -65,27 +61,7 @@ class EntryEditFragment : Fragment() {
 
         toolbar = view.findViewById<Toolbar>(R.id.entry_toolbar).apply {
             setNavigationOnClickListener { viewModel.onClickNavigationIcon() }
-            inflateMenu(R.menu.menu_entry_edit)
-            menu.apply {
-                getItem(MENU_EDIT).setOnMenuItemClickListener {
-                    viewModel.onClickEditMode()
-                    true
-                }
-                getItem(MENU_SEARCH).setOnMenuItemClickListener {
-                    viewModel.onClickSearch()
-                    true
-                }
-                getItem(MENU_CONFIRM).setOnMenuItemClickListener {
-                    viewModel.submit(
-                        titleField.text,
-                        yearField.text,
-                        imageField.text,
-                        creator1Field.text,
-                        creator2Field.text
-                    )
-                    true
-                }
-            }
+            addMenuProvider(EntryEditMenuProvider())
         }
 
         titleField = view.findViewById<EntryField>(R.id.entry_field_title).apply {
@@ -136,10 +112,6 @@ class EntryEditFragment : Fragment() {
             }
 
             it.editMode.observe(viewLifecycleOwner) { editMode ->
-                toolbar.menu.apply {
-                    getItem(MENU_SEARCH).isVisible = editMode
-                    getItem(MENU_CONFIRM).isVisible = editMode
-                }
                 titleField.isEnabled = editMode
                 imageField.isEnabled = editMode
                 dateField.isEnabled = editMode
@@ -148,8 +120,8 @@ class EntryEditFragment : Fragment() {
                 creator2Field.isEnabled = editMode
             }
 
-            it.showEditModeAction.observe(viewLifecycleOwner) { show ->
-                toolbar.menu.getItem(MENU_EDIT).isVisible = show
+            it.menuState.observe(viewLifecycleOwner) {
+                toolbar.invalidateMenu()
             }
 
             it.fields.observe(viewLifecycleOwner) { shownFields ->
@@ -253,6 +225,48 @@ class EntryEditFragment : Fragment() {
         } else {
             entryField.setHint(hintTextRes)
             entryField.visibility = View.VISIBLE
+        }
+    }
+
+    private inner class EntryEditMenuProvider : MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.menu_entry_edit, menu)
+        }
+
+        override fun onPrepareMenu(menu: Menu) {
+            val state = viewModel.menuState.value ?: throw IllegalStateException("Menu state should not be null")
+            menu.iterator().forEach { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.entry_action_edit -> menuItem.isVisible = state.showEdit
+                    R.id.entry_action_search -> menuItem.isVisible = state.showSearch
+                    R.id.entry_action_confirm -> menuItem.isVisible = state.showConfirm
+                }
+            }
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            when(menuItem.itemId) {
+                R.id.entry_action_edit -> {
+                    viewModel.onClickEditMode()
+                    return true
+                }
+                R.id.entry_action_search -> {
+                    viewModel.onClickSearch()
+                    return true
+                }
+                R.id.entry_action_confirm -> {
+                    viewModel.submit(
+                        titleField.text,
+                        yearField.text,
+                        imageField.text,
+                        creator1Field.text,
+                        creator2Field.text
+                    )
+                    return true
+                }
+            }
+
+            return false
         }
     }
 }

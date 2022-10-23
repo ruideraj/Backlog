@@ -54,7 +54,6 @@ class EntryEditViewModel @Inject constructor(
         BOOK(NOT_SHOWN, R.string.field_year_first_year_published, R.string.field_creator_author, NOT_SHOWN)
     }
 
-    private var initialized = false
     private var listId: Long = -1L
     private lateinit var mediaType: MediaType
     private var existingEntry: Entry? = null
@@ -68,8 +67,8 @@ class EntryEditViewModel @Inject constructor(
     private val _showCloseIcon = MutableLiveData(false)
     val showCloseIcon: LiveData<Boolean> = _showCloseIcon
 
-    private val _showEditModeAction = MutableLiveData(false)
-    val showEditModeAction: LiveData<Boolean> = _showEditModeAction
+    private val _menuState = MutableLiveData(EntryEditMenuState())
+    val menuState: LiveData<EntryEditMenuState> = _menuState
 
     private val _fields = MutableLiveData<ShownFields>()
     val fields: LiveData<ShownFields> = _fields
@@ -240,9 +239,11 @@ class EntryEditViewModel @Inject constructor(
 
     private fun setEditMode(enable: Boolean) {
         _editMode.value = enable
+        val state = EntryEditMenuState(existingEntry != null && !enable, enable, enable)
+        _menuState.value = state
+
         if (existingEntry != null) {
             _showCloseIcon.value = enable
-            _showEditModeAction.value = !enable
         }
     }
 

@@ -2,13 +2,13 @@ package com.ruideraj.backlog.entries
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.ViewTreeObserver
+import android.view.*
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.MenuProvider
+import androidx.core.view.iterator
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -61,23 +61,18 @@ class EntriesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val list = requireArguments().getParcelable<BacklogList>(Constants.ARG_LIST)
-            ?: throw IllegalStateException("Need to provide a list to Entries screen")
+        val args = requireArguments()
+        val list = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            args.getParcelable(Constants.ARG_LIST, BacklogList::class.java)
+        } else {
+            args.getParcelable(Constants.ARG_LIST)
+        }
+        if (list == null) throw IllegalStateException("Need to provide a list to Entries screen")
 
         toolbar = view.findViewById<Toolbar>(R.id.entries_toolbar).apply {
+            addMenuProvider(EntriesMenuProvider())
             setNavigationOnClickListener {
                 viewModel.onClickNavigationIcon()
-            }
-            inflateMenu(R.menu.menu_entries_select)
-            menu.let {
-                it.getItem(MENU_DELETE_MODE).setOnMenuItemClickListener {
-                    viewModel.onClickDeleteMode()
-                    true
-                }
-                it.getItem(MENU_DELETE).setOnMenuItemClickListener {
-                    viewModel.onClickDelete()
-                    true
-                }
             }
         }
 
@@ -138,22 +133,14 @@ class EntriesFragment : Fragment() {
 
             it.selectMode.observe(viewLifecycleOwner) { selectMode ->
                 toolbar.apply {
-                    if (selectMode) {
-                        setNavigationIcon(R.drawable.ic_close)
-                        menu.getItem(MENU_DELETE_MODE).isVisible = false
-                        menu.getItem(MENU_DELETE).isVisible = true
-                    } else {
-                        setNavigationIcon(R.drawable.ic_arrow_back)
-                        menu.getItem(MENU_DELETE_MODE).isVisible = true
-                        menu.getItem(MENU_DELETE).isVisible = false
-                    }
+                    invalidateMenu()
+
+                    val navIcon = if (selectMode) R.drawable.ic_close else R.drawable.ic_arrow_back
+                    setNavigationIcon(navIcon)
                 }
 
-                if (selectMode) {
-                    dragDropCallback.setDefaultDragDirs(0)
-                } else {
-                    dragDropCallback.setDefaultDragDirs(ItemTouchHelper.UP or ItemTouchHelper.DOWN)
-                }
+                val enabledDragDirections = if (selectMode) 0 else ItemTouchHelper.UP or ItemTouchHelper.DOWN
+                dragDropCallback.setDefaultDragDirs(enabledDragDirections)
             }
 
             it.entries.observe(viewLifecycleOwner) { entriesList ->
@@ -269,4 +256,34 @@ class EntriesFragment : Fragment() {
         }
     }
 
+    private inner class EntriesMenuProvider : MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.menu_entries_select, menu)
+        }
+
+        override fun onPrepareMenu(menu: Menu) {
+            val isSelectMode = viewModel.selectMode.value == true
+            menu.iterator().forEach { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.entries_select_delete_mode -> menuItem.isVisible = !isSelectMode
+                    R.id.entries_select_delete -> menuItem.isVisible = isSelectMode
+                }
+            }
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            when (menuItem.itemId) {
+                R.id.entries_select_delete_mode -> {
+                    viewModel.onClickDeleteMode()
+                    return true
+                }
+                R.id.entries_select_delete -> {
+                    viewModel.onClickDelete()
+                    return true
+                }
+            }
+
+            return false
+        }
+    }
 }
