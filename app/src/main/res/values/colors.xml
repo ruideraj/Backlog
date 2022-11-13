@@ -11,6 +11,8 @@
 
     <color name="dark_red">#AB000D</color>
 
+    <color name="bg_light_grey">#ECF0F1</color>
+
     <color name="bg_entry_selected">#4C0277BD</color>
 
     <color name="bg_menu_overlay">#52000000</color>

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -46,8 +47,13 @@ class ListsFragment : Fragment() {
         }
 
         val recycler = view.findViewById<RecyclerView>(R.id.lists_recycler).apply {
-            layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
-            addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+            val linearLayoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
+            layoutManager = linearLayoutManager
+
+            val spaceDivider = DividerItemDecoration(context, linearLayoutManager.orientation).apply {
+                ContextCompat.getDrawable(context, R.drawable.divider_space)?.let { setDrawable(it) }
+            }
+            addItemDecoration(spaceDivider)
         }
 
         val adapter = ListsAdapter(viewModel).apply {

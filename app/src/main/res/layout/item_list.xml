@@ -1,55 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/item_padding" >
+    app:cardElevation="2dp">
 
-    <ImageView
-        android:id="@+id/list_icon"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:tint="?attr/colorControlNormal"
-        tools:src="@drawable/ic_list" />
+        android:padding="@dimen/item_padding" >
 
-    <ImageButton
-        android:id="@+id/list_overflow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:padding="@dimen/item_button_padding"
-        app:tint="?attr/colorControlNormal"
-        app:srcCompat="@drawable/ic_more"
-        android:background="?attr/selectableItemBackgroundBorderless"/>
+        <ImageView
+            android:id="@+id/list_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:tint="?attr/colorControlNormal"
+            tools:src="@drawable/ic_list" />
 
-    <TextView
-        android:id="@+id/list_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/list_icon"
-        app:layout_constraintRight_toLeftOf="@id/list_overflow"
-        android:layout_marginLeft="@dimen/item_text_margin"
-        app:layout_constraintHorizontal_bias="0"
-        android:textSize="@dimen/item_text_size"
-        android:textColor="?android:attr/textColorPrimary"
-        tools:text="List Title" />
+        <ImageButton
+            android:id="@+id/list_overflow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:padding="@dimen/item_button_padding"
+            app:tint="?attr/colorControlNormal"
+            app:srcCompat="@drawable/ic_more"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
 
-    <TextView
-        android:id="@+id/list_detail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/list_title"
-        app:layout_constraintLeft_toRightOf="@id/list_icon"
-        android:layout_marginLeft="@dimen/item_text_margin"
-        android:textColor="?android:attr/textColorPrimary"
-        tools:text="3 items"/>
+        <TextView
+            android:id="@+id/list_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/list_icon"
+            app:layout_constraintRight_toLeftOf="@id/list_overflow"
+            android:layout_marginLeft="@dimen/item_text_margin"
+            app:layout_constraintHorizontal_bias="0"
+            android:textSize="@dimen/item_text_size"
+            android:textColor="?android:attr/textColorPrimary"
+            tools:text="List Title" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/list_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/list_title"
+            app:layout_constraintLeft_toRightOf="@id/list_icon"
+            android:layout_marginLeft="@dimen/item_text_margin"
+            android:textColor="?android:attr/textColorPrimary"
+            tools:text="3 items"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

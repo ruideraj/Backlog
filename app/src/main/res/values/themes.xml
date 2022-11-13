@@ -12,6 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
 
+        <item name="android:colorBackground">@color/bg_light_grey</item>
         <item name="alertDialogTheme">@style/AlertDialog</item>
 
         <item name="entryFieldStyle">@style/EntryTextInputLayout</item>
