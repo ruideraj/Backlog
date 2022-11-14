@@ -133,6 +133,8 @@ class EntryEditViewModel @Inject constructor(
         } else if (entry != null) {
             setFieldData(entry.title, entry.metadata)
             setEditMode(false)
+        } else {
+            setEditMode(true)
         }
     }
 
