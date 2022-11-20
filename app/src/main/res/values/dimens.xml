@@ -7,6 +7,7 @@
     <dimen name="item_text_size">18sp</dimen>
     <dimen name="item_button_padding">8dp</dimen>
     <dimen name="item_spacing">8dp</dimen>
+    <dimen name="item_card_elevation">2dp</dimen>
 
     <dimen name="text_input_box_corner_radius">4dp</dimen>
     <dimen name="text_input_box_padding_vertical">16dp</dimen>

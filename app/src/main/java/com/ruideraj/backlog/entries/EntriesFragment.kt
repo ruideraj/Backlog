@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.view.MenuProvider
 import androidx.core.view.iterator
 import androidx.fragment.app.Fragment
@@ -77,8 +78,13 @@ class EntriesFragment : Fragment() {
         }
 
         val recycler = view.findViewById<RecyclerView>(R.id.entries_recycler).apply {
-            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-            addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+            val linearLayoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
+            layoutManager = linearLayoutManager
+
+            val spaceDivider = DividerItemDecoration(context, linearLayoutManager.orientation).apply {
+                ContextCompat.getDrawable(context, R.drawable.divider_space)?.let { setDrawable(it) }
+            }
+            addItemDecoration(spaceDivider)
         }
 
         val adapter = EntriesAdapter(viewModel).apply {

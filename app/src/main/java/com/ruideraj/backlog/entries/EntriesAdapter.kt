@@ -41,9 +41,9 @@ class EntriesAdapter(private val viewModel: EntriesViewModel)
         }
 
         if (viewModel.selectedEntries.contains(entry)) {
-            vh.itemView.setBackgroundResource(R.color.bg_entry_selected)
+            vh.content.setBackgroundResource(R.color.bg_entry_selected)
         } else {
-            vh.itemView.setBackgroundResource(0)
+            vh.content.setBackgroundResource(0)
         }
     }
 
@@ -65,6 +65,7 @@ class EntriesAdapter(private val viewModel: EntriesViewModel)
     }
 
     private inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val content: ViewGroup = itemView.findViewById(R.id.entry_content)
         val title: TextView = itemView.findViewById(R.id.entry_title)
         val image: ImageView = itemView.findViewById(R.id.entry_image)
         val status: ImageView = itemView.findViewById(R.id.entry_status)
