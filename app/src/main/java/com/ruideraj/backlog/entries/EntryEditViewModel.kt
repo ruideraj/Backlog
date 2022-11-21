@@ -158,6 +158,10 @@ class EntryEditViewModel @Inject constructor(
         }
     }
 
+    fun onBackPressed() {
+        onClickNavigationIcon()
+    }
+
     fun onClickSearch() {
         viewModelScope.launch { eventChannel.send(Event.GoToSearch) }
     }

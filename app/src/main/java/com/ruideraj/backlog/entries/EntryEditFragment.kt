@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.InputType
 import android.view.*
 import android.widget.ImageView
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuProvider
 import androidx.core.view.iterator
@@ -41,6 +42,12 @@ class EntryEditFragment : Fragment() {
     private lateinit var creator2Field: EntryField
 
     private lateinit var imageThumbnail: ImageView
+
+    private val backPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            viewModel.onBackPressed()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,6 +104,8 @@ class EntryEditFragment : Fragment() {
 
         creator1Field = view.findViewById(R.id.entry_field_creator1)
         creator2Field = view.findViewById(R.id.entry_field_creator2)
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backPressedCallback)
 
         viewModel.let {
             it.screenTitle.observe(viewLifecycleOwner) { title ->
