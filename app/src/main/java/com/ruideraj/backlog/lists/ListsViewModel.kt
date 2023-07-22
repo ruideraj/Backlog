@@ -6,11 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ruideraj.backlog.BacklogList
 import com.ruideraj.backlog.ListIcon
-import com.ruideraj.backlog.data.local.ListItem
 import com.ruideraj.backlog.data.ListsRepository
+import com.ruideraj.backlog.data.local.ListItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -42,7 +41,9 @@ class ListsViewModel @Inject constructor(private val listsRepository: ListsRepos
     private var listBeingMoved: Long = -1
 
     init {
-        viewModelScope.launch { listsRepository.loadLists().collect { lists -> _lists.value = lists } }
+        viewModelScope.launch {
+            listsRepository.loadLists().collect { lists -> _lists.value = lists }
+        }
     }
 
     fun onClickCreateList() {

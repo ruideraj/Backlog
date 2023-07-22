@@ -26,7 +26,7 @@ class MoviesSearchDeserializer : JsonDeserializer<MoviesSearchResponse> {
         val response = json.get("Response").asBoolean
 
         return if (response) {
-            val totalResults = if (response) json.get("totalResults").asInt else 0
+            val totalResults = json.get("totalResults").asInt
             val results = json.getAsJsonArray("Search")
                 .map { element -> element.asJsonObject }
                 .filter { jsonObject ->

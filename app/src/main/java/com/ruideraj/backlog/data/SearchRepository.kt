@@ -22,8 +22,7 @@ class SearchRepositoryImpl @Inject constructor(
     private val moviesApi: MoviesApi,
     private val igdbApi: IgdbApi,
     private val openLibraryApi: OpenLibraryApi
-)
-    : SearchRepository {
+) : SearchRepository {
     companion object {
         private const val TAG = "SearchRepositoryImpl"
     }
