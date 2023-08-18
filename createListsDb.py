@@ -26,7 +26,7 @@ insert_entries_stmt = 'INSERT INTO entries (listId, title, type, position, metad
 
 entry_rows = 10
 
-db_filename = 'app\\src\\main\\assets\\database\\testDb' + str(list_rows) + '.db'
+db_filename = 'app\\src\\main\\assets\\test\\database\\testDb' + str(list_rows) + '.db'
 
 def create_metadata(type_int):
     # Film
