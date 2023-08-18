@@ -10,7 +10,6 @@ plugins {
 android {
     namespace 'com.ruideraj.backlog'
     compileSdk 33
-    buildToolsVersion = "33.0.2"
 
     defaultConfig {
         applicationId "com.ruideraj.backlog"
