@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext.kotlinVersion = "1.7.10"
-    ext.hiltVersion = '2.42'
+    ext.kotlinVersion = "1.8.20"
+    ext.hiltVersion = '2.47'
     ext.navigationVersion = '2.5.3'
     repositories {
         google()
